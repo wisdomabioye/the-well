@@ -1,0 +1,22 @@
+{
+  "name": "@repo/typescript-config",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "typecheck": "tsc --noEmit -p test/fixture/tsconfig.json",
+    "test:unit": "vitest run test/configs.unit.test.ts",
+    "test:integration": "tsc --noEmit -p test/fixture/tsconfig.json",
+    "test:coverage": "vitest run --coverage test/configs.unit.test.ts"
+  },
+  "devDependencies": {
+    "@types/react": "19.2.18",
+    "@vitest/coverage-v8": "^4.1.11",
+    "typescript": "5.9.3",
+    "vitest": "^4.1.11"
+  },
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  }
+}
