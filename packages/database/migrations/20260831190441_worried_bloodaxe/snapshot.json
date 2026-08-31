@@ -1,0 +1,13 @@
+{
+  "version": "8",
+  "dialect": "postgres",
+  "id": "17ac5744-138b-4d98-8e4d-0d1916a7452f",
+  "prevIds": ["00000000-0000-0000-0000-000000000000"],
+  "ddl": [
+    {
+      "name": "ador",
+      "entityType": "schemas"
+    }
+  ],
+  "renames": []
+}

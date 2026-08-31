@@ -8,4 +8,12 @@ describe("base ESLint preset", () => {
 
     expect(turboConfig?.rules?.["turbo/no-undeclared-env-vars"]).toBe("warn");
   });
+
+  it("excludes generated build and coverage artifacts", () => {
+    const ignoredPaths = config.flatMap((entry) => entry.ignores ?? []);
+
+    expect(ignoredPaths).toEqual(
+      expect.arrayContaining(["coverage/**", "dist/**"]),
+    );
+  });
 });

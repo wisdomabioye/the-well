@@ -14,6 +14,10 @@
       "dependsOn": ["^env:check"],
       "inputs": ["$TURBO_DEFAULT$", ".env*", "../../.env*"]
     },
+    "migration:check": {
+      "dependsOn": ["^migration:check"],
+      "outputs": []
+    },
     "typecheck": {
       "dependsOn": ["^typecheck"]
     },

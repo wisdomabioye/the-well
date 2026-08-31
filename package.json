@@ -10,6 +10,7 @@
     "dev": "turbo run dev",
     "env:check": "turbo run env:check",
     "lint": "turbo run lint",
+    "migration:check": "turbo run migration:check",
     "format": "prettier --write \"**/*.{ts,tsx,js,mjs,json,css,md}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,mjs,json,css,md}\"",
     "typecheck": "turbo run typecheck",
