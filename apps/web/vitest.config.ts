@@ -10,7 +10,11 @@ const coverage = {
     lines: 90.01,
     statements: 90.01,
   },
-  include: ["src/app/page.tsx"],
+  include: [
+    "src/app/page.tsx",
+    "src/app/api/v1/platform/route.ts",
+    "src/server/http/next-operation.ts",
+  ],
 };
 
 export default defineConfig({
@@ -20,11 +24,16 @@ export default defineConfig({
     coverage,
     environment: "node",
     projects: [
-      { test: { name: "unit", include: ["test/**/*.unit.test.tsx"] } },
+      {
+        test: {
+          name: "unit",
+          include: ["test/**/*.unit.test.{ts,tsx}"],
+        },
+      },
       {
         test: {
           name: "integration",
-          include: ["test/**/*.integration.test.tsx"],
+          include: ["test/**/*.integration.test.{ts,tsx}"],
         },
       },
     ],

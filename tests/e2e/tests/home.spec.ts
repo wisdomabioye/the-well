@@ -42,3 +42,21 @@ test("navigates to the planned game from the primary control", async ({
   await expect(page).toHaveURL(/#games$/);
   await expect(page.getByRole("heading", { name: "Frostbite" })).toBeVisible();
 });
+
+test("serves the versioned platform contract with correlated truthful state", async ({
+  request,
+}) => {
+  const correlationId = "123e4567-e89b-42d3-a456-426614174000";
+  const response = await request.get("/api/v1/platform", {
+    headers: { "x-correlation-id": correlationId },
+  });
+
+  expect(response.status()).toBe(200);
+  expect(response.headers()["x-correlation-id"]).toBe(correlationId);
+  expect(await response.json()).toEqual({
+    apiVersion: "v1",
+    registeredFeatures: 1,
+    stage: "foundation",
+    transactionalActions: "gated",
+  });
+});

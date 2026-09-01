@@ -6,17 +6,21 @@ by the web application: primary navigation and the public landing page.
 ## Public API
 
 The package exports `platformShellFeature`, a validated registration consumed by
-`configs/features.ts`. Its entrypoint is lazy-loaded through `@ador/plugin-kit`.
+`configs/features.ts`. Its entrypoint is lazy-loaded through `@ador/plugin-kit`. The
+`@ador/feature-platform-shell/status` subpath exposes the framework-neutral `/api/v1/platform`
+operation.
 
 ## Dependencies and configuration
 
-It depends only on the shared feature contract and plugin kit. It owns no environment variables,
-database state, provider adapter, or product policy.
+It depends on shared contracts, the HTTP operation boundary, and plugin kit. It owns no environment
+variables, database state, provider adapter, or product policy. Fastify is test-only evidence for
+the accepted extraction target.
 
 ## Invariants
 
 - The manifest and loaded entrypoint have the same ID, version, and capabilities.
 - Declared capabilities represent implemented behavior; unfinished launch actions remain gated.
+- Platform status reports only the foundation stage and gated transactional state.
 
 ## Verification
 
