@@ -4,7 +4,9 @@
   "private": true,
   "type": "module",
   "exports": {
-    ".": "./src/registry.ts"
+    ".": "./src/registry.ts",
+    "./boot": "./src/boot.ts",
+    "./providers": "./src/provider-registry.ts"
   },
   "scripts": {
     "lint": "eslint . --max-warnings 0",

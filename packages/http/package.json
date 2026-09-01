@@ -4,7 +4,8 @@
   "private": true,
   "type": "module",
   "exports": {
-    ".": "./src/operation.ts"
+    ".": "./src/operation.ts",
+    "./openapi": "./src/openapi.ts"
   },
   "scripts": {
     "lint": "eslint . --max-warnings 0",

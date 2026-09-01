@@ -60,3 +60,19 @@ test("serves the versioned platform contract with correlated truthful state", as
     transactionalActions: "gated",
   });
 });
+
+test("serves a generated domain-independent OpenAPI contract", async ({
+  request,
+}) => {
+  const response = await request.get("/api/v1/openapi");
+  expect(response.status()).toBe(200);
+  expect(await response.json()).toMatchObject({
+    openapi: "3.1.0",
+    paths: {
+      "/api/v1/platform": {
+        get: { operationId: "getPlatformStatus" },
+      },
+    },
+  });
+  expect(JSON.stringify(await response.json())).not.toContain('"servers"');
+});

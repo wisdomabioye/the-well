@@ -5,6 +5,7 @@ import {
   idempotencyHeaderName,
   idempotencyKeySchema,
   type CorrelationId,
+  type ApplicationHttpErrorCode,
   type HttpErrorCode,
   type HttpErrorEnvelope,
   type HttpMethod,
@@ -21,17 +22,19 @@ export interface HttpOperationContext {
 export type HttpOperationResult<Output extends object> =
   | { readonly ok: true; readonly value: Output }
   | {
-      readonly error: Exclude<HttpErrorCode, "internal_error">;
+      readonly error: ApplicationHttpErrorCode;
       readonly message: string;
       readonly ok: false;
     };
 
 export interface HttpOperation<Input, Output extends object> {
+  readonly applicationErrors: readonly ApplicationHttpErrorCode[];
   readonly execute: (
     input: Input,
     context: HttpOperationContext,
   ) => Promise<HttpOperationResult<Output>>;
   readonly idempotency: IdempotencyPolicy;
+  readonly input: "json" | "none";
   readonly inputSchema: z.ZodType<Input>;
   readonly method: HttpMethod;
   readonly operationId: string;
@@ -152,8 +155,16 @@ export async function executeHttpOperation<Input, Output extends object>(
         ? { idempotencyKey: idempotencyResult.data }
         : {}),
     });
-    if (!result.ok)
+    if (!result.ok) {
+      if (!operation.applicationErrors.includes(result.error)) {
+        return errorResponse(
+          "internal_error",
+          "Internal server error.",
+          correlationId,
+        );
+      }
       return errorResponse(result.error, result.message, correlationId);
+    }
     const outputResult = operation.outputSchema.safeParse(result.value);
     return outputResult.success
       ? {

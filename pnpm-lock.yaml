@@ -16,9 +16,15 @@ importers:
       '@ador/feature-platform-shell':
         specifier: workspace:*
         version: link:features/platform-shell
+      '@ador/http':
+        specifier: workspace:*
+        version: link:packages/http
       '@ador/plugin-kit':
         specifier: workspace:*
         version: link:packages/plugin-kit
+      '@ador/shared':
+        specifier: workspace:*
+        version: link:packages/shared
     devDependencies:
       '@playwright/test':
         specifier: ^1.62.1
@@ -152,6 +158,9 @@ importers:
 
   packages/database:
     dependencies:
+      '@ador/events':
+        specifier: workspace:*
+        version: link:../events
       drizzle-orm:
         specifier: 1.0.0-rc.4
         version: 1.0.0-rc.4(@types/pg@8.23.1)(pg@8.23.0)(zod@4.5.4)
@@ -227,6 +236,37 @@ importers:
         version: 8.68.0(@typescript/typescript6@6.0.2)(eslint@10.9.1(jiti@2.7.0))
       vitest:
         specifier: ^4.1.11
+        version: 4.1.11(@types/node@26.4.0)(@vitest/coverage-v8@4.1.11)(jsdom@30.0.1)(vite@8.2.2(@types/node@26.4.0)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.13)(yaml@2.9.0))
+
+  packages/events:
+    dependencies:
+      '@ador/shared':
+        specifier: workspace:*
+        version: link:../shared
+      zod:
+        specifier: 4.5.4
+        version: 4.5.4
+    devDependencies:
+      '@repo/eslint-config':
+        specifier: workspace:*
+        version: link:../eslint-config
+      '@repo/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      '@types/node':
+        specifier: 26.4.0
+        version: 26.4.0
+      '@vitest/coverage-v8':
+        specifier: 4.1.11
+        version: 4.1.11(vitest@4.1.11)
+      eslint:
+        specifier: 10.9.1
+        version: 10.9.1(jiti@2.7.0)
+      typescript:
+        specifier: 5.9.3
+        version: 5.9.3
+      vitest:
+        specifier: 4.1.11
         version: 4.1.11(@types/node@26.4.0)(@vitest/coverage-v8@4.1.11)(jsdom@30.0.1)(vite@8.2.2(@types/node@26.4.0)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.13)(yaml@2.9.0))
 
   packages/http:

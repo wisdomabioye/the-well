@@ -3,7 +3,9 @@
   "private": true,
   "dependencies": {
     "@ador/feature-platform-shell": "workspace:*",
-    "@ador/plugin-kit": "workspace:*"
+    "@ador/http": "workspace:*",
+    "@ador/plugin-kit": "workspace:*",
+    "@ador/shared": "workspace:*"
   },
   "scripts": {
     "build": "turbo run build",

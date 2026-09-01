@@ -42,6 +42,10 @@ export const httpMethodSchema = z.enum([
 export const idempotencyPolicySchema = z.enum(["none", "required"]);
 
 export type CorrelationId = z.infer<typeof correlationIdSchema>;
+export type ApplicationHttpErrorCode = Exclude<
+  HttpErrorCode,
+  "idempotency_key_required" | "internal_error" | "method_not_allowed"
+>;
 export type HttpErrorCode = z.infer<typeof httpErrorCodeSchema>;
 export type HttpErrorEnvelope = z.infer<typeof httpErrorEnvelopeSchema>;
 export type HttpMethod = z.infer<typeof httpMethodSchema>;

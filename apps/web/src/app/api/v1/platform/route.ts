@@ -1,12 +1,16 @@
-import { createPlatformStatusOperation } from "@ador/feature-platform-shell/status";
-
-import { featureRegistry } from "../../../../../../../configs/features";
+import { platformStatusOperation } from "../../../../../../../configs/api";
 import { executeNextOperation } from "../../../../server/http/next-operation";
 
 export const runtime = "nodejs";
 
-const operation = createPlatformStatusOperation(featureRegistry.list().length);
-
-export function GET(request: Request) {
-  return executeNextOperation(operation, request, {});
+function handle(request: Request) {
+  return executeNextOperation(platformStatusOperation, request, {});
 }
+
+export {
+  handle as DELETE,
+  handle as GET,
+  handle as PATCH,
+  handle as POST,
+  handle as PUT,
+};

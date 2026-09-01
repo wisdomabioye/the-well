@@ -13,6 +13,7 @@ const coverage = {
   include: [
     "src/app/page.tsx",
     "src/app/api/v1/platform/route.ts",
+    "src/app/api/v1/openapi/route.ts",
     "src/server/http/next-operation.ts",
   ],
 };

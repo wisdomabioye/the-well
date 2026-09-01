@@ -98,4 +98,12 @@ describe("source policies", () => {
       "packages/shared/src/auth.ts imports runtime-specific dependency @ador/example/src/value.",
     ]);
   });
+
+  it("allows shared domains to import another public shared domain", async () => {
+    const [root, file] = await temporaryFile(
+      "packages/shared/src/features.ts",
+      'import { httpMethodSchema } from "@ador/shared/http";\nvoid httpMethodSchema;\n',
+    );
+    await expect(findBoundaryViolations(root, [file])).resolves.toEqual([]);
+  });
 });

@@ -15,6 +15,7 @@ const coverage = {
 export default defineConfig({
   test: {
     coverage,
+    fileParallelism: false,
     projects: [
       { test: { name: "unit", include: ["test/**/*.unit.test.ts"] } },
       {

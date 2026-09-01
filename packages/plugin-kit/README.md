@@ -1,12 +1,14 @@
 # `@ador/plugin-kit`
 
-Explicit feature registration, validation, dependency checking, and lazy module loading.
+Explicit feature/provider registration, boot validation, dependency checking, and lazy loading.
 
 ## Public API
 
 - `defineFeature(registration)` validates one manifest at its declaration boundary.
 - `createFeatureRegistry(registrations)` creates an immutable public registry interface.
 - `FeatureRegistration` and `FeatureEntrypoint` define the plugin boundary.
+- `@ador/plugin-kit/providers` defines and creates explicit provider registries.
+- `@ador/plugin-kit/boot` validates provider requirements, routes, and operation IDs before serving.
 
 Applications register a feature by importing its registration and adding it to
 `configs/features.ts`. The registry never scans the filesystem or activates modules through import
@@ -18,6 +20,8 @@ side effects.
 - Every dependency exists and dependency graphs are acyclic.
 - A loaded entrypoint must match its manifest identity, version, and capabilities.
 - Loading is explicit and lazy.
+- Required provider capabilities must exist at boot.
+- Method/path pairs and operation IDs are globally unique; parameter names do not hide collisions.
 
 ## Verification
 

@@ -7,6 +7,7 @@ Runtime-neutral contracts and pure domain behavior shared by browser and server 
 - `@ador/shared/features` — versioned feature identifiers, capabilities, and manifest schema.
 - `@ador/shared/http` — HTTP headers, methods, idempotency policy, and the versioned error envelope.
 - `@ador/shared/platform` — public platform-status input and output contracts.
+- `@ador/shared/providers` — provider identities and capability-bearing manifests.
 
 ## Boundaries
 
@@ -20,6 +21,7 @@ New exports belong to a named domain subpath; there is no catch-all utilities mo
 - Feature versions use an explicit three-part semantic version.
 - Every feature declares at least one supported capability.
 - Manifests reject undeclared fields.
+- Feature routes and provider requirements are runtime-validated boot contracts.
 - Correlation IDs are UUIDs and idempotency keys are bounded opaque values.
 - HTTP errors use one strict, versioned public envelope.
 

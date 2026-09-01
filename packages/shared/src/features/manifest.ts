@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+import { httpMethodSchema } from "@ador/shared/http";
+
 const featureIdPattern = /^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$/;
 const semanticVersionPattern = /^\d+\.\d+\.\d+$/;
 
@@ -11,14 +13,54 @@ export const featureCapabilitySchema = z.enum([
   "studio-page",
 ]);
 
+export const providerCapabilitySchema = z
+  .string()
+  .regex(/^[a-z][a-z0-9-]*(?::[a-z][a-z0-9-]*)+$/);
+
+export const routeContributionSchema = z
+  .object({
+    method: httpMethodSchema,
+    operationId: z.string().regex(/^[a-z][A-Za-z0-9]*$/),
+    path: z
+      .string()
+      .regex(
+        /^\/api\/v1\/(?:[a-z0-9]+(?:-[a-z0-9]+)*|:[a-z][A-Za-z0-9]*)(?:\/(?:[a-z0-9]+(?:-[a-z0-9]+)*|:[a-z][A-Za-z0-9]*))*$/,
+      ),
+  })
+  .strict()
+  .readonly();
+
 export const featureIdSchema = z.string().regex(featureIdPattern);
+export const providerIdSchema = z.string().regex(featureIdPattern);
 
 export const featureManifestSchema = z
   .object({
     id: featureIdSchema,
     version: z.string().regex(semanticVersionPattern),
-    capabilities: z.array(featureCapabilitySchema).min(1).readonly(),
+    capabilities: z
+      .array(featureCapabilitySchema)
+      .min(1)
+      .refine((items) => new Set(items).size === items.length)
+      .readonly(),
     dependencies: z.array(featureIdSchema).readonly(),
+    requiredProviderCapabilities: z
+      .array(providerCapabilitySchema)
+      .refine((items) => new Set(items).size === items.length)
+      .readonly(),
+    routes: z.array(routeContributionSchema).readonly(),
+  })
+  .strict()
+  .readonly();
+
+export const providerManifestSchema = z
+  .object({
+    capabilities: z
+      .array(providerCapabilitySchema)
+      .min(1)
+      .refine((items) => new Set(items).size === items.length)
+      .readonly(),
+    id: providerIdSchema,
+    version: z.string().regex(semanticVersionPattern),
   })
   .strict()
   .readonly();
@@ -26,3 +68,7 @@ export const featureManifestSchema = z
 export type FeatureCapability = z.infer<typeof featureCapabilitySchema>;
 export type FeatureId = z.infer<typeof featureIdSchema>;
 export type FeatureManifest = z.infer<typeof featureManifestSchema>;
+export type ProviderCapability = z.infer<typeof providerCapabilitySchema>;
+export type ProviderId = z.infer<typeof providerIdSchema>;
+export type ProviderManifest = z.infer<typeof providerManifestSchema>;
+export type RouteContribution = z.infer<typeof routeContributionSchema>;

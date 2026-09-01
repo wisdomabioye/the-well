@@ -58,7 +58,8 @@ export async function findBoundaryViolations(
       if (
         isSharedSource(path) &&
         !imported.startsWith(".") &&
-        imported !== "zod"
+        imported !== "zod" &&
+        !imported.startsWith("@ador/shared/")
       ) {
         violations.push(
           `${path} imports runtime-specific dependency ${imported}.`,

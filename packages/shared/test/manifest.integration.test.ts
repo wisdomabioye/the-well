@@ -9,6 +9,8 @@ describe("feature manifest serialization", () => {
       version: "2.1.0",
       capabilities: ["public-page", "navigation"],
       dependencies: ["platform-shell"],
+      requiredProviderCapabilities: [],
+      routes: [],
     });
 
     const result = featureManifestSchema.parse(JSON.parse(serialized));

@@ -27,6 +27,12 @@ function freezeManifest(manifest: FeatureManifest): FeatureManifest {
     ...manifest,
     capabilities: Object.freeze([...manifest.capabilities]),
     dependencies: Object.freeze([...manifest.dependencies]),
+    requiredProviderCapabilities: Object.freeze([
+      ...manifest.requiredProviderCapabilities,
+    ]),
+    routes: Object.freeze(
+      manifest.routes.map((route) => Object.freeze({ ...route })),
+    ),
   });
 }
 

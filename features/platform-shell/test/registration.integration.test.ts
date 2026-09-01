@@ -9,7 +9,7 @@ describe("platform shell registration", () => {
     const registry = createFeatureRegistry([platformShellFeature]);
     await expect(registry.load("platform-shell")).resolves.toMatchObject({
       id: "platform-shell",
-      capabilities: ["navigation", "public-page"],
+      capabilities: ["api-routes", "navigation", "public-page"],
     });
   });
 });

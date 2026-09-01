@@ -1,6 +1,7 @@
 import type { HttpOperation } from "@ador/http";
 import {
   platformStatusInputSchema,
+  platformStatusRoute,
   platformStatusSchema,
   type PlatformStatus,
   type PlatformStatusInput,
@@ -10,6 +11,7 @@ export function createPlatformStatusOperation(
   registeredFeatures: number,
 ): HttpOperation<PlatformStatusInput, PlatformStatus> {
   return {
+    applicationErrors: [],
     execute: async () => ({
       ok: true,
       value: {
@@ -20,10 +22,11 @@ export function createPlatformStatusOperation(
       },
     }),
     idempotency: "none",
+    input: "none",
     inputSchema: platformStatusInputSchema,
-    method: "GET",
-    operationId: "getPlatformStatus",
+    method: platformStatusRoute.method,
+    operationId: platformStatusRoute.operationId,
     outputSchema: platformStatusSchema,
-    path: "/api/v1/platform",
+    path: platformStatusRoute.path,
   };
 }

@@ -6,7 +6,8 @@
   "exports": {
     "./features": "./src/features/manifest.ts",
     "./http": "./src/http/index.ts",
-    "./platform": "./src/platform/status.ts"
+    "./platform": "./src/platform/status.ts",
+    "./providers": "./src/features/manifest.ts"
   },
   "scripts": {
     "lint": "eslint . --max-warnings 0",

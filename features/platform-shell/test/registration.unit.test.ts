@@ -7,8 +7,21 @@ describe("platform shell manifest", () => {
     expect(platformShellFeature.manifest).toEqual({
       id: "platform-shell",
       version: "1.0.0",
-      capabilities: ["navigation", "public-page"],
+      capabilities: ["api-routes", "navigation", "public-page"],
       dependencies: [],
+      requiredProviderCapabilities: [],
+      routes: [
+        {
+          method: "GET",
+          operationId: "getOpenApiDocument",
+          path: "/api/v1/openapi",
+        },
+        {
+          method: "GET",
+          operationId: "getPlatformStatus",
+          path: "/api/v1/platform",
+        },
+      ],
     });
   });
 });

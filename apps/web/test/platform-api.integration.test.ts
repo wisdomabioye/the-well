@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 import { httpErrorEnvelopeSchema } from "@ador/shared/http";
 import { platformStatusSchema } from "@ador/shared/platform";
 
-import { GET } from "../src/app/api/v1/platform/route.js";
+import { GET, POST } from "../src/app/api/v1/platform/route.js";
 
 const correlationId = "123e4567-e89b-42d3-a456-426614174000";
 
@@ -44,5 +44,17 @@ describe("Next platform API adapter", () => {
     expect(
       httpErrorEnvelopeSchema.parse(await response.json()).error.code,
     ).toBe("invalid_request");
+  });
+
+  it("returns the shared envelope for unsupported methods", async () => {
+    const response = await POST(
+      new Request("http://platform.invalid/api/v1/platform", {
+        method: "POST",
+      }),
+    );
+    expect(response.status).toBe(405);
+    expect(
+      httpErrorEnvelopeSchema.parse(await response.json()).error.code,
+    ).toBe("method_not_allowed");
   });
 });

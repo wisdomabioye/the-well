@@ -7,6 +7,7 @@ export {
 export {
   createDatabaseClient,
   type DatabaseClient,
+  type DatabaseTransaction,
 } from "./connection/client.ts";
 export {
   createDatabasePool,
@@ -15,3 +16,17 @@ export {
 } from "./connection/pool.ts";
 export { applyMigrations, migrationsDirectory } from "./migrations/apply.ts";
 export { runMigrations } from "./migrations/run.ts";
+export {
+  claimOutboxEvents,
+  enqueueOutboxEvent,
+  failOutboxEvent,
+  markOutboxEventDelivered,
+  OutboxStateConflictError,
+  retryOutboxEvent,
+} from "./outbox/repository.ts";
+export {
+  outboxEvents,
+  outboxStatus,
+  type NewOutboxEvent,
+  type OutboxEvent,
+} from "./schema/outbox.ts";

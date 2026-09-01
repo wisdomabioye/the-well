@@ -1,0 +1,75 @@
+import type { FeatureManifest } from "@ador/shared/features";
+
+import type { FeatureRegistry } from "./registry.js";
+import type { ProviderRegistry } from "./provider-registry.js";
+
+export interface PlatformBootManifest {
+  readonly features: readonly FeatureManifest[];
+  readonly providerCount: number;
+}
+
+function assertProviderCapabilities(
+  features: readonly FeatureManifest[],
+  providers: ProviderRegistry,
+): void {
+  for (const feature of features) {
+    for (const capability of feature.requiredProviderCapabilities) {
+      if (!providers.hasCapability(capability)) {
+        throw new Error(
+          `Feature ${feature.id} requires missing provider capability: ${capability}.`,
+        );
+      }
+    }
+  }
+}
+
+function assertUniqueRoutes(features: readonly FeatureManifest[]): void {
+  const routeOwners = new Map<string, string>();
+  const operationOwners = new Map<string, string>();
+
+  for (const feature of features) {
+    if (
+      feature.routes.length > 0 &&
+      !feature.capabilities.includes("api-routes")
+    ) {
+      throw new Error(
+        `Feature ${feature.id} contributes routes without the api-routes capability.`,
+      );
+    }
+    for (const route of feature.routes) {
+      const routeShape = route.path.replace(
+        /:[A-Za-z][A-Za-z0-9]*/gu,
+        ":parameter",
+      );
+      const routeKey = `${route.method} ${routeShape}`;
+      const routeOwner = routeOwners.get(routeKey);
+      if (routeOwner) {
+        throw new Error(
+          `Route collision for ${routeKey}: ${routeOwner} and ${feature.id}.`,
+        );
+      }
+      const operationOwner = operationOwners.get(route.operationId);
+      if (operationOwner) {
+        throw new Error(
+          `Operation ID collision for ${route.operationId}: ${operationOwner} and ${feature.id}.`,
+        );
+      }
+      routeOwners.set(routeKey, feature.id);
+      operationOwners.set(route.operationId, feature.id);
+    }
+  }
+}
+
+export function validatePlatformBoot(input: {
+  readonly featureRegistry: FeatureRegistry;
+  readonly providerRegistry: ProviderRegistry;
+}): PlatformBootManifest {
+  const features = input.featureRegistry.list();
+  assertProviderCapabilities(features, input.providerRegistry);
+  assertUniqueRoutes(features);
+
+  return Object.freeze({
+    features: Object.freeze([...features]),
+    providerCount: input.providerRegistry.list().length,
+  });
+}

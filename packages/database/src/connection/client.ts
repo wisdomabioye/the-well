@@ -7,3 +7,6 @@ export function createDatabaseClient(pool: DatabasePool) {
 }
 
 export type DatabaseClient = ReturnType<typeof createDatabaseClient>;
+export type DatabaseTransaction = Parameters<
+  Parameters<DatabaseClient["transaction"]>[0]
+>[0];

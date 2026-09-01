@@ -21,8 +21,10 @@ function operation(
   idempotency: "none" | "required" = "none",
 ): TestOperation {
   return {
+    applicationErrors: ["conflict"],
     execute,
     idempotency,
+    input: "json",
     inputSchema: z.object({ name: z.string() }).strict(),
     method: "POST",
     operationId: "testOperation",
@@ -142,6 +144,25 @@ describe("executeHttpOperation", () => {
       body: { error: { code: "conflict" } },
       status: 409,
     });
+  });
+
+  it("redacts application failures omitted from the operation contract", async () => {
+    const response = await executeHttpOperation(
+      operation(async () => ({
+        error: "unauthorized",
+        message: "Undocumented authorization detail.",
+        ok: false,
+      })),
+      request(),
+      dependencies,
+    );
+    expect(response).toMatchObject({
+      body: {
+        error: { code: "internal_error", message: "Internal server error." },
+      },
+      status: 500,
+    });
+    expect(JSON.stringify(response.body)).not.toContain("authorization detail");
   });
 
   it("redacts an internal failure returned across an untyped runtime boundary", async () => {

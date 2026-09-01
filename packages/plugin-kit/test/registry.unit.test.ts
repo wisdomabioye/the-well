@@ -16,6 +16,8 @@ function registration(
       version: "1.0.0",
       capabilities: ["public-page"],
       dependencies,
+      requiredProviderCapabilities: [],
+      routes: [],
     },
     load: async () => ({
       id,

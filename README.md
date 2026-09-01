@@ -11,7 +11,7 @@ gated until their product decisions and end-to-end verification are complete.
 
 - `apps/web` — Next.js application and public arcade shell.
 - `features/*` — self-describing feature registrations and lazy entrypoints.
-- `packages/plugin-kit` — feature validation, dependency graph, and loading boundary.
+- `packages/plugin-kit` — feature/provider registries, boot validation, dependency graph, and loading boundaries.
 - `packages/shared` — runtime-neutral contracts grouped by domain.
 - `packages/config` — environment catalog, validation, and mirror checks.
 - `packages/database` — PostgreSQL/Drizzle connections and explicit migrations.
@@ -51,10 +51,13 @@ Database migrations are never applied during application startup. Deployment aut
 
 ## Architecture rules
 
-Features are registered explicitly in `configs/features.ts`; the application does not discover
-modules through filesystem scanning or import side effects. Shared contracts remain independent of
-Next.js and provider SDKs. PostgreSQL access uses standard connection URLs so Railway, Supabase, or
-another compatible provider can be selected without changing application code.
+Features and providers are registered explicitly in `configs/features.ts` and
+`configs/providers.ts`; the application does not discover modules through filesystem scanning or
+import side effects. `configs/platform.ts` validates provider requirements, API route ownership,
+and operation-ID uniqueness before an adapter serves the platform. Shared contracts remain
+independent of Next.js and provider SDKs. PostgreSQL access uses standard connection URLs so
+Railway, Supabase, or another compatible provider can be selected without changing application
+code.
 
 Every workspace package exposes a typecheck and meaningful test boundary. Coverage thresholds are
 strictly above 90%, environment examples are pinned to one canonical key order, and handwritten
