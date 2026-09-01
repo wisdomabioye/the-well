@@ -5,6 +5,7 @@ import {
   executeHttpOperation,
   type HttpOperation,
   type HttpOperationContext,
+  type HttpOperationResult,
 } from "../src/operation.ts";
 
 const generatedCorrelationId = "123e4567-e89b-42d3-a456-426614174000";
@@ -81,6 +82,12 @@ describe("executeHttpOperation", () => {
       "invalid_request",
       400,
     ],
+    [
+      "empty correlation ID",
+      request({ headers: { "x-correlation-id": "" } }),
+      "invalid_request",
+      400,
+    ],
     ["wrong method", request({ method: "GET" }), "method_not_allowed", 405],
     ["invalid input", request({ rawInput: {} }), "invalid_request", 400],
   ] as const)("rejects %s", async (_caseName, adapterRequest, code, status) => {
@@ -135,6 +142,28 @@ describe("executeHttpOperation", () => {
       body: { error: { code: "conflict" } },
       status: 409,
     });
+  });
+
+  it("redacts an internal failure returned across an untyped runtime boundary", async () => {
+    const unsafeFailure: HttpOperationResult<{ message: string }> = {
+      error: "conflict",
+      message: "database password leaked",
+      ok: false,
+    };
+    Reflect.set(unsafeFailure, "error", "internal_error");
+
+    const response = await executeHttpOperation(
+      operation(async () => unsafeFailure),
+      request(),
+      dependencies,
+    );
+    expect(response).toMatchObject({
+      body: {
+        error: { code: "internal_error", message: "Internal server error." },
+      },
+      status: 500,
+    });
+    expect(JSON.stringify(response.body)).not.toContain("database password");
   });
 
   it("maps invalid application output to a safe internal error", async () => {

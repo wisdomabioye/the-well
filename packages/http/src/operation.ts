@@ -21,7 +21,7 @@ export interface HttpOperationContext {
 export type HttpOperationResult<Output extends object> =
   | { readonly ok: true; readonly value: Output }
   | {
-      readonly error: HttpErrorCode;
+      readonly error: Exclude<HttpErrorCode, "internal_error">;
       readonly message: string;
       readonly ok: false;
     };
@@ -74,9 +74,11 @@ function errorResponse<Output extends object>(
   message: string,
   correlationId: CorrelationId,
 ): HttpAdapterResponse<Output> {
+  const publicMessage =
+    code === "internal_error" ? "Internal server error." : message;
   return {
     body: httpErrorEnvelopeSchema.parse({
-      error: { code, correlationId, message },
+      error: { code, correlationId, message: publicMessage },
     }),
     headers: { [correlationHeaderName]: correlationId },
     status: errorStatuses[code],
@@ -98,7 +100,10 @@ export async function executeHttpOperation<Input, Output extends object>(
     ? correlationResult.data
     : generatedCorrelationId;
 
-  if (request.headers[correlationHeaderName] && !correlationResult.success) {
+  if (
+    request.headers[correlationHeaderName] !== undefined &&
+    !correlationResult.success
+  ) {
     return errorResponse(
       "invalid_request",
       "Invalid correlation ID.",
