@@ -1,7 +1,14 @@
 {
   "extends": "../../packages/typescript-config/base.json",
   "compilerOptions": {
-    "types": ["node", "@playwright/test"]
+    "allowImportingTsExtensions": true,
+    "types": ["node", "@playwright/test", "vitest/globals"]
   },
-  "include": ["playwright.config.ts", "tests"]
+  "include": [
+    "playwright.config.ts",
+    "src",
+    "test",
+    "tests",
+    "vitest.config.ts"
+  ]
 }

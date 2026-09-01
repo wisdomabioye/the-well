@@ -1,13 +1,12 @@
 import { defineConfig, devices } from "@playwright/test";
 import { resolve } from "node:path";
 
-const baseURL = process.env.E2E_BASE_URL ?? "http://127.0.0.1:4173";
-const repositoryRoot = resolve(import.meta.dirname, "../..");
-const serverPort = new URL(baseURL).port;
+import { resolveE2EServerConfig } from "./src/server-config.ts";
 
-if (!serverPort) {
-  throw new Error("E2E_BASE_URL must include an explicit port.");
-}
+const { baseURL, port: serverPort } = resolveE2EServerConfig(
+  process.env.E2E_BASE_URL,
+);
+const repositoryRoot = resolve(import.meta.dirname, "../..");
 
 export default defineConfig({
   testDir: "./tests",

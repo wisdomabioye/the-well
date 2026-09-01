@@ -1,0 +1,24 @@
+import { findBoundaryViolations } from "./boundary-policy.ts";
+import { listSourceFiles } from "./files.ts";
+import { findOversizedFiles } from "./line-policy.ts";
+import { findScriptPolicyViolations } from "./script-policy.ts";
+import { discoverWorkspaces, repositoryRoot } from "./workspaces.ts";
+
+const root = repositoryRoot(import.meta.url);
+const workspaces = await discoverWorkspaces(root);
+const files = await listSourceFiles(root);
+const violations = [
+  ...findScriptPolicyViolations(workspaces),
+  ...(await findOversizedFiles(root, files)),
+  ...(await findBoundaryViolations(root, files)),
+];
+
+if (violations.length > 0) {
+  throw new Error(
+    `Repository policy violations:\n- ${violations.join("\n- ")}`,
+  );
+}
+
+console.log(
+  `Repository policies passed for ${workspaces.length} workspaces and ${files.length} files.`,
+);

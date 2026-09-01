@@ -1,20 +1,25 @@
 {
-  "name": "@repo/e2e",
-  "version": "1.0.0",
+  "name": "@repo/repository-policy",
+  "version": "0.0.0",
   "private": true,
   "type": "module",
   "scripts": {
+    "check": "node --experimental-strip-types src/check.ts",
+    "check:coverage": "node --experimental-strip-types src/check-coverage.ts",
     "lint": "eslint . --max-warnings 0",
     "typecheck": "tsc --noEmit",
     "test:unit": "vitest run --config vitest.config.ts --project unit",
     "test:integration": "vitest run --config vitest.config.ts --project integration",
-    "test:coverage": "vitest run --config vitest.config.ts --coverage",
-    "test:e2e": "playwright test"
+    "test:coverage": "vitest run --config vitest.config.ts --coverage"
+  },
+  "dependencies": {
+    "typescript": "5.9.3",
+    "zod": "4.5.4"
   },
   "devDependencies": {
-    "@playwright/test": "^1.62.1",
     "@repo/eslint-config": "workspace:*",
-    "@types/node": "^26.4.0",
+    "@repo/typescript-config": "workspace:*",
+    "@types/node": "26.4.0",
     "@vitest/coverage-v8": "4.1.11",
     "eslint": "10.9.1",
     "vitest": "4.1.11"

@@ -17,6 +17,7 @@ gated until their product decisions and end-to-end verification are complete.
 - `packages/database` — PostgreSQL/Drizzle connections and explicit migrations.
 - `packages/ui` — reusable arcade components and design tokens.
 - `tests/e2e` — Playwright browser coverage.
+- `tooling/repository-policy` — executable workspace, boundary, file-size, and coverage gates.
 
 ## Requirements
 
@@ -42,6 +43,7 @@ pnpm migration:check
 pnpm build
 pnpm test:e2e
 pnpm format:check
+pnpm repository:check
 ```
 
 Database migrations are never applied during application startup. Deployment automation must run
@@ -57,3 +59,6 @@ another compatible provider can be selected without changing application code.
 Every workspace package exposes a typecheck and meaningful test boundary. Coverage thresholds are
 strictly above 90%, environment examples are pinned to one canonical key order, and handwritten
 source and test files must remain at or below 300 physical lines.
+
+GitHub Actions runs the complete environment, formatting, repository-policy, type, migration,
+unit, integration, merged-coverage, build, and Playwright matrix on pull requests and `main`.

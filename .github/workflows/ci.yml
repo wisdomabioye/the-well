@@ -1,0 +1,81 @@
+name: Verify
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: verify-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6.0.2
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v6.0.8
+
+      - name: Install Node.js
+        uses: actions/setup-node@v7.0.0
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Verify environment contracts
+        run: pnpm env:check
+
+      - name: Verify formatting
+        run: pnpm format:check
+
+      - name: Verify lint and repository policies
+        run: pnpm lint
+
+      - name: Verify types
+        run: pnpm typecheck
+
+      - name: Run unit tests
+        run: pnpm test:unit
+
+      - name: Verify database migrations
+        run: pnpm migration:check
+
+      - name: Run integration tests
+        run: pnpm test:integration
+
+      - name: Run and merge coverage
+        run: pnpm test:coverage
+
+      - name: Build production artifacts
+        run: pnpm build
+
+      - name: Install Playwright Chromium
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Run browser tests
+        run: pnpm test:e2e
+
+      - name: Retain coverage reports
+        if: always()
+        uses: actions/upload-artifact@v7.0.0
+        with:
+          name: coverage-reports
+          path: |
+            coverage
+            apps/*/coverage
+            features/*/coverage
+            packages/*/coverage
+            tests/*/coverage
+            tooling/*/coverage
+          if-no-files-found: error
