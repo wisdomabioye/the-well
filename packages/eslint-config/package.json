@@ -9,7 +9,8 @@
     "./react-internal": "./react-internal.js"
   },
   "scripts": {
-    "typecheck": "tsc --noEmit --skipLibCheck --module nodenext --moduleResolution nodenext --target es2022 test/types.fixture.ts test/types.d.ts",
+    "lint": "eslint . --max-warnings 0",
+    "typecheck": "tsc --noEmit",
     "test:unit": "vitest run test/base.unit.test.js",
     "test:integration": "vitest run test/presets.integration.test.js",
     "test:coverage": "vitest run --coverage"
@@ -17,9 +18,9 @@
   "devDependencies": {
     "@eslint/js": "10.0.1",
     "@next/eslint-plugin-next": "16.3.2",
+    "@types/node": "26.4.0",
     "eslint": "10.9.1",
     "eslint-config-prettier": "10.1.8",
-    "eslint-plugin-only-warn": "1.2.1",
     "eslint-plugin-react-hooks": "7.1.1",
     "eslint-plugin-turbo": "2.10.11",
     "globals": "17.11.0",

@@ -5,6 +5,10 @@ const baseURL = process.env.E2E_BASE_URL ?? "http://127.0.0.1:4173";
 const repositoryRoot = resolve(import.meta.dirname, "../..");
 const serverPort = new URL(baseURL).port;
 
+if (!serverPort) {
+  throw new Error("E2E_BASE_URL must include an explicit port.");
+}
+
 export default defineConfig({
   testDir: "./tests",
   fullyParallel: true,
@@ -23,7 +27,7 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: "node apps/web/.next/standalone/apps/web/server.js",
+    command: "pnpm --filter web start:standalone",
     cwd: repositoryRoot,
     env: { HOSTNAME: "127.0.0.1", PORT: serverPort },
     reuseExistingServer: false,

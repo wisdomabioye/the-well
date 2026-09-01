@@ -35,6 +35,14 @@ describe("createFeatureRegistry", () => {
     });
   });
 
+  it("does not expose mutable internal manifests", () => {
+    const registry = createFeatureRegistry([registration("catalog")]);
+    const [manifest] = registry.list();
+
+    expect(manifest && Reflect.set(manifest, "id", "changed")).toBe(false);
+    expect(registry.list()[0]?.id).toBe("catalog");
+  });
+
   it("rejects duplicate registrations", () => {
     expect(() =>
       createFeatureRegistry([registration("catalog"), registration("catalog")]),

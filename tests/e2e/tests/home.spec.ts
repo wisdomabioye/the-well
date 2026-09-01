@@ -14,6 +14,25 @@ test("shows only honest foundation-stage launchpad controls", async ({
   );
 });
 
+test("serves the arcade design stylesheet in the production build", async ({
+  page,
+}) => {
+  const stylesheetStatuses: number[] = [];
+  page.on("response", (response) => {
+    if (response.request().resourceType() === "stylesheet") {
+      stylesheetStatuses.push(response.status());
+    }
+  });
+
+  await page.goto("/");
+
+  await expect(page.locator("body")).toHaveCSS(
+    "background-image",
+    /linear-gradient/,
+  );
+  expect(stylesheetStatuses).not.toContain(404);
+});
+
 test("navigates to the planned game from the primary control", async ({
   page,
 }) => {

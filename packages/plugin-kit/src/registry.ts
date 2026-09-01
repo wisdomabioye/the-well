@@ -22,6 +22,14 @@ export interface FeatureRegistry {
   load(id: FeatureId): Promise<FeatureEntrypoint>;
 }
 
+function freezeManifest(manifest: FeatureManifest): FeatureManifest {
+  return Object.freeze({
+    ...manifest,
+    capabilities: Object.freeze([...manifest.capabilities]),
+    dependencies: Object.freeze([...manifest.dependencies]),
+  });
+}
+
 function assertSameCapabilities(
   expected: readonly FeatureCapability[],
   actual: readonly FeatureCapability[],
@@ -62,7 +70,9 @@ export function defineFeature(
 ): FeatureRegistration {
   return {
     ...registration,
-    manifest: featureManifestSchema.parse(registration.manifest),
+    manifest: freezeManifest(
+      featureManifestSchema.parse(registration.manifest),
+    ),
   };
 }
 

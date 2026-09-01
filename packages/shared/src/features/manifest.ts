@@ -20,7 +20,8 @@ export const featureManifestSchema = z
     capabilities: z.array(featureCapabilitySchema).min(1).readonly(),
     dependencies: z.array(featureIdSchema).readonly(),
   })
-  .strict();
+  .strict()
+  .readonly();
 
 export type FeatureCapability = z.infer<typeof featureCapabilitySchema>;
 export type FeatureId = z.infer<typeof featureIdSchema>;

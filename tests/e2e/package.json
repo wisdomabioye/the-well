@@ -4,11 +4,14 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "lint": "eslint . --max-warnings 0",
     "typecheck": "tsc --noEmit",
     "test:e2e": "playwright test"
   },
   "devDependencies": {
     "@playwright/test": "^1.62.1",
-    "@types/node": "^26.4.0"
+    "@repo/eslint-config": "workspace:*",
+    "@types/node": "^26.4.0",
+    "eslint": "10.9.1"
   }
 }

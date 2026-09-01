@@ -10,14 +10,14 @@ const DATABASE_PASSWORD = randomUUID();
 const containerName = `ador-postgres-${randomUUID()}`;
 let containerStarted = false;
 
-function removeContainer(): void {
+function removeContainerOnInterruption(): void {
   if (!containerStarted) return;
   spawnSync("docker", ["rm", "--force", containerName], { stdio: "ignore" });
   containerStarted = false;
 }
 
 function handleInterruption(signal: NodeJS.Signals): void {
-  removeContainer();
+  removeContainerOnInterruption();
   process.kill(process.pid, signal);
 }
 
@@ -60,6 +60,12 @@ async function waitForPostgres(): Promise<void> {
     }
   }
   throw new Error("PostgreSQL test container did not become ready");
+}
+
+async function removeContainer(): Promise<void> {
+  if (!containerStarted) return;
+  await run("docker", ["rm", "--force", containerName]);
+  containerStarted = false;
 }
 
 async function runVitest(mode: "integration" | "coverage", url: string) {
@@ -119,7 +125,7 @@ async function main(): Promise<void> {
     const url = `postgresql://${DATABASE_USER}:${DATABASE_PASSWORD}@127.0.0.1:${port}/${DATABASE_NAME}`;
     await runVitest(mode, url);
   } finally {
-    removeContainer();
+    await removeContainer();
   }
 }
 

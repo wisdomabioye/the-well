@@ -1,159 +1,59 @@
-# Turborepo starter
+# The Well
 
-This Turborepo starter is maintained by the Turborepo core team.
+The Well is a modular Bitcoin Alkanes launchpad and game arcade. This repository is the shared
+Turborepo foundation for the web application, feature plugins, reusable UI, runtime-neutral
+contracts, configuration, and provider-neutral PostgreSQL infrastructure.
 
-## Using this example
+The product is intentionally at foundation stage. Transactional launchpad and wallet controls stay
+gated until their product decisions and end-to-end verification are complete.
 
-Run the following command:
+## Workspace
 
-```sh
-npx create-turbo@latest
+- `apps/web` — Next.js application and public arcade shell.
+- `features/*` — self-describing feature registrations and lazy entrypoints.
+- `packages/plugin-kit` — feature validation, dependency graph, and loading boundary.
+- `packages/shared` — runtime-neutral contracts grouped by domain.
+- `packages/config` — environment catalog, validation, and mirror checks.
+- `packages/database` — PostgreSQL/Drizzle connections and explicit migrations.
+- `packages/ui` — reusable arcade components and design tokens.
+- `tests/e2e` — Playwright browser coverage.
+
+## Requirements
+
+- Node.js 24 or newer
+- pnpm 10.22.0
+- Docker for PostgreSQL integration and coverage tests
+- Playwright Chromium for browser tests
+
+Install dependencies with `pnpm install`. Copy the appropriate checked-in environment example to
+an ignored runtime environment file and replace every placeholder needed by that environment.
+
+## Commands
+
+```bash
+pnpm dev
+pnpm env:check
+pnpm lint
+pnpm typecheck
+pnpm test:unit
+pnpm test:integration
+pnpm test:coverage
+pnpm migration:check
+pnpm build
+pnpm test:e2e
+pnpm format:check
 ```
 
-## What's inside?
+Database migrations are never applied during application startup. Deployment automation must run
+`pnpm --filter @ador/database migration:apply` as an explicit pre-deploy step.
 
-This Turborepo includes the following packages/apps:
+## Architecture rules
 
-### Apps and Packages
+Features are registered explicitly in `configs/features.ts`; the application does not discover
+modules through filesystem scanning or import side effects. Shared contracts remain independent of
+Next.js and provider SDKs. PostgreSQL access uses standard connection URLs so Railway, Supabase, or
+another compatible provider can be selected without changing application code.
 
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `@next/eslint-plugin-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
-
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
-
-### Utilities
-
-This Turborepo has some additional tools already setup for you:
-
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
-
-### Build
-
-To build all apps and packages, run the following command:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
-
-```sh
-cd my-turborepo
-turbo build
-```
-
-Without global `turbo`, use your package manager:
-
-```sh
-cd my-turborepo
-npx turbo build
-pnpm exec turbo build
-pnpm exec turbo build
-```
-
-You can build a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
-
-```sh
-turbo build --filter=docs
-```
-
-Without global `turbo`:
-
-```sh
-npx turbo build --filter=docs
-pnpm exec turbo build --filter=docs
-pnpm exec turbo build --filter=docs
-```
-
-### Develop
-
-To develop all apps and packages, run the following command:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
-
-```sh
-cd my-turborepo
-turbo dev
-```
-
-Without global `turbo`, use your package manager:
-
-```sh
-cd my-turborepo
-npx turbo dev
-pnpm exec turbo dev
-pnpm exec turbo dev
-```
-
-You can develop a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
-
-```sh
-turbo dev --filter=web
-```
-
-Without global `turbo`:
-
-```sh
-npx turbo dev --filter=web
-pnpm exec turbo dev --filter=web
-pnpm exec turbo dev --filter=web
-```
-
-### Remote Caching
-
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
-
-Turborepo can use a technique known as [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
-
-```sh
-cd my-turborepo
-turbo login
-```
-
-Without global `turbo`, use your package manager:
-
-```sh
-cd my-turborepo
-npx turbo login
-pnpm exec turbo login
-pnpm exec turbo login
-```
-
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
-
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
-
-```sh
-turbo link
-```
-
-Without global `turbo`:
-
-```sh
-npx turbo link
-pnpm exec turbo link
-pnpm exec turbo link
-```
-
-## Useful Links
-
-Learn more about the power of Turborepo:
-
-- [Tasks](https://turborepo.dev/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.dev/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.dev/docs/reference/configuration)
-- [CLI Usage](https://turborepo.dev/docs/reference/command-line-reference)
+Every workspace package exposes a typecheck and meaningful test boundary. Coverage thresholds are
+strictly above 90%, environment examples are pinned to one canonical key order, and handwritten
+source and test files must remain at or below 300 physical lines.
