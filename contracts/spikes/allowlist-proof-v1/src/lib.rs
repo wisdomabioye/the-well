@@ -1,5 +1,13 @@
 use sha2::{Digest, Sha256};
 
+mod authorization;
+#[cfg(target_arch = "wasm32")]
+mod runtime;
+
+pub use authorization::{verify_claimant_authorization, AuthorizationError, ClaimantScriptType};
+#[cfg(target_arch = "wasm32")]
+pub use runtime::verify_runtime_claimant_authorization;
+
 pub const DOMAIN: &[u8] = b"ADOR_ALLOWLIST_LEAF_V1";
 pub const HASH_BYTE_LENGTH: usize = 32;
 pub const MAXIMUM_SCRIPT_BYTE_LENGTH: usize = 10_000;
