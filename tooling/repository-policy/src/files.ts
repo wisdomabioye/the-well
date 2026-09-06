@@ -10,8 +10,9 @@ const ignoredDirectories = new Set([
   "node_modules",
   "playwright-report",
   "test-results",
+  "target",
 ]);
-const sourceExtensions = new Set([".css", ".js", ".mjs", ".ts", ".tsx"]);
+const sourceExtensions = new Set([".css", ".js", ".mjs", ".rs", ".ts", ".tsx"]);
 
 export async function listSourceFiles(
   root: string,

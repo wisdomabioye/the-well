@@ -4,6 +4,8 @@ Runtime-neutral contracts and pure domain behavior shared by browser and server 
 
 ## Public API
 
+- `@ador/shared/allowlists` — strict Leaf V1 bytes, decoder, and SHA-256 Merkle primitives used by
+  browser, server, and contract fixture tooling.
 - `@ador/shared/features` — versioned feature identifiers, capabilities, and manifest schema.
 - `@ador/shared/decisions` — accepted-decision records and fail-closed gate evaluation.
 - `@ador/shared/http` — HTTP headers, methods, idempotency policy, and the versioned error envelope.
@@ -16,6 +18,10 @@ This package may use runtime schemas and pure TypeScript. It must not import Rea
 database clients, provider SDKs, Node-only APIs, browser globals, secrets, or feature internals.
 New exports belong to a named domain subpath; there is no catch-all utilities module.
 
+The allowlist hash implementation pins `@noble/hashes` 2.4.0: it is MIT-licensed, maintained,
+runtime-neutral, and avoids separate browser/server cryptographic implementations. SHA-256 and its
+sorted-pair convention are protocol behavior and are locked by Rust/TypeScript fixtures.
+
 ## Invariants
 
 - Feature IDs are lowercase kebab-case.
@@ -26,6 +32,8 @@ New exports belong to a named domain subpath; there is no catch-all utilities mo
 - Accepted decisions require an owner, date, selected outcome, ADR, and evidence records.
 - Correlation IDs are UUIDs and idempotency keys are bounded opaque values.
 - HTTP errors use one strict, versioned public envelope.
+- Allowlist leaves use deterministic little-endian bytes, reject trailing data and unsupported
+  tags, and bind network, launch, phase, snapshot, script, allocation, asset, price, and validity.
 
 ## Verification
 

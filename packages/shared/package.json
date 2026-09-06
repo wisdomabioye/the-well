@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "exports": {
+    "./allowlists": "./src/allowlists/index.ts",
     "./decisions": "./src/decisions/gates.ts",
     "./features": "./src/features/manifest.ts",
     "./http": "./src/http/index.ts",
@@ -18,6 +19,7 @@
     "test:coverage": "vitest run --config vitest.config.ts --coverage"
   },
   "dependencies": {
+    "@noble/hashes": "2.4.0",
     "zod": "^4.5.4"
   },
   "devDependencies": {

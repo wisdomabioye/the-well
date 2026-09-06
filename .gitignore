@@ -27,6 +27,7 @@ test-results
 out/
 build
 dist
+target/
 
 
 # Debug

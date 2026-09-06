@@ -2,6 +2,8 @@ import { readFile } from "node:fs/promises";
 import { relative, sep } from "node:path";
 import ts from "typescript";
 
+const runtimeNeutralSharedImports = new Set(["@noble/hashes/sha2.js", "zod"]);
+
 function moduleSpecifiers(
   contents: string,
   filename: string,
@@ -58,7 +60,7 @@ export async function findBoundaryViolations(
       if (
         isSharedSource(path) &&
         !imported.startsWith(".") &&
-        imported !== "zod" &&
+        !runtimeNeutralSharedImports.has(imported) &&
         !imported.startsWith("@ador/shared/")
       ) {
         violations.push(

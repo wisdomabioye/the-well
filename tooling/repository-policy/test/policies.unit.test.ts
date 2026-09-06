@@ -106,4 +106,12 @@ describe("source policies", () => {
     );
     await expect(findBoundaryViolations(root, [file])).resolves.toEqual([]);
   });
+
+  it("allows only qualified runtime-neutral dependencies in shared source", async () => {
+    const [root, file] = await temporaryFile(
+      "packages/shared/src/hashing.ts",
+      'import { sha256 } from "@noble/hashes/sha2.js";\nvoid sha256;\n',
+    );
+    await expect(findBoundaryViolations(root, [file])).resolves.toEqual([]);
+  });
 });

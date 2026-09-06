@@ -1,0 +1,40 @@
+{
+  "canonicalAlkanesRevision": "62511e9371a3f9e448841140c51cfe428cfcb955",
+  "rootHex": "d0790719c8bff1898e96deba3289fe499eaed0cacfcd6a680e18c68dd8c63301",
+  "vectors": [
+    {
+      "encodedHex": "41444f525f414c4c4f574c4953545f4c4541465f563103000000000000000000000000000000000000000000000000000000000000000100112233445566778899aabbccddeeff0700000022005120111111111111111111111111111111111111111111111111111111111111111119000000000000000000000000000000000001640000000000000001c800000000000000",
+      "hashHex": "f4f5c48dc4f13495a163c89e63a7c07046ade100df52658f2a539f2ec603642f",
+      "input": {
+        "launchCommitmentHex": "0000000000000000000000000000000000000000000000000000000000000001",
+        "maxAllocation": "25",
+        "network": "regtest",
+        "paymentAsset": { "kind": "bitcoin" },
+        "phaseIdHex": "00112233445566778899aabbccddeeff",
+        "priceOverride": null,
+        "scriptPubKeyHex": "51201111111111111111111111111111111111111111111111111111111111111111",
+        "snapshotVersion": 7,
+        "validFrom": "100",
+        "validUntil": "200"
+      },
+      "name": "regtest-p2tr-bitcoin"
+    },
+    {
+      "encodedHex": "41444f525f414c4c4f574c4953545f4c4541465f563102ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffeeddccbbaa99887766554433221100010000001600001422222222222222222222222222222222222222220200000000000000000000000000000001040000000000000000000000000000000900000000000000000000000000000001881300000000000000000000000000000000",
+      "hashHex": "53cba3687ad1b73fdabd11c4224d6eace57ede43879e8d12e51e583881c58615",
+      "input": {
+        "launchCommitmentHex": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "maxAllocation": "2",
+        "network": "signet",
+        "paymentAsset": { "block": "4", "kind": "alkane", "transaction": "9" },
+        "phaseIdHex": "ffeeddccbbaa99887766554433221100",
+        "priceOverride": "5000",
+        "scriptPubKeyHex": "00142222222222222222222222222222222222222222",
+        "snapshotVersion": 1,
+        "validFrom": null,
+        "validUntil": null
+      },
+      "name": "signet-p2wpkh-alkane"
+    }
+  ]
+}

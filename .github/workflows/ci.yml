@@ -33,6 +33,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Install Rust coverage tool
+        run: cargo install cargo-llvm-cov --version 0.6.21 --locked
+
       - name: Verify environment contracts
         run: pnpm env:check
 
@@ -79,6 +82,7 @@ jobs:
             apps/*/coverage
             features/*/coverage
             packages/*/coverage
+            contracts/target/llvm-cov-target/lcov.info
             tests/*/coverage
             tooling/*/coverage
           if-no-files-found: error

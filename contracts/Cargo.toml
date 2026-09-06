@@ -1,0 +1,3 @@
+[workspace]
+members = ["spikes/allowlist-proof-v1"]
+resolver = "2"
