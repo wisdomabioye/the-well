@@ -6,6 +6,7 @@
   "scripts": {
     "check": "node --experimental-strip-types src/check.ts",
     "check:coverage": "node --experimental-strip-types src/check-coverage.ts",
+    "check:decisions": "node --experimental-strip-types src/check-decisions.ts",
     "lint": "eslint . --max-warnings 0",
     "typecheck": "tsc --noEmit",
     "test:unit": "vitest run --config vitest.config.ts --project unit",
@@ -13,6 +14,7 @@
     "test:coverage": "vitest run --config vitest.config.ts --coverage"
   },
   "dependencies": {
+    "@ador/shared": "workspace:*",
     "typescript": "5.9.3",
     "zod": "4.5.4"
   },

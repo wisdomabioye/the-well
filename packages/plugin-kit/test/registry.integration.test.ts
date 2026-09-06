@@ -11,6 +11,7 @@ describe("feature module loading", () => {
           version: "1.0.0",
           capabilities: ["public-page"],
           dependencies: [],
+          requiredDecisionGates: [],
           requiredProviderCapabilities: [],
           routes: [],
         },

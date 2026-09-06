@@ -1,6 +1,7 @@
 {
   "name": "the-well",
   "private": true,
+  "type": "module",
   "dependencies": {
     "@ador/feature-platform-shell": "workspace:*",
     "@ador/http": "workspace:*",
@@ -8,7 +9,8 @@
     "@ador/shared": "workspace:*"
   },
   "scripts": {
-    "build": "turbo run build",
+    "build": "pnpm decision:check && turbo run build",
+    "decision:check": "pnpm --filter @repo/repository-policy check:decisions",
     "dev": "turbo run dev",
     "env:check": "turbo run env:check",
     "lint": "turbo run lint && pnpm repository:check",

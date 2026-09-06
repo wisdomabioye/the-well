@@ -26,6 +26,7 @@ function freezeManifest(manifest: ProviderManifest): ProviderManifest {
   return Object.freeze({
     ...manifest,
     capabilities: Object.freeze([...manifest.capabilities]),
+    requiredDecisionGates: Object.freeze([...manifest.requiredDecisionGates]),
   });
 }
 

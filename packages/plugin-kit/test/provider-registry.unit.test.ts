@@ -16,6 +16,7 @@ function registration(id: string): ProviderRegistration {
     manifest: {
       capabilities: ["system:status"],
       id,
+      requiredDecisionGates: [],
       version: "1.0.0",
     },
   };
@@ -35,6 +36,9 @@ describe("createProviderRegistry", () => {
     expect(manifest && Reflect.set(manifest, "id", "changed")).toBe(false);
     expect(
       manifest && Reflect.set(manifest.capabilities, "0", "storage:write"),
+    ).toBe(false);
+    expect(
+      manifest && Reflect.set(manifest.requiredDecisionGates, "0", "release"),
     ).toBe(false);
   });
 

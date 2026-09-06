@@ -16,6 +16,7 @@ function registration(
       version: "1.0.0",
       capabilities: ["public-page"],
       dependencies,
+      requiredDecisionGates: [],
       requiredProviderCapabilities: [],
       routes: [],
     },
@@ -42,6 +43,9 @@ describe("createFeatureRegistry", () => {
     const [manifest] = registry.list();
 
     expect(manifest && Reflect.set(manifest, "id", "changed")).toBe(false);
+    expect(
+      manifest && Reflect.set(manifest.requiredDecisionGates, "0", "release"),
+    ).toBe(false);
     expect(registry.list()[0]?.id).toBe("catalog");
   });
 

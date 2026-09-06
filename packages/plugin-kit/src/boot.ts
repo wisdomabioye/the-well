@@ -1,4 +1,9 @@
 import type { FeatureManifest } from "@ador/shared/features";
+import {
+  assertDecisionGateOpen,
+  type DecisionCatalog,
+  type DecisionGateId,
+} from "@ador/shared/decisions";
 
 import type { FeatureRegistry } from "./registry.js";
 import type { ProviderRegistry } from "./provider-registry.js";
@@ -21,6 +26,13 @@ function assertProviderCapabilities(
       }
     }
   }
+}
+
+function assertDecisionGates(
+  gateIds: readonly DecisionGateId[],
+  decisions: DecisionCatalog,
+): void {
+  for (const gateId of gateIds) assertDecisionGateOpen(decisions, gateId);
 }
 
 function assertUniqueRoutes(features: readonly FeatureManifest[]): void {
@@ -61,10 +73,17 @@ function assertUniqueRoutes(features: readonly FeatureManifest[]): void {
 }
 
 export function validatePlatformBoot(input: {
+  readonly decisionCatalog: DecisionCatalog;
   readonly featureRegistry: FeatureRegistry;
   readonly providerRegistry: ProviderRegistry;
 }): PlatformBootManifest {
   const features = input.featureRegistry.list();
+  for (const feature of features) {
+    assertDecisionGates(feature.requiredDecisionGates, input.decisionCatalog);
+  }
+  for (const provider of input.providerRegistry.list()) {
+    assertDecisionGates(provider.requiredDecisionGates, input.decisionCatalog);
+  }
   assertProviderCapabilities(features, input.providerRegistry);
   assertUniqueRoutes(features);
 

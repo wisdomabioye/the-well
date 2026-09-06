@@ -4,6 +4,7 @@ import { httpMethodSchema } from "@ador/shared/http";
 
 const featureIdPattern = /^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$/;
 const semanticVersionPattern = /^\d+\.\d+\.\d+$/;
+const decisionGateIdPattern = /^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$/;
 
 export const featureCapabilitySchema = z.enum([
   "api-routes",
@@ -16,6 +17,8 @@ export const featureCapabilitySchema = z.enum([
 export const providerCapabilitySchema = z
   .string()
   .regex(/^[a-z][a-z0-9-]*(?::[a-z][a-z0-9-]*)+$/);
+
+export const decisionGateIdSchema = z.string().regex(decisionGateIdPattern);
 
 export const routeContributionSchema = z
   .object({
@@ -47,6 +50,10 @@ export const featureManifestSchema = z
       .array(providerCapabilitySchema)
       .refine((items) => new Set(items).size === items.length)
       .readonly(),
+    requiredDecisionGates: z
+      .array(decisionGateIdSchema)
+      .refine((items) => new Set(items).size === items.length)
+      .readonly(),
     routes: z.array(routeContributionSchema).readonly(),
   })
   .strict()
@@ -59,6 +66,10 @@ export const providerManifestSchema = z
       .min(1)
       .refine((items) => new Set(items).size === items.length)
       .readonly(),
+    requiredDecisionGates: z
+      .array(decisionGateIdSchema)
+      .refine((items) => new Set(items).size === items.length)
+      .readonly(),
     id: providerIdSchema,
     version: z.string().regex(semanticVersionPattern),
   })
@@ -66,6 +77,7 @@ export const providerManifestSchema = z
   .readonly();
 
 export type FeatureCapability = z.infer<typeof featureCapabilitySchema>;
+export type DecisionGateId = z.infer<typeof decisionGateIdSchema>;
 export type FeatureId = z.infer<typeof featureIdSchema>;
 export type FeatureManifest = z.infer<typeof featureManifestSchema>;
 export type ProviderCapability = z.infer<typeof providerCapabilitySchema>;

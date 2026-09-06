@@ -468,6 +468,9 @@ importers:
 
   tooling/repository-policy:
     dependencies:
+      '@ador/shared':
+        specifier: workspace:*
+        version: link:../../packages/shared
       typescript:
         specifier: 5.9.3
         version: 5.9.3

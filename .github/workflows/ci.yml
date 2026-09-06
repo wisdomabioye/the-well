@@ -36,6 +36,9 @@ jobs:
       - name: Verify environment contracts
         run: pnpm env:check
 
+      - name: Verify decision gates
+        run: pnpm decision:check
+
       - name: Verify formatting
         run: pnpm format:check
 

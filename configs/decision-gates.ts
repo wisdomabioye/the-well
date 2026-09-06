@@ -1,0 +1,123 @@
+import { decisionCatalogSchema } from "@ador/shared/decisions";
+
+export const decisionCatalog = decisionCatalogSchema.parse({
+  version: 1,
+  decisions: [
+    {
+      id: "D13",
+      status: "unresolved",
+      owner: "product + engineering",
+      deadline: "Start Week 5",
+      requiredFields: [
+        "canonical_bytes",
+        "hash",
+        "destination",
+        "authorizer",
+        "fee_payer",
+        "failure_or_refund_policy",
+      ],
+    },
+    {
+      id: "D14",
+      status: "unresolved",
+      owner: "product + engineering",
+      deadline: "Start Week 5",
+      requiredFields: [
+        "content_mode",
+        "metadata_schema",
+        "reveal",
+        "maximum_beta_supply",
+      ],
+    },
+    {
+      id: "D15",
+      status: "researching",
+      owner: "product + engineering",
+      deadline: "Week 1 exit",
+      requiredFields: [
+        "spike_owner",
+        "commitment_format",
+        "proof_format",
+        "contract_verifier",
+        "claim_accounting",
+        "claimant_binding",
+        "supersession_policy",
+        "test_vectors",
+        "runtime_evidence",
+      ],
+    },
+    {
+      id: "D17",
+      status: "unresolved",
+      owner: "product + engineering",
+      deadline: "Start Week 5",
+      requiredFields: [
+        "payment_mode",
+        "asset_id",
+        "price_units",
+        "minimum_price",
+        "recipient_policy",
+        "overpayment_policy",
+        "failed_mint_policy",
+      ],
+    },
+    {
+      id: "D18",
+      status: "unresolved",
+      owner: "product + engineering",
+      deadline: "Start Week 5",
+      requiredFields: [
+        "platform_fee_bps",
+        "platform_recipient",
+        "creator_proceeds_bps",
+        "creator_recipient_rule",
+        "royalties",
+        "recipient_change_policy",
+        "rounding_policy",
+      ],
+    },
+    {
+      id: "D19",
+      status: "unresolved",
+      owner: "product + engineering",
+      deadline: "Start Week 6",
+      requiredFields: [
+        "authority_model",
+        "authority_matrix",
+        "freeze_trigger",
+        "emergency_policy",
+      ],
+    },
+    {
+      id: "D22",
+      status: "unresolved",
+      owner: "product + engineering",
+      deadline: "Start Week 7",
+      requiredFields: [
+        "deployment_confirmations",
+        "mint_confirmations",
+        "maximum_indexer_lag_blocks",
+        "stuck_threshold_minutes",
+        "replacement_policy",
+        "reconciliation_interval",
+        "completion",
+      ],
+    },
+  ],
+  gates: [
+    { id: "phase-zero-exit", requiredDecisions: ["D15"] },
+    {
+      id: "phase-three-entry",
+      requiredDecisions: ["D13", "D14", "D17", "D18"],
+    },
+    {
+      id: "production-contract",
+      requiredDecisions: ["D13", "D14", "D15", "D17", "D18", "D19"],
+    },
+    { id: "transaction-release", requiredDecisions: ["D22"] },
+    {
+      id: "beta-release",
+      requiredDecisions: ["D13", "D14", "D15", "D17", "D18", "D19", "D22"],
+    },
+  ],
+});

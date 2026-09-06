@@ -13,6 +13,7 @@ describe("provider module loading", () => {
         manifest: {
           capabilities: ["system:status"],
           id: "fixture-provider",
+          requiredDecisionGates: [],
           version: "1.0.0",
         },
       },

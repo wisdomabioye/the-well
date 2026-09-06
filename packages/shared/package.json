@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "exports": {
+    "./decisions": "./src/decisions/gates.ts",
     "./features": "./src/features/manifest.ts",
     "./http": "./src/http/index.ts",
     "./platform": "./src/platform/status.ts",

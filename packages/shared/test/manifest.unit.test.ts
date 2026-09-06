@@ -10,6 +10,7 @@ const validManifest = {
   version: "1.0.0",
   capabilities: ["public-page"],
   dependencies: [],
+  requiredDecisionGates: [],
   requiredProviderCapabilities: [],
   routes: [],
 } as const;
@@ -24,6 +25,7 @@ describe("featureManifestSchema", () => {
     { ...validManifest, version: "latest" },
     { ...validManifest, capabilities: [] },
     { ...validManifest, capabilities: ["public-page", "public-page"] },
+    { ...validManifest, requiredDecisionGates: ["release", "release"] },
     {
       ...validManifest,
       requiredProviderCapabilities: ["storage:write", "storage:write"],
@@ -49,6 +51,7 @@ describe("providerManifestSchema", () => {
     const manifest = {
       capabilities: ["storage:write"],
       id: "object-storage",
+      requiredDecisionGates: [],
       version: "1.0.0",
     } as const;
     expect(providerManifestSchema.parse(manifest)).toEqual(manifest);

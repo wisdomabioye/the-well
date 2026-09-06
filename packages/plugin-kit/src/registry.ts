@@ -30,6 +30,7 @@ function freezeManifest(manifest: FeatureManifest): FeatureManifest {
     requiredProviderCapabilities: Object.freeze([
       ...manifest.requiredProviderCapabilities,
     ]),
+    requiredDecisionGates: Object.freeze([...manifest.requiredDecisionGates]),
     routes: Object.freeze(
       manifest.routes.map((route) => Object.freeze({ ...route })),
     ),

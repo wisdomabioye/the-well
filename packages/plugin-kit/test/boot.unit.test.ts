@@ -26,6 +26,7 @@ function feature(
       capabilities: ["api-routes"],
       dependencies: [],
       id,
+      requiredDecisionGates: [],
       requiredProviderCapabilities,
       routes: [route],
       version: "1.0.0",
@@ -38,6 +39,8 @@ const catalogRoute = {
   operationId: "getCatalog",
   path: "/api/v1/catalog",
 } as const;
+
+const decisionCatalog = { decisions: [], gates: [], version: 1 } as const;
 
 describe("validatePlatformBoot", () => {
   it("returns an immutable manifest when all requirements are satisfied", () => {
@@ -54,12 +57,17 @@ describe("validatePlatformBoot", () => {
         manifest: {
           capabilities: ["indexer:read"],
           id: "local-indexer",
+          requiredDecisionGates: [],
           version: "1.0.0",
         },
       },
     ]);
 
-    const boot = validatePlatformBoot({ featureRegistry, providerRegistry });
+    const boot = validatePlatformBoot({
+      decisionCatalog,
+      featureRegistry,
+      providerRegistry,
+    });
     expect(boot.providerCount).toBe(1);
     expect(boot.features.map(({ id }) => id)).toEqual(["catalog"]);
     expect(Reflect.set(boot.features, "0", {})).toBe(false);
@@ -68,6 +76,7 @@ describe("validatePlatformBoot", () => {
   it("rejects a missing provider capability", () => {
     expect(() =>
       validatePlatformBoot({
+        decisionCatalog,
         featureRegistry: createFeatureRegistry([
           feature("catalog", catalogRoute, ["indexer:read"]),
         ]),
@@ -87,6 +96,7 @@ describe("validatePlatformBoot", () => {
     };
     expect(() =>
       validatePlatformBoot({
+        decisionCatalog,
         featureRegistry: createFeatureRegistry([registration]),
         providerRegistry: createProviderRegistry([]),
       }),
@@ -96,6 +106,7 @@ describe("validatePlatformBoot", () => {
   it("rejects duplicate method and path pairs", () => {
     expect(() =>
       validatePlatformBoot({
+        decisionCatalog,
         featureRegistry: createFeatureRegistry([
           feature("catalog", catalogRoute),
           feature("launches", {
@@ -111,6 +122,7 @@ describe("validatePlatformBoot", () => {
   it("rejects duplicate operation IDs across different routes", () => {
     expect(() =>
       validatePlatformBoot({
+        decisionCatalog,
         featureRegistry: createFeatureRegistry([
           feature("catalog", catalogRoute),
           feature("launches", {
@@ -126,6 +138,7 @@ describe("validatePlatformBoot", () => {
   it("treats differently named dynamic segments as the same route", () => {
     expect(() =>
       validatePlatformBoot({
+        decisionCatalog,
         featureRegistry: createFeatureRegistry([
           feature("catalog", {
             ...catalogRoute,
@@ -140,5 +153,63 @@ describe("validatePlatformBoot", () => {
         providerRegistry: createProviderRegistry([]),
       }),
     ).toThrow("Route collision for GET /api/v1/catalog/:parameter");
+  });
+
+  const gatedCatalog = {
+    decisions: [
+      {
+        deadline: "Week 1 exit",
+        id: "D15",
+        owner: "product + engineering",
+        requiredFields: ["claimant_binding"],
+        status: "researching",
+      },
+    ],
+    gates: [{ id: "phase-zero-exit", requiredDecisions: ["D15"] }],
+    version: 1,
+  } as const;
+
+  it("rejects a gated feature until every decision is accepted", () => {
+    const baseFeature = feature("catalog", catalogRoute);
+    const featureRegistration = {
+      ...baseFeature,
+      manifest: {
+        ...baseFeature.manifest,
+        requiredDecisionGates: ["phase-zero-exit"] as const,
+      },
+    };
+
+    expect(() =>
+      validatePlatformBoot({
+        decisionCatalog: gatedCatalog,
+        featureRegistry: createFeatureRegistry([featureRegistration]),
+        providerRegistry: createProviderRegistry([]),
+      }),
+    ).toThrow("phase-zero-exit is closed by: D15");
+  });
+
+  it("rejects a gated provider until every decision is accepted", () => {
+    const providerRegistry = createProviderRegistry([
+      {
+        load: async () => ({
+          capabilities: ["indexer:read"],
+          id: "indexer",
+          version: "1.0.0",
+        }),
+        manifest: {
+          capabilities: ["indexer:read"],
+          id: "indexer",
+          requiredDecisionGates: ["phase-zero-exit"],
+          version: "1.0.0",
+        },
+      },
+    ]);
+    expect(() =>
+      validatePlatformBoot({
+        decisionCatalog: gatedCatalog,
+        featureRegistry: createFeatureRegistry([]),
+        providerRegistry,
+      }),
+    ).toThrow("phase-zero-exit is closed by: D15");
   });
 });
