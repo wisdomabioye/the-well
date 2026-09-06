@@ -1,0 +1,32 @@
+# Gate record: signed workflow adapter
+
+Status: blocked from implementation and provider registration
+
+## Reason
+
+The maintained official Inngest SDK version evaluated on 2026-09-06 installs deprecated transitive
+packages. Adding it would violate the repository dependency policy. Replacing the SDK with a
+hand-written event or signing protocol would weaken correctness and drift from ADR-003.
+
+## Available foundation
+
+- `@ador/jobs` owns provider-neutral relay policy, retry classification, and publication/store
+  ports.
+- `@ador/database` adapts the transactional PostgreSQL outbox to the relay store port.
+- Domain events and business state remain independent of workflow-provider types.
+- No provider capability is registered and no environment key implies the adapter is operational.
+
+## Re-entry criteria
+
+Implementation may resume only when all of the following are evidenced:
+
+1. An official, maintained SDK release has no deprecated installed dependency, or a repository-rule
+   exception is explicitly approved and recorded.
+2. The exact SDK and transitive graph pass license, maintenance, compatibility, and vulnerability
+   review and are pinned in the lockfile.
+3. Signed endpoint rejection, stable event identity, duplicate delivery, retry exhaustion, provider
+   outage, database acknowledgement failure, and recovery are covered by meaningful tests.
+4. Adapter tests run against the real local workflow runtime, and all workspace quality gates pass.
+
+This gate defers only the signed workflow-provider adapter. It does not reopen D06 or change
+ADR-003's accepted target architecture.

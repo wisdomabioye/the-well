@@ -1,9 +1,11 @@
 import type { DomainEventEnvelope } from "@ador/events";
+import { relayOutboxBatch, TerminalWorkflowDeliveryError } from "@ador/jobs";
 import { eq } from "drizzle-orm";
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 import {
   claimOutboxEvents,
+  createOutboxDeliveryStore,
   createDatabaseClient,
   createDatabasePool,
   enqueueOutboxEvent,
@@ -170,6 +172,49 @@ describe("transactional outbox", () => {
         leaseId,
       }),
     ).rejects.toBeInstanceOf(OutboxStateConflictError);
+  });
+
+  it("adapts claimed rows to the provider-neutral relay contract", async () => {
+    const terminal = event("a2554dc1-188c-4c39-b38f-b6363547eb09");
+    const retryable = event("f2554dc1-188c-4c39-b38f-b6363547eb09");
+    await enqueue();
+    await enqueue(terminal);
+    await enqueue(retryable);
+    const published: DomainEventEnvelope[] = [];
+    const result = await relayOutboxBatch(
+      {
+        clock: { now: () => now },
+        createLeaseId: () => "a8e4d617-963f-41f6-b5e8-6ebc70817890",
+        jitter: () => 0,
+        publisher: {
+          publish: async (value) => {
+            published.push(value);
+            if (value.eventId === terminal.eventId) {
+              throw new TerminalWorkflowDeliveryError("invalid event");
+            }
+            if (value.eventId === retryable.eventId) throw new Error("outage");
+          },
+        },
+        store: createOutboxDeliveryStore(database),
+      },
+      {
+        batchSize: 3,
+        leaseDurationMs: 60_000,
+        maxAttempts: 3,
+        retryBaseMs: 1_000,
+        retryMaxMs: 10_000,
+      },
+    );
+    expect(result).toEqual({ claimed: 3, delivered: 1, failed: 1, retried: 1 });
+    expect(published).toHaveLength(3);
+    const rows = await database.select().from(outboxEvents);
+    expect(
+      Object.fromEntries(rows.map((row) => [row.eventId, row.status])),
+    ).toEqual({
+      [event().eventId]: "delivered",
+      [terminal.eventId]: "failed",
+      [retryable.eventId]: "pending",
+    });
   });
 
   it("schedules retry and later moves exhausted delivery to failed", async () => {

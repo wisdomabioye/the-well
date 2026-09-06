@@ -21,5 +21,6 @@
 
 The real-PostgreSQL suite covers transaction rollback, duplicate identity, concurrent claims,
 expired-lease recovery, stale acknowledgement, delayed retry, exhausted failure, invalid policies,
-and unsafe payload rejection. The provider adapter and retry policy are deliberately deferred to
-the following workflow slice so no cloud acknowledgement can precede durable persistence.
+and unsafe payload rejection. The provider-neutral retry policy and database adapter are now
+implemented. The signed provider adapter remains gated by `workflow-adapter-gate.md`, so no cloud
+acknowledgement is represented before its dependency and runtime checks satisfy repository policy.

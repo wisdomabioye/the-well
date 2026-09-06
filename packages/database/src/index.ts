@@ -24,6 +24,7 @@ export {
   OutboxStateConflictError,
   retryOutboxEvent,
 } from "./outbox/repository.ts";
+export { createOutboxDeliveryStore } from "./outbox/relay-store.ts";
 export {
   outboxEvents,
   outboxStatus,

@@ -18,6 +18,11 @@ gated until their product decisions and end-to-end verification are complete.
 - `packages/ui` — reusable arcade components and design tokens.
 - `tests/e2e` — Playwright browser coverage.
 - `tooling/repository-policy` — executable workspace, boundary, file-size, and coverage gates.
+- `packages/jobs` — provider-neutral outbox relay policy and workflow publication port.
+
+The signed Inngest adapter is intentionally gated by
+[`references/workflow-adapter-gate.md`](references/workflow-adapter-gate.md); no workflow provider
+is registered or represented as available until that gate is satisfied.
 
 ## Requirements
 
