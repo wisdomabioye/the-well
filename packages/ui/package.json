@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "exports": {
-    "./arcade": "./src/arcade.tsx",
+    "./arcade": "./src/arcade.ts",
     "./styles.css": "./src/styles.css"
   },
   "scripts": {

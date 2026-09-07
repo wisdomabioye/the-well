@@ -1,0 +1,69 @@
+.arcade-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.75rem;
+  padding: 0.75rem 1rem;
+  border: 0.125rem solid currentcolor;
+  border-radius: var(--arcade-radius-small);
+  background: var(--arcade-surface-recessed);
+  box-shadow: var(--arcade-shadow-depth) var(--arcade-shadow-depth) 0
+    var(--arcade-ink);
+  font-family: var(--arcade-font-pixel);
+  font-size: 0.625rem;
+  line-height: 1.4;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition:
+    transform var(--arcade-transition-fast),
+    box-shadow var(--arcade-transition-fast);
+}
+.arcade-button:hover {
+  box-shadow: 0.125rem 0.125rem 0 var(--arcade-ink);
+  transform: translate(0.25rem, 0.25rem);
+}
+.arcade-button--cyan {
+  color: var(--arcade-cyan);
+}
+.arcade-button--mint {
+  color: var(--arcade-mint);
+}
+.arcade-button--pink {
+  color: var(--arcade-pink);
+}
+.arcade-button--red {
+  color: var(--arcade-red);
+}
+.arcade-button--yellow {
+  color: var(--arcade-yellow);
+}
+.status-lamp {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.625rem;
+  margin: 0;
+  font-family: var(--arcade-font-pixel);
+  font-size: 0.625rem;
+  line-height: 1.6;
+  text-transform: uppercase;
+}
+.status-lamp__light {
+  width: 0.625rem;
+  height: 0.625rem;
+  background: currentcolor;
+  box-shadow: 0 0 1rem currentcolor;
+}
+.status-lamp--attention {
+  color: var(--arcade-yellow);
+}
+.status-lamp--ready {
+  color: var(--arcade-mint);
+}
+.status-lamp--unavailable {
+  color: var(--arcade-red);
+}
+@media (prefers-reduced-motion: reduce) {
+  .arcade-button {
+    transition: none;
+  }
+}

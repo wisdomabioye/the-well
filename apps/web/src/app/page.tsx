@@ -1,4 +1,9 @@
-import { ArcadeButton, ArcadePanel, StatusLamp } from "@repo/ui/arcade";
+import {
+  AppShell,
+  ArcadeButton,
+  ArcadePanel,
+  StatusLamp,
+} from "@repo/ui/arcade";
 import { featureRegistry } from "../../../../configs/features";
 
 const platformStatus = [
@@ -8,33 +13,29 @@ const platformStatus = [
   ["Games", "01 PLANNED"],
 ] as const;
 
+const platformNotices = [
+  "★ BUILT ON BITCOIN",
+  "◆ POWERED BY ALKANES",
+  "▲ BETA FOUNDATION IN PROGRESS",
+] as const;
+
+const primaryNavigation = [
+  { href: "#launches", label: "Launches" },
+  { href: "#games", label: "Games", tone: "yellow" },
+] as const;
+
 export default function Home() {
   return (
-    <main className="arcade-shell" id="top">
-      <div className="arcade-marquee" aria-label="Platform status">
-        <span>★ BUILT ON BITCOIN</span>
-        <span>◆ POWERED BY ALKANES</span>
-        <span>▲ BETA FOUNDATION IN PROGRESS</span>
-      </div>
-
-      <header className="arcade-header">
-        <a className="arcade-brand" href="#top" aria-label="Adorbitals home">
-          <span className="arcade-orbit" aria-hidden="true" />
-          <span>ADORBITALS</span>
-        </a>
-        <nav aria-label="Primary navigation">
-          <ArcadeButton href="#launches" tone="cyan">
-            Launches
-          </ArcadeButton>
-          <ArcadeButton href="#games" tone="yellow">
-            Games
-          </ArcadeButton>
-        </nav>
-      </header>
-
+    <AppShell
+      brand="Adorbitals"
+      footerLabel="Adorbitals beta foundation"
+      homeHref="#top"
+      navigation={primaryNavigation}
+      notices={platformNotices}
+    >
       <section className="arcade-hero">
         <div className="arcade-hero-copy">
-          <StatusLamp label="Foundation build in progress" />
+          <StatusLamp label="Foundation build in progress" tone="attention" />
           <h1>Launch your legacy. Mint the future.</h1>
           <p>
             A self-custodial launchpad and game arcade for Bitcoin Alkanes.
@@ -42,7 +43,7 @@ export default function Home() {
             end-to-end checks pass.
           </p>
           <div className="arcade-actions">
-            <ArcadeButton href="#launches" tone="magenta">
+            <ArcadeButton href="#launches" tone="red">
               Explore launches
             </ArcadeButton>
             <ArcadeButton href="#games" tone="cyan">
@@ -72,7 +73,7 @@ export default function Home() {
         </p>
       </section>
 
-      <section className="arcade-section arcade-section-accent" id="games">
+      <section className="arcade-section arcade-section--raised" id="games">
         <p className="arcade-eyebrow">02 / Arcade</p>
         <h2>One template. Many on-chain worlds.</h2>
         <article className="arcade-game-card">
@@ -84,6 +85,6 @@ export default function Home() {
           <span className="arcade-chip">COMING ONLINE</span>
         </article>
       </section>
-    </main>
+    </AppShell>
   );
 }

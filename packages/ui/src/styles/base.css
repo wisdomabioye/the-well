@@ -1,0 +1,43 @@
+* {
+  box-sizing: border-box;
+}
+html {
+  background: var(--arcade-canvas);
+  scroll-behavior: smooth;
+}
+body {
+  margin: 0;
+  min-width: 20rem;
+  min-height: 100vh;
+  background: var(--arcade-canvas);
+  color: var(--arcade-text);
+  font-family: var(--arcade-font-body);
+  -webkit-font-smoothing: antialiased;
+}
+a {
+  color: inherit;
+}
+:focus-visible {
+  outline: 0.1875rem solid var(--arcade-focus);
+  outline-offset: 0.25rem;
+}
+.skip-link {
+  position: fixed;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: 100;
+  padding: 0.75rem 1rem;
+  background: var(--arcade-yellow);
+  color: var(--arcade-ink);
+  font-family: var(--arcade-font-pixel);
+  font-size: 0.625rem;
+  transform: translateY(-200%);
+}
+.skip-link:focus {
+  transform: translateY(0);
+}
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}

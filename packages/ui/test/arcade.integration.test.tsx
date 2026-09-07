@@ -1,7 +1,7 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 
-import { ArcadeButton, ArcadePanel } from "../src/arcade.js";
+import { AppShell, ArcadeButton, ArcadePanel } from "../src/arcade.js";
 
 describe("arcade panel composition", () => {
   it("preserves its heading and nested interactive content", () => {
@@ -15,6 +15,28 @@ describe("arcade panel composition", () => {
 
     expect(markup).toContain("<article");
     expect(markup).toContain("<h2>The Well</h2>");
-    expect(markup).toContain("arcade-button-yellow");
+    expect(markup).toContain("arcade-button--yellow");
+  });
+
+  it("keeps navigation and a skip target available in the shared shell", () => {
+    const markup = renderToStaticMarkup(
+      <AppShell
+        brand="Test arcade"
+        footerLabel="Test foundation"
+        homeHref="#top"
+        navigation={[{ href: "#launches", label: "Launches", tone: "yellow" }]}
+        notices={["Foundation in progress"]}
+      >
+        <h1>Home</h1>
+      </AppShell>,
+    );
+
+    expect(markup).toContain('href="#main-content"');
+    expect(markup).toContain('id="main-content"');
+    expect(markup).toContain('aria-label="Primary navigation"');
+    expect(markup).toContain('aria-label="Test arcade home"');
+    expect(markup).toContain("arcade-button--yellow");
+    expect(markup).toContain("Foundation in progress");
+    expect(markup).toContain("Test foundation");
   });
 });

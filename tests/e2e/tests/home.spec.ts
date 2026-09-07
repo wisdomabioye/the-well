@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { AxeBuilder } from "@axe-core/playwright";
 
 test("shows only honest foundation-stage launchpad controls", async ({
   page,
@@ -26,9 +27,9 @@ test("serves the arcade design stylesheet in the production build", async ({
 
   await page.goto("/");
 
-  await expect(page.locator("body")).toHaveCSS(
+  await expect(page.locator(".app-shell")).toHaveCSS(
     "background-image",
-    /linear-gradient/,
+    /radial-gradient/,
   );
   expect(stylesheetStatuses).not.toContain(404);
 });
@@ -41,6 +42,52 @@ test("navigates to the planned game from the primary control", async ({
 
   await expect(page).toHaveURL(/#games$/);
   await expect(page.getByRole("heading", { name: "Frostbite" })).toBeVisible();
+});
+
+test("keeps shell navigation keyboard-accessible at every viewport", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await page.keyboard.press("Tab");
+
+  const skipLink = page.getByRole("link", { name: "Skip to main content" });
+  await expect(skipLink).toBeFocused();
+  await skipLink.press("Enter");
+  await expect(page.locator("#main-content")).toBeFocused();
+  await expect(
+    page.getByRole("navigation", { name: "Primary navigation" }),
+  ).toBeVisible();
+});
+
+test("removes decorative scanlines when reduced motion is requested", async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/");
+
+  await expect(page.locator(".scanlines")).toHaveCSS("display", "none");
+});
+
+test("has no automatically detectable WCAG 2.2 AA violations", async ({
+  page,
+}) => {
+  await page.goto("/");
+
+  const results = await new AxeBuilder({ page })
+    .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"])
+    .analyze();
+
+  expect(results.violations).toEqual([]);
+});
+
+test("matches the reviewed arcade shell baseline", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/");
+
+  await expect(page).toHaveScreenshot("arcade-shell.png", {
+    animations: "disabled",
+    fullPage: true,
+  });
 });
 
 test("serves the versioned platform contract with correlated truthful state", async ({

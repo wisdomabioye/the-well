@@ -12,7 +12,7 @@ describe("arcade controls", () => {
     );
 
     expect(markup).toContain('href="#games"');
-    expect(markup).toContain("arcade-button-cyan");
+    expect(markup).toContain("arcade-button--cyan");
     expect(markup).toContain("Games");
   });
 
@@ -20,6 +20,8 @@ describe("arcade controls", () => {
     const markup = renderToStaticMarkup(<StatusLamp label="Building" />);
 
     expect(markup).toContain('aria-hidden="true"');
+    expect(markup).toContain('role="status"');
+    expect(markup).toContain("status-lamp--attention");
     expect(markup).toContain("Building");
   });
 });

@@ -1,0 +1,141 @@
+.arcade-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(17.5rem, 0.85fr);
+  gap: clamp(2rem, 7vw, 6rem);
+  align-items: center;
+  width: min(100%, var(--arcade-content-width));
+  min-height: 40rem;
+  margin: auto;
+  padding: clamp(4rem, 9vw, 7rem) 1.25rem;
+}
+.arcade-hero h1 {
+  max-width: 48rem;
+  margin: 1.25rem 0;
+  font-family: var(--arcade-font-display);
+  font-size: clamp(3rem, 7vw, 6rem);
+  font-weight: 400;
+  line-height: 0.98;
+  text-transform: uppercase;
+  text-shadow:
+    0.25rem 0.25rem 0 var(--arcade-red),
+    0.5rem 0.5rem 0 color-mix(in srgb, var(--arcade-cyan) 45%, transparent);
+}
+.arcade-hero-copy > p:not(.status-lamp),
+.arcade-section > p:not(.arcade-eyebrow) {
+  max-width: 42rem;
+  color: var(--arcade-text-muted);
+  font-size: 1.125rem;
+  line-height: 1.7;
+}
+.arcade-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+.arcade-panel {
+  position: relative;
+  padding: 2rem;
+  border: var(--arcade-border-width) solid var(--arcade-text);
+  border-radius: var(--arcade-radius-medium);
+  background: var(--arcade-surface);
+  box-shadow: 0.75rem 0.75rem 0 var(--arcade-red);
+}
+.arcade-panel::before {
+  position: absolute;
+  inset: 0.625rem;
+  border: 0.0625rem solid var(--arcade-border-strong);
+  content: "";
+  pointer-events: none;
+}
+.arcade-panel h2,
+.arcade-section h2 {
+  margin: 0.75rem 0 1.5rem;
+  font-family: var(--arcade-font-display);
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  font-weight: 400;
+  line-height: 1;
+  text-transform: uppercase;
+}
+.arcade-eyebrow {
+  color: var(--arcade-yellow);
+  font-family: var(--arcade-font-pixel);
+  font-size: 0.625rem;
+  line-height: 1.5;
+  text-transform: uppercase;
+}
+.arcade-score-grid {
+  margin: 0;
+}
+.arcade-score-grid div {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 0;
+  border-top: 0.0625rem dashed var(--arcade-border-strong);
+}
+.arcade-score-grid dt {
+  color: var(--arcade-text-muted);
+}
+.arcade-score-grid dd {
+  margin: 0;
+  color: var(--arcade-cyan);
+  font-family: var(--arcade-font-pixel);
+  font-size: 0.625rem;
+}
+.arcade-section {
+  padding: clamp(4rem, 9vw, 7rem)
+    max(1.25rem, calc((100vw - var(--arcade-content-width)) / 2));
+  border-top: var(--arcade-border-width) solid var(--arcade-border);
+  background: var(--arcade-surface);
+}
+.arcade-section--raised {
+  background: var(--arcade-surface-raised);
+}
+.arcade-game-card {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 1.5rem;
+  align-items: center;
+  max-width: 52rem;
+  margin-top: 2.5rem;
+  padding: 1.5rem;
+  border: 0.125rem solid var(--arcade-cyan);
+  border-radius: var(--arcade-radius-medium);
+  background: var(--arcade-canvas);
+  box-shadow: var(--arcade-shadow-depth) var(--arcade-shadow-depth) 0
+    var(--arcade-ink);
+}
+.arcade-game-card h3 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+.arcade-game-card p {
+  margin: 0.35rem 0 0;
+  color: var(--arcade-text-muted);
+}
+.arcade-game-number {
+  color: var(--arcade-pink);
+  font-family: var(--arcade-font-pixel);
+}
+.arcade-chip {
+  color: var(--arcade-yellow);
+  font-family: var(--arcade-font-pixel);
+  font-size: 0.625rem;
+}
+@media (max-width: 48rem) {
+  .arcade-hero {
+    grid-template-columns: 1fr;
+    min-height: auto;
+  }
+  .arcade-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+  .arcade-game-card {
+    grid-template-columns: auto 1fr;
+  }
+  .arcade-chip {
+    grid-column: 2;
+  }
+}
