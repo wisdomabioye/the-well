@@ -49,6 +49,20 @@ env.__request_input_prevouts() -> i32
 env.__load_input_prevouts(output_ptr: i32) -> i32
 ```
 
+Both calls return a non-negative byte length/count on success or a stable negative `PrevoutStatus`
+code on a recoverable lookup failure. Assign named protocol constants for missing output, invalid
+ordering, malformed stored output, resource limit, and invalid call sequence. An unavailable import
+fails module instantiation; invalid guest memory, fuel exhaustion, poisoned runtime state, and other
+internal host failures remain VM traps. The guest wrapper maps statuses to `PrevoutError` and must
+never cast a negative result to a buffer length.
+
+The request call resolves, validates, encodes, and caches one immutable result in `AlkanesState` for
+the current WASM invocation. The load call may only copy that cached byte sequence, returns the exact
+number of bytes written, and then clears the cache. A second request replaces and discards the prior
+snapshot; invocation completion or failure also clears it. The guest rejects a load count different
+from the requested length. This makes the two-call ABI a single logical snapshot rather than two
+independent table reads.
+
 The payload is Bitcoin consensus encoding of `Vec<TxOut>`. The order and length must exactly match
 `current_transaction.input`. Returning the whole set in one snapshot avoids per-input disagreement,
 supports Taproot `Prevouts::All`, and removes arbitrary historical-output access from the contract
@@ -58,14 +72,14 @@ Host behavior must be:
 
 - Derive each outpoint only from the current transaction's inputs.
 - Reject coinbase inputs for claim execution.
-- Fail atomically if any output is absent, malformed, duplicated inconsistently, or cannot be
-  represented as a Bitcoin `TxOut`; never return a partial vector.
+- Fail atomically if any output is absent, malformed, or cannot be represented as a Bitcoin `TxOut`;
+  never cache or return a partial vector.
 - For same-block inputs, prove the producing transaction index is lower than the current transaction
   index. Reject forward references even when a fabricated test block pre-populated the output table.
 - Charge deterministic fuel for lookup keys and returned bytes, with checked arithmetic and a
   configured maximum input count/response size.
-- Return distinguishable errors for unavailable capability, missing output, invalid ordering,
-  malformed stored output, resource limit, and host failure.
+- Return the documented `PrevoutStatus` for every recoverable lookup failure. Status values are
+  protocol constants shared by the host and guest and covered by compatibility tests.
 - Leave storage unchanged. A failed lookup or later contract revert must not affect claim state.
 
 Guest behavior must decode with full-consumption semantics, reject a length mismatch, and return
@@ -80,10 +94,13 @@ The implementation spans these owned boundaries in `alkanes-rs`:
   stubs that can inject an ordered prevout set.
 - `crates/alkanes-runtime/src/runtime.rs`: add the typed `input_prevouts()` guest method and strict
   decoding/count validation. Do not revive the arbitrary `output(&OutPoint)` API.
+- `src/vm/state.rs`: own the per-invocation encoded snapshot and guarantee cleanup on replacement,
+  successful load, invocation completion, and failure.
 - `src/vm/host_functions.rs`: resolve the complete ordered set from the current transaction and
-  `protorune::tables::OUTPOINT_TO_OUTPUT`; enforce presence, same-block ordering, limits, and fuel.
-- `src/vm/instance.rs`: register both imports and abort execution on host errors without returning
-  ambiguous empty bytes.
+  `protorune::tables::OUTPOINT_TO_OUTPUT`; enforce presence, same-block ordering, limits, fuel, stable
+  status mapping, and snapshot lifecycle.
+- `src/vm/instance.rs`: register both imports, preserve recoverable status returns, and trap on memory
+  violations, fuel exhaustion, or invariant-breaking host failures without returning ambiguous bytes.
 - Runtime/indexer tests: exercise the production WASM path with prior-block and earlier-same-block
   spends, plus every failure listed below.
 
@@ -98,7 +115,8 @@ runtime, whose context already owns the current transaction and indexed atomic p
 - A prior-block output and an earlier-same-block output resolve successfully.
 - Missing outpoint, out-of-range vout, malformed stored protobuf, coinbase input, same-block forward
   reference, excessive input count, excessive response bytes, and fuel exhaustion all revert.
-- Request/load size disagreement cannot expose uninitialized or truncated memory.
+- Request/load size disagreement, load without request, repeated request, repeated load, and failure
+  cleanup cannot expose stale, uninitialized, or truncated memory.
 - Nested call, delegate call, and static call observe the originating transaction prevouts rather
   than a callee-selected transaction.
 - Contract writes before a later failure roll back; successful writes follow normal indexed-state
