@@ -44,6 +44,12 @@
   },
   "pnpm": {
     "overrides": {
+      "@sats-connect/core>axios": "1.20.0",
+      "alkanes": "https://codeload.github.com/kungfuflex/alkanes/tar.gz/7a3326b12702c044424d10b37c048e06ebefb3d2",
+      "alkanes>bip32": "5.0.1",
+      "body-parser>qs": "6.16.0",
+      "express>qs": "6.16.0",
+      "vite-plugin-ssr>esbuild": "0.28.2",
       "flatted": "3.4.2",
       "nanoid@3": "3.3.18",
       "picomatch@2": "2.3.2"

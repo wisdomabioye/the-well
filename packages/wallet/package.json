@@ -1,0 +1,38 @@
+{
+  "name": "@ador/wallet",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./client": "./src/client/provider.tsx",
+    "./contracts": "./src/contracts.ts",
+    "./qualification": "./src/qualification.ts",
+    "./signer": "./src/bridge/laser-eyes-signer.ts"
+  },
+  "scripts": {
+    "lint": "eslint . --max-warnings 0",
+    "typecheck": "tsc --noEmit",
+    "test:unit": "vitest run --config vitest.config.ts --project unit",
+    "test:integration": "vitest run --config vitest.config.ts --project integration && node --experimental-strip-types test/qualify-next.ts",
+    "test:coverage": "vitest run --config vitest.config.ts --coverage"
+  },
+  "dependencies": {
+    "@omnisat/lasereyes-core": "0.0.85",
+    "@omnisat/lasereyes-react": "0.0.80",
+    "react": "19.2.8",
+    "react-dom": "19.2.8"
+  },
+  "devDependencies": {
+    "@repo/eslint-config": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
+    "@types/node": "26.4.0",
+    "@types/react": "19.2.18",
+    "@types/react-dom": "19.2.5",
+    "@vitest/coverage-v8": "^4.1.11",
+    "eslint": "10.9.1",
+    "next": "16.3.3",
+    "typescript": "5.9.3",
+    "vite": "8.2.2",
+    "vitest": "^4.1.11"
+  }
+}
