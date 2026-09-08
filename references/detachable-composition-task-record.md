@@ -3,6 +3,7 @@
 Status: converged
 
 Baseline: `5de163e36951c5cd625e74f74dced5f483ed18cf`
+Implementation commit: `a82f3e4`
 Date: 2026-09-08
 
 ## Outcome
