@@ -33,6 +33,17 @@ export const routeContributionSchema = z
   .strict()
   .readonly();
 
+export const pageContributionSchema = z
+  .object({
+    path: z
+      .string()
+      .regex(
+        /^\/$|^\/[a-z0-9]+(?:-[a-z0-9]+)*(?:\/[a-z0-9]+(?:-[a-z0-9]+)*)*$/,
+      ),
+  })
+  .strict()
+  .readonly();
+
 export const featureIdSchema = z.string().regex(featureIdPattern);
 export const providerIdSchema = z.string().regex(featureIdPattern);
 
@@ -54,6 +65,7 @@ export const featureManifestSchema = z
       .array(decisionGateIdSchema)
       .refine((items) => new Set(items).size === items.length)
       .readonly(),
+    pages: z.array(pageContributionSchema).readonly(),
     routes: z.array(routeContributionSchema).readonly(),
   })
   .strict()
@@ -83,4 +95,5 @@ export type FeatureManifest = z.infer<typeof featureManifestSchema>;
 export type ProviderCapability = z.infer<typeof providerCapabilitySchema>;
 export type ProviderId = z.infer<typeof providerIdSchema>;
 export type ProviderManifest = z.infer<typeof providerManifestSchema>;
+export type PageContribution = z.infer<typeof pageContributionSchema>;
 export type RouteContribution = z.infer<typeof routeContributionSchema>;

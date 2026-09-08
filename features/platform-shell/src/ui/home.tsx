@@ -4,34 +4,33 @@ import {
   ArcadePanel,
   StatusLamp,
 } from "@repo/ui/arcade";
-import { featureRegistry } from "../../../../configs/features";
 
-const platformStatus = [
-  ["Features", `${featureRegistry.list().length} REGISTERED`],
-  ["Network", "UNSET"],
-  ["Launches", "GATED"],
-  ["Games", "01 PLANNED"],
-] as const;
+export function PlatformHome({
+  registeredFeatures,
+}: {
+  readonly registeredFeatures: number;
+}) {
+  const status = [
+    ["Features", `${registeredFeatures} REGISTERED`],
+    ["Network", "UNSET"],
+    ["Launches", "GATED"],
+    ["Games", "01 PLANNED"],
+  ] as const;
 
-const platformNotices = [
-  "★ BUILT ON BITCOIN",
-  "◆ POWERED BY ALKANES",
-  "▲ BETA FOUNDATION IN PROGRESS",
-] as const;
-
-const primaryNavigation = [
-  { href: "#launches", label: "Launches" },
-  { href: "#games", label: "Games", tone: "yellow" },
-] as const;
-
-export default function Home() {
   return (
     <AppShell
       brand="Adorbitals"
       footerLabel="Adorbitals beta foundation"
       homeHref="#top"
-      navigation={primaryNavigation}
-      notices={platformNotices}
+      navigation={[
+        { href: "#launches", label: "Launches" },
+        { href: "#games", label: "Games", tone: "yellow" },
+      ]}
+      notices={[
+        "★ BUILT ON BITCOIN",
+        "◆ POWERED BY ALKANES",
+        "▲ BETA FOUNDATION IN PROGRESS",
+      ]}
     >
       <section className="arcade-hero">
         <div className="arcade-hero-copy">
@@ -51,10 +50,9 @@ export default function Home() {
             </ArcadeButton>
           </div>
         </div>
-
         <ArcadePanel eyebrow="System status" title="The Well">
           <dl className="arcade-score-grid">
-            {platformStatus.map(([label, value]) => (
+            {status.map(([label, value]) => (
               <div key={label}>
                 <dt>{label}</dt>
                 <dd>{value}</dd>
@@ -63,7 +61,6 @@ export default function Home() {
           </dl>
         </ArcadePanel>
       </section>
-
       <section className="arcade-section" id="launches">
         <p className="arcade-eyebrow">01 / Launchpad</p>
         <h2>Fair launches without hidden controls.</h2>
@@ -72,7 +69,6 @@ export default function Home() {
           indexing flows will appear only after their release gates pass.
         </p>
       </section>
-
       <section className="arcade-section arcade-section--raised" id="games">
         <p className="arcade-eyebrow">02 / Arcade</p>
         <h2>One template. Many on-chain worlds.</h2>

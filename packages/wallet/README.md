@@ -5,6 +5,7 @@ The single platform boundary around the exact-pinned LaserEyes React/Core pair.
 ## Public API
 
 - `WalletProvider` composes LaserEyes without exposing wallet-specific adapters.
+- `@ador/wallet/registration` contributes LaserEyes through one explicit provider-registry entry.
 - `createLaserEyesSigner` adapts one connected LaserEyes client to the narrow signer contract used
   by Alkanes application services.
 - Wallet contracts normalize account, network, and signed-PSBT results without leaking broad vendor
@@ -32,8 +33,12 @@ when LaserEyes publishes a compatible release without that dependency.
 
 The resolved graph currently carries a high-severity Valibot advisory. LaserEyes React is
 pre-bundled, so module provenance cannot prove that its transitive implementation is absent from the
-client artifact. No provider or wallet-input flow is enabled by this qualification; resolving or
-explicitly accepting this advisory is a security gate before wallet authentication is exposed.
+client artifact. The adapter is registered, but no individual wallet or wallet-input flow is
+enabled by registration alone. The accepted beta exception is recorded in the advisory task record;
+wallet activation still requires conformance evidence.
+
+Removing the single entry from `configs/providers.ts` removes the adapter's capabilities without
+changing app routes, features, or wallet-specific conditionals.
 
 Network selection is provided by validated configuration. Platform engineering owns this package.
 Run its `typecheck`, `test:unit`, `test:integration`, or `test:coverage` scripts.

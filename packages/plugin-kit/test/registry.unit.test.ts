@@ -18,6 +18,7 @@ function registration(
       dependencies,
       requiredDecisionGates: [],
       requiredProviderCapabilities: [],
+      pages: [],
       routes: [],
     },
     load: async () => ({
@@ -96,6 +97,56 @@ describe("createFeatureRegistry", () => {
     await expect(
       createFeatureRegistry([capabilityDrift]).load("catalog"),
     ).rejects.toThrow("capabilities");
+  });
+
+  it("resolves only registered pages and rejects contribution drift", async () => {
+    const detachable: FeatureRegistration = {
+      ...registration("catalog"),
+      manifest: {
+        ...registration("catalog").manifest,
+        pages: [{ path: "/catalog" }],
+      },
+      load: async () => ({
+        capabilities: ["public-page"],
+        id: "catalog",
+        pages: [{ path: "/catalog", render: () => "catalog" }],
+        version: "1.0.0",
+      }),
+    };
+    const registry = createFeatureRegistry([detachable]);
+
+    await expect(registry.resolvePage("/catalog")).resolves.toMatchObject({
+      path: "/catalog",
+    });
+    await expect(
+      createFeatureRegistry([]).resolvePage("/catalog"),
+    ).resolves.toBeUndefined();
+
+    const routeDrift: FeatureRegistration = {
+      ...registration("catalog"),
+      manifest: {
+        ...registration("catalog").manifest,
+        routes: [
+          { method: "GET", operationId: "getCatalog", path: "/api/v1/catalog" },
+        ],
+      },
+    };
+    await expect(
+      createFeatureRegistry([routeDrift]).load("catalog"),
+    ).rejects.toThrow("routes");
+
+    const pageDrift = {
+      ...registration("catalog"),
+      load: async () => ({
+        capabilities: ["public-page"] as const,
+        id: "catalog",
+        pages: [{ path: "/catalog" as const, render: () => "catalog" }],
+        version: "1.0.0",
+      }),
+    };
+    await expect(
+      createFeatureRegistry([pageDrift]).load("catalog"),
+    ).rejects.toThrow("pages");
   });
 });
 

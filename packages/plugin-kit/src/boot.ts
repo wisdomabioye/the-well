@@ -72,6 +72,28 @@ function assertUniqueRoutes(features: readonly FeatureManifest[]): void {
   }
 }
 
+function assertUniquePages(features: readonly FeatureManifest[]): void {
+  const owners = new Map<string, string>();
+  for (const feature of features) {
+    if (
+      feature.pages.length > 0 &&
+      !feature.capabilities.includes("public-page")
+    ) {
+      throw new Error(
+        `Feature ${feature.id} contributes pages without the public-page capability.`,
+      );
+    }
+    for (const page of feature.pages) {
+      const owner = owners.get(page.path);
+      if (owner)
+        throw new Error(
+          `Page collision for ${page.path}: ${owner} and ${feature.id}.`,
+        );
+      owners.set(page.path, feature.id);
+    }
+  }
+}
+
 export function validatePlatformBoot(input: {
   readonly decisionCatalog: DecisionCatalog;
   readonly featureRegistry: FeatureRegistry;
@@ -86,6 +108,7 @@ export function validatePlatformBoot(input: {
   }
   assertProviderCapabilities(features, input.providerRegistry);
   assertUniqueRoutes(features);
+  assertUniquePages(features);
 
   return Object.freeze({
     features: Object.freeze([...features]),

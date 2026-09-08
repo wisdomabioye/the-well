@@ -12,6 +12,7 @@ const validManifest = {
   dependencies: [],
   requiredDecisionGates: [],
   requiredProviderCapabilities: [],
+  pages: [],
   routes: [],
 } as const;
 
@@ -29,6 +30,14 @@ describe("featureManifestSchema", () => {
     {
       ...validManifest,
       requiredProviderCapabilities: ["storage:write", "storage:write"],
+    },
+    {
+      ...validManifest,
+      pages: [{ path: "catalog" }],
+    },
+    {
+      ...validManifest,
+      pages: [{ path: "/catalog/" }],
     },
     {
       ...validManifest,

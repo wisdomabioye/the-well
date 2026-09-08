@@ -7,9 +7,10 @@ Explicit feature/provider registration, boot validation, dependency checking, an
 - `defineFeature(registration)` validates one manifest at its declaration boundary.
 - `createFeatureRegistry(registrations)` creates an immutable public registry interface.
 - `FeatureRegistration` and `FeatureEntrypoint` define the plugin boundary.
+- Feature entrypoints own pages and framework-neutral HTTP operations; apps use generic dispatchers.
 - `@ador/plugin-kit/providers` defines and creates explicit provider registries.
-- `@ador/plugin-kit/boot` validates decision gates, provider requirements, routes, and operation IDs
-  before serving.
+- `@ador/plugin-kit/boot` validates decision gates, provider requirements, pages, routes, and
+  operation IDs before serving.
 
 Applications register a feature by importing its registration and adding it to
 `configs/features.ts`. The registry never scans the filesystem or activates modules through import
@@ -24,6 +25,10 @@ side effects.
 - Required provider capabilities must exist at boot.
 - Required decision gates must be open before a feature or provider can register at boot.
 - Method/path pairs and operation IDs are globally unique; parameter names do not hide collisions.
+- Page paths are declared in manifests, globally unique at boot, and match loaded entrypoints.
+
+Removing the single registration entry from `configs/features.ts` removes that feature's pages and
+operations. Runtime filesystem discovery and feature-specific app routes are intentionally absent.
 
 ## Verification
 

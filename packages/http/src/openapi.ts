@@ -162,7 +162,9 @@ export function describeOpenApiOperation<Input, Output extends object>(
   };
 }
 
-type OpenApiOperationDescription = ReturnType<typeof describeOpenApiOperation>;
+export type OpenApiOperationDescription = ReturnType<
+  typeof describeOpenApiOperation
+>;
 
 export function createOpenApiDocument(input: {
   readonly operations: readonly OpenApiOperationDescription[];

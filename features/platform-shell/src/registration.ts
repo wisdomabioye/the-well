@@ -1,5 +1,4 @@
 import { defineFeature } from "@ador/plugin-kit";
-import { openApiDocumentRoute } from "@ador/http/openapi";
 import { platformStatusRoute } from "@ador/shared/platform";
 
 export const platformShellFeature = defineFeature({
@@ -10,10 +9,12 @@ export const platformShellFeature = defineFeature({
     dependencies: [],
     requiredDecisionGates: [],
     requiredProviderCapabilities: [],
-    routes: [openApiDocumentRoute, platformStatusRoute],
+    pages: [{ path: "/" }],
+    routes: [platformStatusRoute],
   },
-  load: async () =>
+  load: async (context) =>
     import("@ador/feature-platform-shell/entrypoint").then(
-      ({ platformShellEntrypoint }) => platformShellEntrypoint,
+      ({ createPlatformShellEntrypoint }) =>
+        createPlatformShellEntrypoint(context),
     ),
 });

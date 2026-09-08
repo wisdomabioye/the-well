@@ -4,15 +4,28 @@ import {
   type FeatureId,
   type FeatureManifest,
 } from "@ador/shared/features";
+import type { RegisteredHttpOperation } from "@ador/http/registered-operation";
+import type { ReactNode } from "react";
+
+export interface FeaturePageContribution {
+  readonly path: `/${string}`;
+  readonly render: () => ReactNode | Promise<ReactNode>;
+}
+
+export interface FeatureLoadContext {
+  readonly registeredFeatureCount: number;
+}
 
 export interface FeatureEntrypoint {
   readonly capabilities: readonly FeatureCapability[];
   readonly id: FeatureId;
   readonly version: string;
+  readonly operations?: readonly RegisteredHttpOperation[];
+  readonly pages?: readonly FeaturePageContribution[];
 }
 
 export interface FeatureRegistration {
-  readonly load: () => Promise<FeatureEntrypoint>;
+  readonly load: (context: FeatureLoadContext) => Promise<FeatureEntrypoint>;
   readonly manifest: FeatureManifest;
 }
 
@@ -20,6 +33,8 @@ export interface FeatureRegistry {
   has(id: FeatureId): boolean;
   list(): readonly FeatureManifest[];
   load(id: FeatureId): Promise<FeatureEntrypoint>;
+  loadAll(): Promise<readonly FeatureEntrypoint[]>;
+  resolvePage(path: string): Promise<FeaturePageContribution | undefined>;
 }
 
 function freezeManifest(manifest: FeatureManifest): FeatureManifest {
@@ -31,6 +46,9 @@ function freezeManifest(manifest: FeatureManifest): FeatureManifest {
       ...manifest.requiredProviderCapabilities,
     ]),
     requiredDecisionGates: Object.freeze([...manifest.requiredDecisionGates]),
+    pages: Object.freeze(
+      manifest.pages.map((page) => Object.freeze({ ...page })),
+    ),
     routes: Object.freeze(
       manifest.routes.map((route) => Object.freeze({ ...route })),
     ),
@@ -46,6 +64,26 @@ function assertSameCapabilities(
 
   if (normalize(expected) !== normalize(actual)) {
     throw new Error("Loaded feature capabilities do not match its manifest.");
+  }
+}
+
+function assertRuntimeContributions(
+  manifest: FeatureManifest,
+  entrypoint: FeatureEntrypoint,
+): void {
+  const expected = manifest.routes
+    .map(({ method, path }) => `${method} ${path}`)
+    .sort();
+  const actual = (entrypoint.operations ?? [])
+    .map(({ route }) => `${route.method} ${route.path}`)
+    .sort();
+  if (expected.join("\n") !== actual.join("\n")) {
+    throw new Error("Loaded feature routes do not match its manifest.");
+  }
+  const expectedPages = manifest.pages.map(({ path }) => path).sort();
+  const actualPages = (entrypoint.pages ?? []).map(({ path }) => path).sort();
+  if (expectedPages.join("\n") !== actualPages.join("\n")) {
+    throw new Error("Loaded feature pages do not match its manifest.");
   }
 }
 
@@ -100,25 +138,41 @@ export function createFeatureRegistry(
 
   assertDependencyGraph(registrations);
 
+  const load = async (id: FeatureId): Promise<FeatureEntrypoint> => {
+    const registration = registrations.get(id);
+    if (!registration) throw new Error(`Feature is not registered: ${id}.`);
+
+    const entrypoint = await registration.load({
+      registeredFeatureCount: registrations.size,
+    });
+    if (
+      entrypoint.id !== registration.manifest.id ||
+      entrypoint.version !== registration.manifest.version
+    ) {
+      throw new Error("Loaded feature identity does not match its manifest.");
+    }
+    assertSameCapabilities(
+      registration.manifest.capabilities,
+      entrypoint.capabilities,
+    );
+    assertRuntimeContributions(registration.manifest, entrypoint);
+    return entrypoint;
+  };
+
+  const loadAll = async (): Promise<readonly FeatureEntrypoint[]> => {
+    return Promise.all([...registrations.keys()].map(load));
+  };
+
   return {
     has: (id) => registrations.has(id),
     list: () => [...registrations.values()].map(({ manifest }) => manifest),
-    load: async (id) => {
-      const registration = registrations.get(id);
-      if (!registration) throw new Error(`Feature is not registered: ${id}.`);
-
-      const entrypoint = await registration.load();
-      if (
-        entrypoint.id !== registration.manifest.id ||
-        entrypoint.version !== registration.manifest.version
-      ) {
-        throw new Error("Loaded feature identity does not match its manifest.");
-      }
-      assertSameCapabilities(
-        registration.manifest.capabilities,
-        entrypoint.capabilities,
-      );
-      return entrypoint;
+    load,
+    loadAll,
+    resolvePage: async (path) => {
+      const entrypoints = await loadAll();
+      return entrypoints
+        .flatMap(({ pages = [] }) => pages)
+        .find((page) => page.path === path);
     },
   };
 }

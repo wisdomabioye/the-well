@@ -2,9 +2,13 @@
 
 Next.js delivery shell for The Well launchpad and game arcade.
 
-The application composes explicitly registered features from `configs/features.ts` and reusable
-arcade components from `@repo/ui`. It currently presents only honest foundation-stage controls;
-wallet and transaction actions remain gated.
+The application consumes the boot-validated composition from `configs/platform.ts`; feature and
+provider entries remain explicit in their respective config registries. It currently presents only
+honest foundation-stage controls; wallet and transaction actions remain gated.
+
+One optional page catch-all and one API catch-all translate framework requests into registry
+contributions. Adding or removing a feature does not require a Next.js page or route-handler edit.
+OpenAPI is assembled from the same registered operations.
 
 ## Commands
 

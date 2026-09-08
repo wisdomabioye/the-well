@@ -16,11 +16,14 @@
     "test:coverage": "vitest run --config vitest.config.ts --coverage"
   },
   "dependencies": {
-    "@ador/shared": "workspace:*"
+    "@ador/http": "workspace:*",
+    "@ador/shared": "workspace:*",
+    "react": "19.2.8"
   },
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",
     "@types/node": "^26.4.0",
+    "@types/react": "19.2.18",
     "@vitest/coverage-v8": "^4.1.11",
     "eslint": "10.9.1",
     "typescript": "5.9.3",

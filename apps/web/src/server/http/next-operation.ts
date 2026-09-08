@@ -1,18 +1,17 @@
 import { randomUUID } from "node:crypto";
 
-import { executeHttpOperation, type HttpOperation } from "@ador/http";
+import type { RegisteredHttpOperation } from "@ador/http/registered-operation";
 import {
   correlationHeaderName,
   idempotencyHeaderName,
 } from "@ador/shared/http";
 
-export async function executeNextOperation<Input, Output extends object>(
-  operation: HttpOperation<Input, Output>,
+export async function executeNextOperation(
+  operation: RegisteredHttpOperation,
   request: Request,
   rawInput: unknown,
 ): Promise<Response> {
-  const response = await executeHttpOperation(
-    operation,
+  const response = await operation.execute(
     {
       headers: {
         [correlationHeaderName]:

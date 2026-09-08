@@ -1,11 +1,15 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 
-import Home from "../src/app/page";
+import FeaturePage from "../src/app/[[...path]]/page";
 
 describe("home release state", () => {
-  it("does not claim that unimplemented transactions are available", () => {
-    const markup = renderToStaticMarkup(<Home />);
+  it("does not claim that unimplemented transactions are available", async () => {
+    const page = await FeaturePage({
+      params: Promise.resolve({}),
+      searchParams: Promise.resolve({}),
+    });
+    const markup = renderToStaticMarkup(page);
 
     expect(markup).toContain("No live sale is configured");
     expect(markup).toContain("GATED");

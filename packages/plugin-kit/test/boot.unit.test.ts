@@ -26,6 +26,7 @@ function feature(
       capabilities: ["api-routes"],
       dependencies: [],
       id,
+      pages: [],
       requiredDecisionGates: [],
       requiredProviderCapabilities,
       routes: [route],
@@ -133,6 +134,58 @@ describe("validatePlatformBoot", () => {
         providerRegistry: createProviderRegistry([]),
       }),
     ).toThrow("Operation ID collision for getCatalog");
+  });
+
+  it("rejects duplicate page ownership at boot", () => {
+    const first = feature("catalog", catalogRoute);
+    const second = feature("launches", {
+      method: "GET",
+      operationId: "getLaunches",
+      path: "/api/v1/launches",
+    });
+    expect(() =>
+      validatePlatformBoot({
+        decisionCatalog,
+        featureRegistry: createFeatureRegistry([
+          {
+            ...first,
+            manifest: {
+              ...first.manifest,
+              capabilities: ["api-routes", "public-page"],
+              pages: [{ path: "/browse" }],
+            },
+          },
+          {
+            ...second,
+            manifest: {
+              ...second.manifest,
+              capabilities: ["api-routes", "public-page"],
+              pages: [{ path: "/browse" }],
+            },
+          },
+        ]),
+        providerRegistry: createProviderRegistry([]),
+      }),
+    ).toThrow("Page collision for /browse");
+  });
+
+  it("rejects page contributions without the matching capability", () => {
+    const registration = feature("catalog", catalogRoute);
+    expect(() =>
+      validatePlatformBoot({
+        decisionCatalog,
+        featureRegistry: createFeatureRegistry([
+          {
+            ...registration,
+            manifest: {
+              ...registration.manifest,
+              pages: [{ path: "/browse" }],
+            },
+          },
+        ]),
+        providerRegistry: createProviderRegistry([]),
+      }),
+    ).toThrow("without the public-page capability");
   });
 
   it("treats differently named dynamic segments as the same route", () => {

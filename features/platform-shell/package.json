@@ -5,7 +5,7 @@
   "type": "module",
   "exports": {
     ".": "./src/registration.ts",
-    "./entrypoint": "./src/entrypoint.ts",
+    "./entrypoint": "./src/entrypoint.tsx",
     "./status": "./src/application/platform-status.ts"
   },
   "scripts": {
@@ -18,14 +18,19 @@
   "dependencies": {
     "@ador/http": "workspace:*",
     "@ador/plugin-kit": "workspace:*",
-    "@ador/shared": "workspace:*"
+    "@ador/shared": "workspace:*",
+    "@repo/ui": "workspace:*",
+    "react": "19.2.8"
   },
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",
     "@types/node": "^26.4.0",
+    "@types/react": "19.2.18",
+    "@types/react-dom": "19.2.3",
     "@vitest/coverage-v8": "^4.1.11",
     "eslint": "10.9.1",
     "fastify": "5.12.1",
+    "react-dom": "19.2.8",
     "typescript": "5.9.3",
     "vitest": "^4.1.11"
   }

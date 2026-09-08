@@ -11,12 +11,8 @@ describe("platform shell manifest", () => {
       dependencies: [],
       requiredDecisionGates: [],
       requiredProviderCapabilities: [],
+      pages: [{ path: "/" }],
       routes: [
-        {
-          method: "GET",
-          operationId: "getOpenApiDocument",
-          path: "/api/v1/openapi",
-        },
         {
           method: "GET",
           operationId: "getPlatformStatus",

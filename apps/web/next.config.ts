@@ -7,7 +7,13 @@ const nextConfig: NextConfig = {
   output: "standalone",
   outputFileTracingRoot: new URL("../..", import.meta.url).pathname,
   poweredByHeader: false,
-  transpilePackages: ["@repo/ui"],
+  transpilePackages: [
+    "@ador/feature-platform-shell",
+    "@ador/http",
+    "@ador/plugin-kit",
+    "@ador/shared",
+    "@repo/ui",
+  ],
   typedRoutes: true,
 };
 

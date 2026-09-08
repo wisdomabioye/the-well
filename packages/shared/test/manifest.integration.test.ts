@@ -11,6 +11,7 @@ describe("feature manifest serialization", () => {
       dependencies: ["platform-shell"],
       requiredProviderCapabilities: [],
       requiredDecisionGates: [],
+      pages: [],
       routes: [],
     });
 

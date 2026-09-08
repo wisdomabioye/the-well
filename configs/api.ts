@@ -1,17 +1,29 @@
-import { createPlatformStatusOperation } from "@ador/feature-platform-shell/status";
-import {
-  createOpenApiDocument,
-  describeOpenApiOperation,
-} from "@ador/http/openapi";
+import { createOpenApiDocument } from "@ador/http/openapi";
+import type { RegisteredHttpOperation } from "@ador/http/registered-operation";
 import { platformApiInfo } from "@ador/shared/platform";
 
-import { platformBoot } from "./platform";
+import { platformComposition } from "./platform";
 
-export const platformStatusOperation = createPlatformStatusOperation(
-  platformBoot.features.length,
-);
+async function operations(): Promise<readonly RegisteredHttpOperation[]> {
+  const entrypoints = await platformComposition.features.loadAll();
+  return entrypoints.flatMap(({ operations: contributed = [] }) => contributed);
+}
 
-export const openApiDocument = createOpenApiDocument({
-  ...platformApiInfo,
-  operations: [describeOpenApiOperation(platformStatusOperation)],
-});
+export async function resolveApiOperation(
+  method: string,
+  path: string,
+): Promise<RegisteredHttpOperation | undefined> {
+  const registered = await operations();
+  return (
+    registered.find(
+      ({ route }) => route.method === method && route.path === path,
+    ) ?? registered.find(({ route }) => route.path === path)
+  );
+}
+
+export async function getOpenApiDocument() {
+  return createOpenApiDocument({
+    ...platformApiInfo,
+    operations: (await operations()).map(({ describe }) => describe()),
+  });
+}

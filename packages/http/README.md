@@ -11,5 +11,9 @@ The `@ador/http/openapi` export derives an OpenAPI 3.1 document from those same 
 and declarations. This keeps request, response, header, and application-error documentation tied to
 the executable contract. The generated document contains no deployment domain or server URL.
 
+`@ador/http/registered-operation` erases operation-specific generics only after a typed operation
+is built. Registries can expose heterogeneous operations to Next.js today and a future Fastify
+adapter without duplicating schemas, handlers, or route metadata.
+
 The package owns no business logic, authentication policy, database access, or provider calls.
 Adapters and feature operations are verified independently through conformance tests.

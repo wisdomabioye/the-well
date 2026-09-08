@@ -6,7 +6,8 @@
     "@ador/feature-platform-shell": "workspace:*",
     "@ador/http": "workspace:*",
     "@ador/plugin-kit": "workspace:*",
-    "@ador/shared": "workspace:*"
+    "@ador/shared": "workspace:*",
+    "@ador/wallet": "workspace:*"
   },
   "scripts": {
     "build": "pnpm decision:check && pnpm contracts:typecheck && turbo run build",

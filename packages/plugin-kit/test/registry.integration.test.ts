@@ -13,6 +13,7 @@ describe("feature module loading", () => {
           dependencies: [],
           requiredDecisionGates: [],
           requiredProviderCapabilities: [],
+          pages: [],
           routes: [],
         },
         load: async () =>
