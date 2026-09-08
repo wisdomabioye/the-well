@@ -15,5 +15,7 @@ export const walletClientBundlePolicy = {
     "createKeystore",
   ],
   prohibitedModuleFragments: ["/esbuild@", "/vite-plugin-ssr@"],
-  requiredModuleFragments: ["/@omnisat+lasereyes-react@0.0.80"],
+  requiredModuleFragments: [
+    `/@omnisat+lasereyes-react@${qualifiedLaserEyes.reactVersion}`,
+  ],
 } as const;
