@@ -161,6 +161,49 @@ importers:
         specifier: ^4.1.11
         version: 4.1.11(@opentelemetry/api@1.9.1)(@types/node@26.4.0)(@vitest/coverage-v8@4.1.11)(jsdom@30.0.1(@noble/hashes@2.4.0))(vite@8.2.2(@types/node@26.4.0)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.13)(yaml@2.9.0))
 
+  packages/auth:
+    dependencies:
+      '@ador/chain':
+        specifier: workspace:*
+        version: link:../chain
+      '@ador/database':
+        specifier: workspace:*
+        version: link:../database
+      '@ador/shared':
+        specifier: workspace:*
+        version: link:../shared
+      bip322-js:
+        specifier: 4.0.0
+        version: 4.0.0(typescript@5.9.3)
+      drizzle-orm:
+        specifier: 1.0.0-rc.4
+        version: 1.0.0-rc.4(@opentelemetry/api@1.9.1)(@types/pg@8.23.1)(pg@8.23.0)(valibot@1.4.2(typescript@5.9.3))(zod@4.5.4)
+      zod:
+        specifier: 4.5.4
+        version: 4.5.4
+    devDependencies:
+      '@repo/eslint-config':
+        specifier: workspace:*
+        version: link:../eslint-config
+      '@repo/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      '@types/node':
+        specifier: 26.4.0
+        version: 26.4.0
+      '@vitest/coverage-v8':
+        specifier: 4.1.11
+        version: 4.1.11(vitest@4.1.11)
+      eslint:
+        specifier: 10.9.1
+        version: 10.9.1(jiti@2.7.0)
+      typescript:
+        specifier: 5.9.3
+        version: 5.9.3
+      vitest:
+        specifier: 4.1.11
+        version: 4.1.11(@opentelemetry/api@1.9.1)(@types/node@26.4.0)(@vitest/coverage-v8@4.1.11)(jsdom@30.0.1(@noble/hashes@2.4.0))(vite@8.2.2(@types/node@26.4.0)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.13)(yaml@2.9.0))
+
   packages/chain:
     dependencies:
       '@alkanes/ts-sdk':
@@ -225,6 +268,9 @@ importers:
       '@ador/jobs':
         specifier: workspace:*
         version: link:../jobs
+      '@ador/shared':
+        specifier: workspace:*
+        version: link:../shared
       drizzle-orm:
         specifier: 1.0.0-rc.4
         version: 1.0.0-rc.4(@opentelemetry/api@1.9.1)(@types/pg@8.23.1)(pg@8.23.0)(valibot@1.4.2(typescript@5.9.3))(zod@4.5.4)
@@ -529,6 +575,9 @@ importers:
       '@omnisat/lasereyes-react':
         specifier: 0.0.80
         version: 0.0.80(@popperjs/core@2.11.8)(@types/node@26.4.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(typescript@5.9.3)(vite@8.2.2(@types/node@26.4.0)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.13)(yaml@2.9.0))
+      nanostores:
+        specifier: 0.11.4
+        version: 0.11.4
       react:
         specifier: 19.2.8
         version: 19.2.8
@@ -1499,6 +1548,10 @@ packages:
     resolution: {integrity: sha512-gbKGcRUYIjA3/zCCNaWDciTMFI0dCkvou3TL8Zmy5Nc7sJ47a0jtOeZoTaMxkuqRo9cRhjOdZJXegxYE5FN/xw==}
     engines: {node: ^14.21.3 || >=16}
 
+  '@noble/curves@2.4.0':
+    resolution: {integrity: sha512-P4/62zrgfH33CneE3Dn4WhJVA22YUU0eR51wKIan4NVRvwsA0YnPTwWGpNbpuacSujmSFLvyzpyuR30+fbq2Ew==}
+    engines: {node: '>= 20.19.0'}
+
   '@noble/hashes@1.3.2':
     resolution: {integrity: sha512-MVC8EAQp7MvEcm30KWENFjgR+Mkmf+D189XJTkFIlwohU5hcBbn1ZkKq7KVTi2Hme3PMGF390DaL52beVrIihQ==}
     engines: {node: '>= 16'}
@@ -2235,6 +2288,10 @@ packages:
   bip322-js@2.0.0:
     resolution: {integrity: sha512-wyewxyCLl+wudZWiyvA46SaNQL41dVDJ+sx4HvD6zRXScHzAycwuKEMmbvr2qN+P/IIYArF4XVqlyZVnjutELQ==}
 
+  bip322-js@4.0.0:
+    resolution: {integrity: sha512-84DYLDeOSFG8M9S49DIimmoZjYGiAkbRBkthUd0G8PQ3Fh8+878JlKBkk7dNwiE4RM/FZqlFGxxG91K3wcWJ3Q==}
+    engines: {node: '>=20.19.0'}
+
   bip32@4.0.0:
     resolution: {integrity: sha512-aOGy88DDlVUhspIXJN+dVEtclhIsfAUppD43V0j40cPTld3pv/0X/MlrZSZ6jowIaQQzFwP8M6rFU2z2mVYjDQ==}
     engines: {node: '>=6.0.0'}
@@ -2782,6 +2839,10 @@ packages:
   ecpair@2.1.0:
     resolution: {integrity: sha512-cL/mh3MtJutFOvFc27GPZE2pWL3a3k4YvzUWEOvilnfZVlH3Jwgx/7d6tlD7/75tNk8TG2m+7Kgtz0SI1tWcqw==}
     engines: {node: '>=8.0.0'}
+
+  ecpair@3.0.2:
+    resolution: {integrity: sha512-q74N80jaqlSkOTx1Wki43KdQrGaz00CVHxU1fkTv4AJRCTu388uUJV+r4ZxaP1HKGLF7ygMic3lU7dt5o3r+Gg==}
+    engines: {node: '>=20.0.0'}
 
   ee-first@1.1.1:
     resolution: {integrity: sha512-WMwm9LhRUo+WUaRN+vRuETqG89IgZphVSNkdFgeb6sS/E4OrDIN7t48CAewSHXc6C8lefD8KKfr5vY61brQlow==}
@@ -5411,6 +5472,10 @@ snapshots:
     dependencies:
       '@noble/hashes': 1.8.0
 
+  '@noble/curves@2.4.0':
+    dependencies:
+      '@noble/hashes': 2.4.0
+
   '@noble/hashes@1.3.2': {}
 
   '@noble/hashes@1.6.0': {}
@@ -5610,7 +5675,7 @@ snapshots:
       bip32: 4.0.0
       bip322-js: 1.1.1
       bip39: 3.1.0
-      bitcoinjs-lib: 6.1.7
+      bitcoinjs-lib: 6.1.8
       bitcoinjs-message: 2.2.0
       buffer-reverse: 1.0.1
       cross-fetch: 3.2.0
@@ -6172,7 +6237,7 @@ snapshots:
   bip322-js@1.1.1:
     dependencies:
       '@bitcoinerlab/secp256k1': 1.2.0
-      bitcoinjs-lib: 6.1.7
+      bitcoinjs-lib: 6.1.8
       bitcoinjs-message: 2.2.0
       ecpair: 2.1.0
       elliptic: 6.6.1
@@ -6182,12 +6247,23 @@ snapshots:
   bip322-js@2.0.0:
     dependencies:
       '@bitcoinerlab/secp256k1': 1.2.0
-      bitcoinjs-lib: 6.1.7
+      bitcoinjs-lib: 6.1.8
       bitcoinjs-message: 2.2.0
       ecpair: 2.1.0
       elliptic: 6.6.1
       fast-sha256: 1.3.0
       secp256k1: 5.0.2
+
+  bip322-js@4.0.0(typescript@5.9.3):
+    dependencies:
+      '@bitcoinerlab/secp256k1': 1.2.0
+      '@noble/curves': 2.4.0
+      '@noble/hashes': 2.4.0
+      bitcoinjs-lib: 7.0.2(typescript@5.9.3)
+      ecpair: 3.0.2(typescript@5.9.3)
+      fast-sha256: 1.3.0
+    transitivePeerDependencies:
+      - typescript
 
   bip32@4.0.0:
     dependencies:
@@ -6728,6 +6804,14 @@ snapshots:
       randombytes: 2.1.0
       typeforce: 1.18.0
       wif: 2.0.6
+
+  ecpair@3.0.2(typescript@5.9.3):
+    dependencies:
+      uint8array-tools: 0.0.8
+      valibot: 1.4.2(typescript@5.9.3)
+      wif: 5.0.0
+    transitivePeerDependencies:
+      - typescript
 
   ee-first@1.1.1: {}
 

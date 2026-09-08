@@ -26,6 +26,16 @@ export {
 } from "./outbox/repository.ts";
 export { createOutboxDeliveryStore } from "./outbox/relay-store.ts";
 export {
+  authSessions,
+  authUsers,
+  walletChallenges,
+  walletIdentities,
+  type AuthSession,
+  type AuthUser,
+  type WalletChallenge,
+  type WalletIdentity,
+} from "./schema/auth.ts";
+export {
   outboxEvents,
   outboxStatus,
   type NewOutboxEvent,

@@ -21,6 +21,7 @@
     "@ador/plugin-kit": "workspace:*",
     "@omnisat/lasereyes-core": "0.0.85",
     "@omnisat/lasereyes-react": "0.0.80",
+    "nanostores": "0.11.4",
     "react": "19.2.8",
     "react-dom": "19.2.8"
   },

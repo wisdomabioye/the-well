@@ -8,6 +8,7 @@ Server-only, provider-neutral PostgreSQL infrastructure for the platform.
 - Standard `pg` pool construction with explicit TLS and timeout policy.
 - Drizzle client construction and explicit migration application.
 - The shared `ador` PostgreSQL schema boundary.
+- UUIDv7 auth user, wallet identity, challenge, and hashed-session tables.
 - Transactional outbox insertion, lease-based claiming, acknowledgement, retry, and exhausted
   failure transitions.
 
@@ -23,8 +24,9 @@ adapters as domain tables are accepted; it never exports database rows as HTTP c
   PostgreSQL row locks and expiring leases; stale workers cannot acknowledge another lease.
 - `DATABASE_MIGRATION_URL` falls back to `DATABASE_URL` only when it is absent or blank.
 - TLS, pool sizing, and timeouts come only from validated configuration.
-- Public identifier policy remains gated, so the baseline migration creates only the application
-  schema and no speculative durable tables.
+- Public identifiers are application-generated UUIDv7 values stored in native `uuid` columns.
+- Wallet challenges are single-use records; session storage contains hashes rather than bearer
+  tokens and separately models idle expiry, absolute expiry, and revocation.
 
 ## Verification
 

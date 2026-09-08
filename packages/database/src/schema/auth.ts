@@ -1,0 +1,170 @@
+import { sql } from "drizzle-orm";
+import { walletAuthActions } from "@ador/shared/auth";
+import {
+  boolean,
+  check,
+  index,
+  integer,
+  text,
+  timestamp,
+  uniqueIndex,
+  uuid,
+} from "drizzle-orm/pg-core";
+
+import { platformSchema } from "./platform.ts";
+
+function timestamps() {
+  return {
+    createdAt: timestamp("created_at", { mode: "date", withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp("updated_at", { mode: "date", withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  };
+}
+
+export const authUsers = platformSchema.table("auth_users", {
+  id: uuid("id").primaryKey(),
+  name: text("name").notNull(),
+  email: text("email").notNull().unique(),
+  emailVerified: boolean("email_verified").notNull().default(false),
+  image: text("image"),
+  ...timestamps(),
+});
+
+export const authSessions = platformSchema.table(
+  "auth_sessions",
+  {
+    id: uuid("id").primaryKey(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => authUsers.id, { onDelete: "cascade" }),
+    tokenHash: text("token_hash").notNull(),
+    idleExpiresAt: timestamp("idle_expires_at", {
+      mode: "date",
+      withTimezone: true,
+    }).notNull(),
+    absoluteExpiresAt: timestamp("absolute_expires_at", {
+      mode: "date",
+      withTimezone: true,
+    }).notNull(),
+    revokedAt: timestamp("revoked_at", { mode: "date", withTimezone: true }),
+    ipAddress: text("ip_address"),
+    userAgent: text("user_agent"),
+    ...timestamps(),
+  },
+  (table) => [
+    uniqueIndex("auth_sessions_token_hash_unique").on(table.tokenHash),
+    index("auth_sessions_user_id_idx").on(table.userId),
+    check(
+      "auth_sessions_idle_before_absolute",
+      sql`${table.idleExpiresAt} <= ${table.absoluteExpiresAt}`,
+    ),
+    check(
+      "auth_sessions_token_hash_sha256",
+      sql`${table.tokenHash} ~ '^[0-9a-f]{64}$'`,
+    ),
+  ],
+);
+
+export const walletIdentities = platformSchema.table(
+  "wallet_identities",
+  {
+    id: uuid("id").primaryKey(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => authUsers.id, { onDelete: "cascade" }),
+    network: text("network").notNull(),
+    address: text("address").notNull(),
+    scriptIdentity: text("script_identity").notNull(),
+    walletAdapter: text("wallet_adapter").notNull(),
+    ...timestamps(),
+  },
+  (table) => [
+    uniqueIndex("wallet_identities_network_script_unique").on(
+      table.network,
+      table.scriptIdentity,
+    ),
+    index("wallet_identities_user_id_idx").on(table.userId),
+    check(
+      "wallet_identities_network_supported",
+      sql`${table.network} in ('mainnet', 'signet')`,
+    ),
+    check(
+      "wallet_identities_adapter_nonempty",
+      sql`length(${table.walletAdapter}) > 0 and ${table.walletAdapter} = btrim(${table.walletAdapter})`,
+    ),
+  ],
+);
+
+export const authChallengeAction = platformSchema.enum(
+  "auth_challenge_action",
+  walletAuthActions,
+);
+
+export const walletChallenges = platformSchema.table(
+  "wallet_challenges",
+  {
+    id: uuid("id").primaryKey(),
+    expectedUserId: uuid("expected_user_id").references(() => authUsers.id, {
+      onDelete: "cascade",
+    }),
+    action: authChallengeAction("action").notNull(),
+    address: text("address").notNull(),
+    scriptIdentity: text("script_identity").notNull(),
+    network: text("network").notNull(),
+    domain: text("domain").notNull(),
+    origin: text("origin").notNull(),
+    uri: text("uri").notNull(),
+    walletAdapter: text("wallet_adapter").notNull(),
+    signatureScheme: text("signature_scheme").notNull(),
+    nonce: text("nonce").notNull(),
+    requestId: uuid("request_id").notNull(),
+    messageHash: text("message_hash").notNull(),
+    schemaVersion: integer("schema_version").notNull(),
+    attempts: integer("attempts").notNull().default(0),
+    issuedAt: timestamp("issued_at", {
+      mode: "date",
+      withTimezone: true,
+    }).notNull(),
+    expiresAt: timestamp("expires_at", {
+      mode: "date",
+      withTimezone: true,
+    }).notNull(),
+    consumedAt: timestamp("consumed_at", { mode: "date", withTimezone: true }),
+  },
+  (table) => [
+    uniqueIndex("wallet_challenges_nonce_unique").on(table.nonce),
+    check(
+      "wallet_challenges_attempts_nonnegative",
+      sql`${table.attempts} >= 0`,
+    ),
+    check(
+      "wallet_challenges_expiry_after_issue",
+      sql`${table.expiresAt} > ${table.issuedAt}`,
+    ),
+    check(
+      "wallet_challenges_network_supported",
+      sql`${table.network} in ('mainnet', 'signet')`,
+    ),
+    check(
+      "wallet_challenges_signature_scheme_supported",
+      sql`${table.signatureScheme} = 'bip322-simple'`,
+    ),
+    check(
+      "wallet_challenges_schema_version_supported",
+      sql`${table.schemaVersion} = 1`,
+    ),
+    check(
+      "wallet_challenges_message_hash_sha256",
+      sql`${table.messageHash} ~ '^[0-9a-f]{64}$'`,
+    ),
+    index("wallet_challenges_expiry_idx").on(table.expiresAt),
+  ],
+);
+
+export type AuthUser = typeof authUsers.$inferSelect;
+export type AuthSession = typeof authSessions.$inferSelect;
+export type WalletIdentity = typeof walletIdentities.$inferSelect;
+export type WalletChallenge = typeof walletChallenges.$inferSelect;

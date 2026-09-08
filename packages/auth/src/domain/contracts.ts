@@ -1,0 +1,80 @@
+import type {
+  BitcoinNetwork,
+  ValidatedBitcoinAddress,
+} from "@ador/chain/bitcoin";
+import type { UuidV7 } from "@ador/shared/identifiers";
+import { walletAuthActions, type WalletAuthAction } from "@ador/shared/auth";
+
+export { walletAuthActions, type WalletAuthAction };
+
+export const WALLET_CHALLENGE_SCHEMA_VERSION = 1;
+export const BIP322_SIGNATURE_SCHEME = "bip322-simple";
+
+export interface WalletChallengeMessage {
+  readonly action: WalletAuthAction;
+  readonly address: ValidatedBitcoinAddress;
+  readonly challengeId: UuidV7;
+  readonly domain: string;
+  readonly expiresAt: Date;
+  readonly issuedAt: Date;
+  readonly network: BitcoinNetwork;
+  readonly nonce: string;
+  readonly origin: string;
+  readonly requestId: UuidV7;
+  readonly schemaVersion: typeof WALLET_CHALLENGE_SCHEMA_VERSION;
+  readonly signatureScheme: typeof BIP322_SIGNATURE_SCHEME;
+  readonly uri: string;
+}
+
+export interface IssuedWalletChallenge {
+  readonly challengeId: UuidV7;
+  readonly expiresAt: Date;
+  readonly message: string;
+  readonly signatureScheme: typeof BIP322_SIGNATURE_SCHEME;
+}
+
+export type WalletAuthenticationFailure =
+  | "challenge-expired"
+  | "challenge-invalid"
+  | "challenge-replayed"
+  | "identity-conflict"
+  | "signature-invalid";
+
+export type WalletAuthenticationResult =
+  | {
+      readonly ok: true;
+      readonly sessionToken: string;
+      readonly userId: UuidV7;
+    }
+  | { readonly ok: false; readonly code: WalletAuthenticationFailure };
+
+export interface WalletSignatureVerifier {
+  verify(input: {
+    readonly address: ValidatedBitcoinAddress;
+    readonly message: string;
+    readonly signature: string;
+  }): boolean;
+}
+
+export interface WalletAuthPolicy {
+  readonly challengeLifetimeMs: number;
+  readonly maximumVerificationAttempts: number;
+  readonly sessionAbsoluteLifetimeMs: number;
+  readonly sessionIdleLifetimeMs: number;
+}
+
+export interface IssueWalletChallengeInput {
+  readonly action: WalletAuthAction;
+  readonly address: string;
+  readonly expectedUserId?: UuidV7;
+  readonly network: BitcoinNetwork;
+  readonly origin: string;
+  readonly requestId: UuidV7;
+  readonly uri: string;
+  readonly walletAdapter: string;
+}
+
+export interface VerifyWalletChallengeInput {
+  readonly challengeId: UuidV7;
+  readonly signature: string;
+}

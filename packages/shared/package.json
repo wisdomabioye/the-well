@@ -5,9 +5,11 @@
   "type": "module",
   "exports": {
     "./allowlists": "./src/allowlists/index.ts",
+    "./auth": "./src/auth/wallet-auth-action.ts",
     "./decisions": "./src/decisions/gates.ts",
     "./features": "./src/features/manifest.ts",
     "./http": "./src/http/index.ts",
+    "./identifiers": "./src/identifiers/uuid-v7.ts",
     "./platform": "./src/platform/status.ts",
     "./providers": "./src/features/manifest.ts"
   },

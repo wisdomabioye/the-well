@@ -1,8 +1,8 @@
 # Wallet authentication — task record
 
-Status: in progress
+Status: completed
 
-Baseline: `e203a99bef55250abed152b5f971484bf321a8b3`
+Baseline: `3812314`
 Branch: `feat/database-foundation`
 Started: 2026-09-08
 
@@ -13,8 +13,9 @@ Started: 2026-09-08
 - Wallet authentication follows ADR-005: canonical server-issued challenges, strict BIP-322
   verification, atomic single-use consumption, and revocable PostgreSQL-backed sessions behind an
   auth-owned public contract.
-- Better Auth and Bitcoin signature libraries remain boundary adapters. Feature and route code must
-  not import their internals.
+- Authentication frameworks and Bitcoin signature libraries remain boundary adapters. Feature and
+  route code must not import their internals; Better Auth is not permitted to own wallet sessions
+  while its bearer-token persistence contract conflicts with ADR-005.
 
 ## Done means
 
@@ -45,7 +46,7 @@ Started: 2026-09-08
 - An existing wallet identity is linked to a second user or recreated under a non-canonical form.
 - Session tokens or complete signed challenges leak through durable storage or error responses.
 
-## Active implementation gate
+## Resolved implementation gate
 
 The dependency qualification found two incompatible default paths:
 
@@ -54,9 +55,26 @@ The dependency qualification found two incompatible default paths:
 - Better Auth's standard session schema persists the bearer session token, while ADR-005 requires
   persisting only a cryptographic hash.
 
-The proposed maintainable path is an auth-owned Better Auth database adapter over the repository's
-current Drizzle schema. It must hash session-token lookup values at the adapter boundary without
-persisting the bearer value. This preserves both accepted invariants but is a material custom
-security boundary requiring full Better Auth adapter conformance tests. Work is paused for explicit
-approval of that boundary rather than silently weakening the ADR or changing the repository-wide
-Drizzle version.
+The approved path is an auth-owned database adapter over the repository's current Drizzle schema.
+It hashes session-token lookup values at the adapter boundary and never persists the bearer value.
+During implementation, Better Auth's generic adapter contract was proven unsuitable for this
+boundary: list/revoke flows expose or reuse its stored `token` field as a bearer credential. Better
+Auth may still host other authentication mechanisms later, but wallet sessions use the detachable
+auth-owned port so a database hash can never authenticate as a cookie. The user approved the custom
+boundary on 2026-09-08; neither the hash-only invariant nor the repository-wide Drizzle version is
+weakened.
+
+## Verification and convergence
+
+- Full repository format, environment, lint, policy, typecheck, unit, integration, Rust contract,
+  coverage, migration-drift, build, and Playwright gates passed on 2026-09-08.
+- Auth coverage: 93.28% statements, 92.68% branches, 100% functions, and 96.72% lines. Merged
+  repository line and branch coverage remained above 90%.
+- Real-PostgreSQL tests prove atomic rollback, single-use consumption, identity ownership, hashed
+  persistence, retry limits, and idle/absolute session expiry. All 36 Playwright cases passed.
+- Mutation checks intentionally broke challenge binding, policy limits, signature verification,
+  step-up ownership, rollback, expiry boundaries, UUID versioning, action vocabulary, outcome
+  mapping, and database constraints; the corresponding tests failed for the intended reasons.
+- Deep review converged after three final clean passes: line-by-line data-flow audit, contract/schema
+  drift comparison, and adversarial dynamic verification. Earlier findings were repaired and reset
+  the streak before these passes.
