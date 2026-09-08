@@ -25,6 +25,7 @@ side effects.
 - Required provider capabilities must exist at boot.
 - Required decision gates must be open before a feature or provider can register at boot.
 - Method/path pairs and operation IDs are globally unique; parameter names do not hide collisions.
+- Routes are static until the shared HTTP contract defines typed path-parameter validation.
 - Page paths are declared in manifests, globally unique at boot, and match loaded entrypoints.
 
 Removing the single registration entry from `configs/features.ts` removes that feature's pages and

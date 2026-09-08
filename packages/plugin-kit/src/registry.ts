@@ -72,10 +72,10 @@ function assertRuntimeContributions(
   entrypoint: FeatureEntrypoint,
 ): void {
   const expected = manifest.routes
-    .map(({ method, path }) => `${method} ${path}`)
+    .map(({ method, operationId, path }) => `${method} ${path} ${operationId}`)
     .sort();
   const actual = (entrypoint.operations ?? [])
-    .map(({ route }) => `${route.method} ${route.path}`)
+    .map(({ route }) => `${route.method} ${route.path} ${route.operationId}`)
     .sort();
   if (expected.join("\n") !== actual.join("\n")) {
     throw new Error("Loaded feature routes do not match its manifest.");

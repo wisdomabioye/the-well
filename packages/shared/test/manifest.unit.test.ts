@@ -49,6 +49,16 @@ describe("featureManifestSchema", () => {
         },
       ],
     },
+    {
+      ...validManifest,
+      routes: [
+        {
+          method: "GET",
+          operationId: "getCatalogItem",
+          path: "/api/v1/catalog/:itemId",
+        },
+      ],
+    },
     { ...validManifest, extra: true },
   ])("rejects an invalid manifest", (manifest) => {
     expect(() => featureManifestSchema.parse(manifest)).toThrow();

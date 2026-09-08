@@ -50,6 +50,15 @@ removed without scattered application edits.
    feature-owned DOM unit suite now covers the renderer.
 5. Workspace-source imports used compiled suffixes that Turbopack could not resolve. TypeScript
    source extensions are enabled explicitly and lazy imports use their resolvable source path.
+6. Feature and web coverage inventories omitted the moved TSX UI and generic Next.js adapters. Both
+   inventories now include the actual source patterns and have mutation-proven configuration tests.
+7. Runtime contribution validation ignored operation IDs, allowing the manifest, collision checks,
+   and generated OpenAPI contract to drift. Complete method, path, and operation-ID identity is now
+   enforced.
+8. The infrastructure-owned OpenAPI route could be shadowed by a feature that still passed boot.
+   Infrastructure routes are now explicit reserved boot inputs and collision-tested.
+9. Manifests accepted dynamic routes although generic dispatch had no path-parameter contract. Route
+   declarations now reject parameters until typed parsing and validation are designed explicitly.
 
 ## Review evidence
 

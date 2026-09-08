@@ -136,6 +136,31 @@ describe("validatePlatformBoot", () => {
     ).toThrow("Operation ID collision for getCatalog");
   });
 
+  it("rejects a feature route shadowed by platform infrastructure", () => {
+    expect(() =>
+      validatePlatformBoot({
+        decisionCatalog,
+        featureRegistry: createFeatureRegistry([
+          feature("catalog", {
+            method: "GET",
+            operationId: "featureOpenApi",
+            path: "/api/v1/openapi",
+          }),
+        ]),
+        providerRegistry: createProviderRegistry([]),
+        reservedRoutes: [
+          {
+            method: "GET",
+            operationId: "getOpenApiDocument",
+            path: "/api/v1/openapi",
+          },
+        ],
+      }),
+    ).toThrow(
+      "Route collision for GET /api/v1/openapi: platform infrastructure and catalog",
+    );
+  });
+
   it("rejects duplicate page ownership at boot", () => {
     const first = feature("catalog", catalogRoute);
     const second = feature("launches", {
@@ -186,26 +211,6 @@ describe("validatePlatformBoot", () => {
         providerRegistry: createProviderRegistry([]),
       }),
     ).toThrow("without the public-page capability");
-  });
-
-  it("treats differently named dynamic segments as the same route", () => {
-    expect(() =>
-      validatePlatformBoot({
-        decisionCatalog,
-        featureRegistry: createFeatureRegistry([
-          feature("catalog", {
-            ...catalogRoute,
-            path: "/api/v1/catalog/:itemId",
-          }),
-          feature("launches", {
-            method: "GET",
-            operationId: "getLaunch",
-            path: "/api/v1/catalog/:slug",
-          }),
-        ]),
-        providerRegistry: createProviderRegistry([]),
-      }),
-    ).toThrow("Route collision for GET /api/v1/catalog/:parameter");
   });
 
   const gatedCatalog = {

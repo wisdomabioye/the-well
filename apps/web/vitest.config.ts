@@ -11,9 +11,8 @@ const coverage = {
     statements: 90.01,
   },
   include: [
-    "src/app/page.tsx",
-    "src/app/api/v1/platform/route.ts",
-    "src/app/api/v1/openapi/route.ts",
+    "src/app/**/page.tsx",
+    "src/app/api/v1/**/route.ts",
     "src/server/http/next-operation.ts",
   ],
 };

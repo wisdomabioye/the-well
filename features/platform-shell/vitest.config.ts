@@ -9,7 +9,7 @@ const coverage = {
     lines: 90.01,
     statements: 90.01,
   },
-  include: ["src/**/*.ts"],
+  include: ["src/**/*.{ts,tsx}"],
 };
 
 export default defineConfig({

@@ -27,7 +27,7 @@ export const routeContributionSchema = z
     path: z
       .string()
       .regex(
-        /^\/api\/v1\/(?:[a-z0-9]+(?:-[a-z0-9]+)*|:[a-z][A-Za-z0-9]*)(?:\/(?:[a-z0-9]+(?:-[a-z0-9]+)*|:[a-z][A-Za-z0-9]*))*$/,
+        /^\/api\/v1\/[a-z0-9]+(?:-[a-z0-9]+)*(?:\/[a-z0-9]+(?:-[a-z0-9]+)*)*$/,
       ),
   })
   .strict()

@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
 
+import { registerHttpOperation } from "@ador/http/registered-operation";
+import {
+  platformStatusInputSchema,
+  platformStatusSchema,
+} from "@ador/shared/platform";
+
 import {
   createFeatureRegistry,
   defineFeature,
@@ -133,6 +139,45 @@ describe("createFeatureRegistry", () => {
     };
     await expect(
       createFeatureRegistry([routeDrift]).load("catalog"),
+    ).rejects.toThrow("routes");
+
+    const operationIdDrift: FeatureRegistration = {
+      ...registration("catalog"),
+      manifest: {
+        ...registration("catalog").manifest,
+        routes: [
+          { method: "GET", operationId: "getCatalog", path: "/api/v1/catalog" },
+        ],
+      },
+      load: async () => ({
+        capabilities: ["public-page"],
+        id: "catalog",
+        operations: [
+          registerHttpOperation({
+            applicationErrors: [],
+            execute: async () => ({
+              ok: true,
+              value: {
+                apiVersion: "v1",
+                registeredFeatures: 1,
+                stage: "foundation",
+                transactionalActions: "gated",
+              },
+            }),
+            idempotency: "none",
+            input: "none",
+            inputSchema: platformStatusInputSchema,
+            method: "GET",
+            operationId: "getDifferentCatalog",
+            outputSchema: platformStatusSchema,
+            path: "/api/v1/catalog",
+          }),
+        ],
+        version: "1.0.0",
+      }),
+    };
+    await expect(
+      createFeatureRegistry([operationIdDrift]).load("catalog"),
     ).rejects.toThrow("routes");
 
     const pageDrift = {

@@ -1,4 +1,4 @@
-import type { FeatureManifest } from "@ador/shared/features";
+import type { FeatureManifest, RouteContribution } from "@ador/shared/features";
 import {
   assertDecisionGateOpen,
   type DecisionCatalog,
@@ -35,9 +35,17 @@ function assertDecisionGates(
   for (const gateId of gateIds) assertDecisionGateOpen(decisions, gateId);
 }
 
-function assertUniqueRoutes(features: readonly FeatureManifest[]): void {
+function assertUniqueRoutes(
+  features: readonly FeatureManifest[],
+  reservedRoutes: readonly RouteContribution[],
+): void {
   const routeOwners = new Map<string, string>();
   const operationOwners = new Map<string, string>();
+
+  for (const route of reservedRoutes) {
+    routeOwners.set(`${route.method} ${route.path}`, "platform infrastructure");
+    operationOwners.set(route.operationId, "platform infrastructure");
+  }
 
   for (const feature of features) {
     if (
@@ -98,6 +106,7 @@ export function validatePlatformBoot(input: {
   readonly decisionCatalog: DecisionCatalog;
   readonly featureRegistry: FeatureRegistry;
   readonly providerRegistry: ProviderRegistry;
+  readonly reservedRoutes?: readonly RouteContribution[];
 }): PlatformBootManifest {
   const features = input.featureRegistry.list();
   for (const feature of features) {
@@ -107,7 +116,7 @@ export function validatePlatformBoot(input: {
     assertDecisionGates(provider.requiredDecisionGates, input.decisionCatalog);
   }
   assertProviderCapabilities(features, input.providerRegistry);
-  assertUniqueRoutes(features);
+  assertUniqueRoutes(features, input.reservedRoutes ?? []);
   assertUniquePages(features);
 
   return Object.freeze({
