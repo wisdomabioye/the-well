@@ -1,6 +1,9 @@
 import { describe, expect, it } from "vitest";
 
-import { parseEnvironment } from "../src/env/runtime.ts";
+import {
+  parseAuthSessionEnvironment,
+  parseEnvironment,
+} from "../src/env/runtime.ts";
 
 const validEnvironment = {
   APP_ENV: "test",
@@ -24,4 +27,21 @@ describe("parseEnvironment", () => {
       parseEnvironment({ ...validEnvironment, APP_ENV: "staging" }),
     ).toThrow();
   });
+});
+
+describe("parseAuthSessionEnvironment", () => {
+  it("parses a positive session idle timeout", () => {
+    expect(
+      parseAuthSessionEnvironment({ AUTH_SESSION_IDLE_TIMEOUT_MS: "60000" }),
+    ).toEqual({ AUTH_SESSION_IDLE_TIMEOUT_MS: 60_000 });
+  });
+
+  it.each([undefined, "0", "invalid"])(
+    "rejects invalid timeout %s",
+    (value) => {
+      expect(() =>
+        parseAuthSessionEnvironment({ AUTH_SESSION_IDLE_TIMEOUT_MS: value }),
+      ).toThrow();
+    },
+  );
 });

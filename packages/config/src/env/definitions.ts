@@ -86,6 +86,14 @@ export const environmentDefinitions = [
     required: true,
     secret: false,
   },
+  {
+    key: "AUTH_SESSION_IDLE_TIMEOUT_MS",
+    description:
+      "Sliding idle lifetime for authenticated platform sessions in milliseconds.",
+    exposure: "server",
+    required: true,
+    secret: false,
+  },
 ] as const satisfies readonly EnvironmentDefinition[];
 
 export const environmentKeys = environmentDefinitions.map(({ key }) => key);

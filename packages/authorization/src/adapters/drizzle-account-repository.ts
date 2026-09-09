@@ -2,8 +2,8 @@ import {
   accountAuditEvents,
   organizationMemberships,
   organizations,
-  type DatabaseClient,
-} from "@ador/database";
+} from "@ador/database/schema/accounts";
+import type { DatabaseClient } from "@ador/database/connection";
 import { createUuidV7 } from "@ador/shared/identifiers";
 import { and, eq, inArray, ne, sql } from "drizzle-orm";
 

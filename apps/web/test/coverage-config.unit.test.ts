@@ -11,6 +11,8 @@ describe("web coverage inventory", () => {
             "src/app/**/page.tsx",
             "src/app/api/v1/**/route.ts",
             "src/server/http/next-operation.ts",
+            "src/server/auth/page-access.ts",
+            "src/server/auth/runtime.ts",
           ],
         },
       },

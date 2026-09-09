@@ -3,13 +3,22 @@ import {
   type FeatureCapability,
   type FeatureId,
   type FeatureManifest,
+  type PageAccessRequirement,
 } from "@ador/shared/features";
+import type { UuidV7 } from "@ador/shared/identifiers";
 import type { RegisteredHttpOperation } from "@ador/http/registered-operation";
 import type { ReactNode } from "react";
 
 export interface FeaturePageContribution {
+  readonly access: PageAccessRequirement;
   readonly path: `/${string}`;
-  readonly render: () => ReactNode | Promise<ReactNode>;
+  readonly render: (
+    context: PageRenderContext,
+  ) => ReactNode | Promise<ReactNode>;
+}
+
+export interface PageRenderContext {
+  readonly actorUserId: UuidV7 | null;
 }
 
 export interface FeatureLoadContext {
@@ -80,8 +89,15 @@ function assertRuntimeContributions(
   if (expected.join("\n") !== actual.join("\n")) {
     throw new Error("Loaded feature routes do not match its manifest.");
   }
-  const expectedPages = manifest.pages.map(({ path }) => path).sort();
-  const actualPages = (entrypoint.pages ?? []).map(({ path }) => path).sort();
+  const describePage = ({
+    access,
+    path,
+  }: {
+    readonly access: PageAccessRequirement;
+    readonly path: string;
+  }) => `${path} ${JSON.stringify(access)}`;
+  const expectedPages = manifest.pages.map(describePage).sort();
+  const actualPages = (entrypoint.pages ?? []).map(describePage).sort();
   if (expectedPages.join("\n") !== actualPages.join("\n")) {
     throw new Error("Loaded feature pages do not match its manifest.");
   }

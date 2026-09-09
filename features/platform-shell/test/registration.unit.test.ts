@@ -11,7 +11,7 @@ describe("platform shell manifest", () => {
       dependencies: [],
       requiredDecisionGates: [],
       requiredProviderCapabilities: [],
-      pages: [{ path: "/" }],
+      pages: [{ access: { kind: "public" }, path: "/" }],
       routes: [
         {
           method: "GET",

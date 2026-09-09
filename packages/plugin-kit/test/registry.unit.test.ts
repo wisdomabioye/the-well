@@ -110,12 +110,18 @@ describe("createFeatureRegistry", () => {
       ...registration("catalog"),
       manifest: {
         ...registration("catalog").manifest,
-        pages: [{ path: "/catalog" }],
+        pages: [{ access: { kind: "public" }, path: "/catalog" }],
       },
       load: async () => ({
         capabilities: ["public-page"],
         id: "catalog",
-        pages: [{ path: "/catalog", render: () => "catalog" }],
+        pages: [
+          {
+            access: { kind: "public" },
+            path: "/catalog",
+            render: () => "catalog",
+          },
+        ],
         version: "1.0.0",
       }),
     };
@@ -185,7 +191,13 @@ describe("createFeatureRegistry", () => {
       load: async () => ({
         capabilities: ["public-page"] as const,
         id: "catalog",
-        pages: [{ path: "/catalog" as const, render: () => "catalog" }],
+        pages: [
+          {
+            access: { kind: "public" as const },
+            path: "/catalog" as const,
+            render: () => "catalog",
+          },
+        ],
         version: "1.0.0",
       }),
     };

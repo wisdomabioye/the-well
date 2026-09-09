@@ -102,7 +102,7 @@ test("serves the versioned platform contract with correlated truthful state", as
   expect(response.headers()["x-correlation-id"]).toBe(correlationId);
   expect(await response.json()).toEqual({
     apiVersion: "v1",
-    registeredFeatures: 1,
+    registeredFeatures: 2,
     stage: "foundation",
     transactionalActions: "gated",
   });
@@ -122,4 +122,44 @@ test("serves a generated domain-independent OpenAPI contract", async ({
     },
   });
   expect(JSON.stringify(await response.json())).not.toContain('"servers"');
+});
+
+test("keeps authenticated route content closed without a session", async ({
+  page,
+}) => {
+  for (const path of ["/account", "/studio", "/admin"]) {
+    await page.goto(path);
+    await expect(page.getByText("Authentication required")).toBeVisible();
+    await expect(page.getByText(/session active/i)).toHaveCount(0);
+    await expect(page.locator(".app-shell")).toBeVisible();
+  }
+});
+
+test("keeps protected-route state accessible and keyboard navigable", async ({
+  page,
+}) => {
+  await page.goto("/studio");
+  await page.keyboard.press("Tab");
+  await expect(
+    page.getByRole("link", { name: "Skip to main content" }),
+  ).toBeFocused();
+  const results = await new AxeBuilder({ page })
+    .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"])
+    .analyze();
+  expect(results.violations).toEqual([]);
+});
+
+test("honors reduced motion on protected-route states", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/studio");
+  await expect(page.locator(".scanlines")).toHaveCSS("display", "none");
+});
+
+test("matches the protected-route visual baseline", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/studio");
+  await expect(page).toHaveScreenshot("protected-route.png", {
+    animations: "disabled",
+    fullPage: true,
+  });
 });

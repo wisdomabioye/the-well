@@ -177,7 +177,7 @@ describe("validatePlatformBoot", () => {
             manifest: {
               ...first.manifest,
               capabilities: ["api-routes", "public-page"],
-              pages: [{ path: "/browse" }],
+              pages: [{ access: { kind: "public" }, path: "/browse" }],
             },
           },
           {
@@ -185,7 +185,7 @@ describe("validatePlatformBoot", () => {
             manifest: {
               ...second.manifest,
               capabilities: ["api-routes", "public-page"],
-              pages: [{ path: "/browse" }],
+              pages: [{ access: { kind: "public" }, path: "/browse" }],
             },
           },
         ]),
@@ -204,13 +204,33 @@ describe("validatePlatformBoot", () => {
             ...registration,
             manifest: {
               ...registration.manifest,
-              pages: [{ path: "/browse" }],
+              pages: [{ access: { kind: "public" }, path: "/browse" }],
             },
           },
         ]),
         providerRegistry: createProviderRegistry([]),
       }),
     ).toThrow("without the public-page capability");
+  });
+
+  it("requires authenticated-page capability for protected pages", () => {
+    const registration = feature("catalog", catalogRoute);
+    expect(() =>
+      validatePlatformBoot({
+        decisionCatalog,
+        featureRegistry: createFeatureRegistry([
+          {
+            ...registration,
+            manifest: {
+              ...registration.manifest,
+              capabilities: ["api-routes", "public-page"],
+              pages: [{ access: { kind: "authenticated" }, path: "/account" }],
+            },
+          },
+        ]),
+        providerRegistry: createProviderRegistry([]),
+      }),
+    ).toThrow("without the authenticated-page capability");
   });
 
   const gatedCatalog = {

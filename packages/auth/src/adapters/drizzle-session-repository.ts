@@ -1,4 +1,5 @@
-import { authSessions, type DatabaseClient } from "@ador/database";
+import type { DatabaseClient } from "@ador/database/connection";
+import { authSessions } from "@ador/database/schema/auth";
 import { uuidV7Schema } from "@ador/shared/identifiers";
 import { and, eq, gt, isNull, sql } from "drizzle-orm";
 

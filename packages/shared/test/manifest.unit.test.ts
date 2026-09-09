@@ -33,11 +33,20 @@ describe("featureManifestSchema", () => {
     },
     {
       ...validManifest,
-      pages: [{ path: "catalog" }],
+      pages: [{ access: { kind: "public" }, path: "catalog" }],
     },
     {
       ...validManifest,
-      pages: [{ path: "/catalog/" }],
+      pages: [{ access: { kind: "public" }, path: "/catalog/" }],
+    },
+    {
+      ...validManifest,
+      pages: [
+        {
+          access: { kind: "platform", capability: "invalid" },
+          path: "/catalog",
+        },
+      ],
     },
     {
       ...validManifest,

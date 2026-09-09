@@ -18,8 +18,8 @@ describe("PlatformHome", () => {
         registeredFeatureCount: 3,
       }).pages ?? [];
     expect(page?.path).toBe("/");
-    expect(renderToStaticMarkup(await page?.render())).toContain(
-      "3 REGISTERED",
-    );
+    expect(
+      renderToStaticMarkup(await page?.render({ actorUserId: null })),
+    ).toContain("3 REGISTERED");
   });
 });

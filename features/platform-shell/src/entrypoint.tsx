@@ -18,6 +18,7 @@ export function createPlatformShellEntrypoint(
     ],
     pages: [
       {
+        access: { kind: "public" },
         path: "/",
         render: () => (
           <PlatformHome registeredFeatures={context.registeredFeatureCount} />

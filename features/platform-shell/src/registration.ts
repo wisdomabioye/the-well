@@ -9,7 +9,7 @@ export const platformShellFeature = defineFeature({
     dependencies: [],
     requiredDecisionGates: [],
     requiredProviderCapabilities: [],
-    pages: [{ path: "/" }],
+    pages: [{ access: { kind: "public" }, path: "/" }],
     routes: [platformStatusRoute],
   },
   load: async (context) =>

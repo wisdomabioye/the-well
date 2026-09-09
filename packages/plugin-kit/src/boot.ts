@@ -83,15 +83,14 @@ function assertUniqueRoutes(
 function assertUniquePages(features: readonly FeatureManifest[]): void {
   const owners = new Map<string, string>();
   for (const feature of features) {
-    if (
-      feature.pages.length > 0 &&
-      !feature.capabilities.includes("public-page")
-    ) {
-      throw new Error(
-        `Feature ${feature.id} contributes pages without the public-page capability.`,
-      );
-    }
     for (const page of feature.pages) {
+      const requiredCapability =
+        page.access.kind === "public" ? "public-page" : "authenticated-page";
+      if (!feature.capabilities.includes(requiredCapability)) {
+        throw new Error(
+          `Feature ${feature.id} contributes a ${page.access.kind} page without the ${requiredCapability} capability.`,
+        );
+      }
       const owner = owners.get(page.path);
       if (owner)
         throw new Error(

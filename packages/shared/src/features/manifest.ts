@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 import { httpMethodSchema } from "@ador/shared/http";
+import { capabilitySchema } from "@ador/shared/accounts";
 
 const featureIdPattern = /^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$/;
 const semanticVersionPattern = /^\d+\.\d+\.\d+$/;
@@ -10,6 +11,7 @@ export const featureCapabilitySchema = z.enum([
   "api-routes",
   "navigation",
   "public-page",
+  "authenticated-page",
   "scheduled-workflows",
   "studio-page",
 ]);
@@ -35,6 +37,16 @@ export const routeContributionSchema = z
 
 export const pageContributionSchema = z
   .object({
+    access: z.discriminatedUnion("kind", [
+      z.object({ kind: z.literal("public") }).strict(),
+      z.object({ kind: z.literal("authenticated") }).strict(),
+      z
+        .object({
+          capability: capabilitySchema,
+          kind: z.literal("platform"),
+        })
+        .strict(),
+    ]),
     path: z
       .string()
       .regex(
@@ -96,4 +108,5 @@ export type ProviderCapability = z.infer<typeof providerCapabilitySchema>;
 export type ProviderId = z.infer<typeof providerIdSchema>;
 export type ProviderManifest = z.infer<typeof providerManifestSchema>;
 export type PageContribution = z.infer<typeof pageContributionSchema>;
+export type PageAccessRequirement = PageContribution["access"];
 export type RouteContribution = z.infer<typeof routeContributionSchema>;

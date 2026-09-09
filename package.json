@@ -3,6 +3,7 @@
   "private": true,
   "type": "module",
   "dependencies": {
+    "@ador/feature-accounts": "workspace:*",
     "@ador/feature-platform-shell": "workspace:*",
     "@ador/http": "workspace:*",
     "@ador/plugin-kit": "workspace:*",

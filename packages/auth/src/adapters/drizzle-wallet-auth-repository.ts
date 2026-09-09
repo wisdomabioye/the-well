@@ -3,10 +3,12 @@ import {
   authUsers,
   walletChallenges,
   walletIdentities,
-  type DatabaseClient,
-  type DatabaseTransaction,
   type WalletChallenge,
-} from "@ador/database";
+} from "@ador/database/schema/auth";
+import type {
+  DatabaseClient,
+  DatabaseTransaction,
+} from "@ador/database/connection";
 import {
   validateBitcoinAddress,
   type BitcoinNetwork,
