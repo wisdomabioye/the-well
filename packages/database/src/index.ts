@@ -26,6 +26,16 @@ export {
 } from "./outbox/repository.ts";
 export { createOutboxDeliveryStore } from "./outbox/relay-store.ts";
 export {
+  accountAuditEvents,
+  organizationMemberships,
+  organizations,
+  platformRoleAssignments,
+  type AccountAuditEvent,
+  type Organization,
+  type OrganizationMembership,
+  type PlatformRoleAssignment,
+} from "./schema/accounts.ts";
+export {
   authSessions,
   authUsers,
   walletChallenges,

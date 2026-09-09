@@ -1,0 +1,2 @@
+ALTER TABLE "ador"."account_audit_events" ADD COLUMN "reason_code" text NOT NULL;--> statement-breakpoint
+ALTER TABLE "ador"."account_audit_events" ADD CONSTRAINT "account_audit_events_reason_code_valid" CHECK ("reason_code" ~ '^[a-z][a-z0-9-]{2,63}$');
