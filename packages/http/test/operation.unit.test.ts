@@ -21,6 +21,7 @@ function operation(
   idempotency: "none" | "required" = "none",
 ): TestOperation {
   return {
+    access: { kind: "public" },
     applicationErrors: ["conflict"],
     execute,
     idempotency,
@@ -35,6 +36,7 @@ function operation(
 
 function request(overrides: object = {}) {
   return {
+    actorUserId: null,
     headers: {},
     method: "POST",
     rawInput: { name: "Ada" },
@@ -71,6 +73,7 @@ describe("executeHttpOperation", () => {
     expect(execute).toHaveBeenCalledWith(
       { name: "Ada" },
       {
+        actorUserId: null,
         correlationId: suppliedCorrelationId,
         idempotencyKey: "request-key-1234",
       },

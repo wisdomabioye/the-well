@@ -1,6 +1,19 @@
 {
   "$schema": "https://turborepo.dev/schema.json",
-  "globalEnv": ["CI", "E2E_BASE_URL"],
+  "globalEnv": [
+    "CI",
+    "APP_ENV",
+    "AUTH_SESSION_IDLE_TIMEOUT_MS",
+    "DATABASE_ACQUIRE_TIMEOUT_MS",
+    "DATABASE_IDLE_TIMEOUT_MS",
+    "DATABASE_POOL_MAX",
+    "DATABASE_SSL_MODE",
+    "DATABASE_STATEMENT_TIMEOUT_MS",
+    "DATABASE_URL",
+    "E2E_BASE_URL",
+    "NEXT_PUBLIC_APP_NAME",
+    "PUBLIC_BASE_URL"
+  ],
   "ui": "tui",
   "tasks": {
     "build": {

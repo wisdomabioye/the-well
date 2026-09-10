@@ -13,7 +13,7 @@ describe("home release state", () => {
 
     expect(markup).toContain("No live sale is configured");
     expect(markup).toContain("GATED");
-    expect(markup).toContain("2 REGISTERED");
+    expect(markup).toContain("3 REGISTERED");
     expect(markup).not.toContain("Connect wallet");
     expect(markup).not.toContain("Buy now");
   });

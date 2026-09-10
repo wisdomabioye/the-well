@@ -10,6 +10,7 @@ import {
 import { z } from "zod";
 
 import type { HttpOperation } from "./operation.js";
+import { platformSessionCookieName } from "@ador/shared/auth";
 
 type JsonSchema = z.core.JSONSchema.JSONSchema;
 type OpenApiMethod = "delete" | "get" | "patch" | "post" | "put";
@@ -32,6 +33,7 @@ interface OpenApiOperationObject {
     readonly required: true;
   };
   readonly responses: Readonly<Record<string, OpenApiResponse>>;
+  readonly security: readonly Readonly<Record<string, readonly string[]>>[];
 }
 
 type OpenApiPathItem = Partial<
@@ -39,6 +41,18 @@ type OpenApiPathItem = Partial<
 >;
 
 export interface OpenApiDocument {
+  readonly components: {
+    readonly securitySchemes: Readonly<
+      Record<
+        "cookieSession",
+        {
+          readonly in: "cookie";
+          readonly name: string;
+          readonly type: "apiKey";
+        }
+      >
+    >;
+  };
   readonly info: { readonly title: string; readonly version: string };
   readonly openapi: "3.1.0";
   readonly paths: Readonly<Record<string, OpenApiPathItem>>;
@@ -151,6 +165,8 @@ export function describeOpenApiOperation<Input, Output extends object>(
     operation: {
       operationId: operation.operationId,
       parameters,
+      security:
+        operation.access.kind === "public" ? [] : [{ cookieSession: [] }],
       ...(operation.input === "json"
         ? {
             requestBody: jsonRequestBody(z.toJSONSchema(operation.inputSchema)),
@@ -185,6 +201,15 @@ export function createOpenApiDocument(input: {
     };
   }
   return {
+    components: {
+      securitySchemes: {
+        cookieSession: {
+          in: "cookie",
+          name: platformSessionCookieName,
+          type: "apiKey",
+        },
+      },
+    },
     info: { title: input.title, version: input.version },
     openapi: "3.1.0",
     paths,

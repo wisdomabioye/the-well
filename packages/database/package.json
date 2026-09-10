@@ -8,6 +8,7 @@
     "./connection": "./src/connection/index.ts",
     "./schema/accounts": "./src/schema/accounts.ts",
     "./schema/auth": "./src/schema/auth.ts",
+    "./schema/creator-admission": "./src/schema/creator-admission.ts",
     "./schema/platform": "./src/schema/platform.ts"
   },
   "scripts": {

@@ -11,6 +11,7 @@ export function createPlatformStatusOperation(
   registeredFeatures: number,
 ): HttpOperation<PlatformStatusInput, PlatformStatus> {
   return {
+    access: { kind: "public" },
     applicationErrors: [],
     execute: async () => ({
       ok: true,

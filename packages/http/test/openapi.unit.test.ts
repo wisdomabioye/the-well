@@ -11,8 +11,10 @@ function operation(
   method: "DELETE" | "GET" | "PATCH" | "POST" | "PUT" = "POST",
   input: "json" | "none" = "json",
   idempotency: "none" | "required" = "required",
+  access: { readonly kind: "public" | "authenticated" } = { kind: "public" },
 ): HttpOperation<{ name?: string }, { accepted: boolean }> {
   return {
+    access,
     applicationErrors: [
       "conflict",
       "forbidden",
@@ -96,7 +98,22 @@ describe("OpenAPI generation", () => {
         "/api/v1/fixture": { get: { operationId: "createFixture" } },
       },
     });
+    expect(document.components.securitySchemes.cookieSession).toMatchObject({
+      in: "cookie",
+      type: "apiKey",
+    });
     expect(JSON.stringify(document)).not.toContain("localhost");
+  });
+
+  it("documents cookie security only for protected operations", () => {
+    expect(
+      describeOpenApiOperation(
+        operation("GET", "none", "none", { kind: "authenticated" }),
+      ).operation.security,
+    ).toEqual([{ cookieSession: [] }]);
+    expect(describeOpenApiOperation(operation()).operation.security).toEqual(
+      [],
+    );
   });
 
   it("rejects duplicate method and path descriptions", () => {

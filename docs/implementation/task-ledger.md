@@ -3,7 +3,7 @@
 Status: active  
 Milestone: Launchpad Beta  
 Canonical status source: this file  
-Last synchronized: 2026-09-09
+Last synchronized: 2026-09-10
 
 This ledger tracks every implementation task in the eight-week Launchpad Beta milestone. The
 milestone defines scope and acceptance criteria; this file records execution status. Task records
@@ -26,8 +26,8 @@ same change. Never infer completion from a commit, passing test, or partially de
 
 | Field                   | Value                                                               |
 | ----------------------- | ------------------------------------------------------------------- |
-| Active task             | None — `W2-06` completed; next task has not started                 |
-| Next ordered task       | `W2-07` Creator admission                                           |
+| Active task             | None — `W2-07` completed and no later task has started              |
+| Next ordered task       | `W2-08` Public product route families                               |
 | Current milestone phase | Week 2 — Authentication, authorization, and shell                   |
 | Parallel security gate  | `SEC-D15-04` remains blocked                                        |
 | Mainnet                 | Outside this milestone and blocked by a separate readiness decision |
@@ -62,7 +62,7 @@ stored in `references/task-list.md`.
 | W2-04 | Implement canonical wallet authentication and hash-only sessions                        | completed | `references/wallet-authentication-task-record.md`                                                      |
 | W2-05 | Implement UUIDv7 accounts, organizations, memberships, roles, and authorization         | completed | `references/authorization-accounts-task-record.md`                                                     |
 | W2-06 | Implement the authenticated account, studio, and admin route family                     | completed | `references/authenticated-routes-task-record.md`                                                       |
-| W2-07 | Implement curated creator admission and minimal staff approval                          | pending   | Depends on W2-05 and W2-06                                                                             |
+| W2-07 | Implement curated creator admission and minimal staff approval                          | completed | `references/creator-admission-task-record.md`; deep review converged after exhaustive mutation proof   |
 | W2-08 | Implement the remaining public product route families                                   | pending   | Depends on W2-06                                                                                       |
 | W2-09 | Add authenticated passkey linking with conflict and final-method protections            | pending   | Depends on W2-04 and a qualified passkey adapter decision                                              |
 | W2-10 | Complete supported-wallet device/browser conformance and enable only passing providers  | pending   | Depends on W2-01; physical/provider evidence required                                                  |

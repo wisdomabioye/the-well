@@ -4,7 +4,8 @@
   "private": true,
   "type": "module",
   "exports": {
-    "./env": "./src/env/runtime.ts"
+    "./env": "./src/env/runtime.ts",
+    "./authorization": "./src/policy/authorization.ts"
   },
   "scripts": {
     "env:check": "node --experimental-strip-types src/env/check-files.ts",
@@ -15,6 +16,7 @@
     "test:coverage": "vitest run --config vitest.config.ts --coverage"
   },
   "dependencies": {
+    "@ador/shared": "workspace:*",
     "zod": "^4.5.4"
   },
   "devDependencies": {

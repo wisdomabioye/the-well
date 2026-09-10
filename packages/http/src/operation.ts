@@ -13,8 +13,11 @@ import {
   type IdempotencyPolicy,
 } from "@ador/shared/http";
 import type { z } from "zod";
+import type { PageAccessRequirement } from "@ador/shared/features";
+import type { UuidV7 } from "@ador/shared/identifiers";
 
 export interface HttpOperationContext {
+  readonly actorUserId: UuidV7 | null;
   readonly correlationId: CorrelationId;
   readonly idempotencyKey?: IdempotencyKey;
 }
@@ -28,6 +31,7 @@ export type HttpOperationResult<Output extends object> =
     };
 
 export interface HttpOperation<Input, Output extends object> {
+  readonly access: PageAccessRequirement;
   readonly applicationErrors: readonly ApplicationHttpErrorCode[];
   readonly execute: (
     input: Input,
@@ -43,6 +47,7 @@ export interface HttpOperation<Input, Output extends object> {
 }
 
 export interface HttpAdapterRequest {
+  readonly actorUserId: UuidV7 | null;
   readonly headers: Readonly<Record<string, string | undefined>>;
   readonly method: string;
   /** Untrusted adapter input is validated immediately by the operation schema. */
@@ -150,6 +155,7 @@ export async function executeHttpOperation<Input, Output extends object>(
 
   try {
     const result = await operation.execute(inputResult.data, {
+      actorUserId: request.actorUserId,
       correlationId,
       ...(idempotencyResult.success
         ? { idempotencyKey: idempotencyResult.data }

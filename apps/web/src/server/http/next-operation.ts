@@ -10,9 +10,11 @@ export async function executeNextOperation(
   operation: RegisteredHttpOperation,
   request: Request,
   rawInput: unknown,
+  actorUserId: import("@ador/shared/identifiers").UuidV7 | null,
 ): Promise<Response> {
   const response = await operation.execute(
     {
+      actorUserId,
       headers: {
         [correlationHeaderName]:
           request.headers.get(correlationHeaderName) ?? undefined,

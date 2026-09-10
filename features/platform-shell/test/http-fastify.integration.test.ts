@@ -18,6 +18,7 @@ application.get(operation.path, async (request, reply) => {
   const response = await executeHttpOperation(
     operation,
     {
+      actorUserId: null,
       headers: {
         [correlationHeaderName]: suppliedCorrelationId,
       },

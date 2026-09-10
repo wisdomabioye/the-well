@@ -7,10 +7,13 @@ export type UuidV7 = string & { readonly [uuidV7Brand]: true };
 const uuidV7Pattern =
   /^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/u;
 
-export const uuidV7Schema = z
+export const uuidV7TextSchema = z
   .string()
-  .regex(uuidV7Pattern, "Expected UUIDv7")
-  .transform((value) => value as UuidV7);
+  .regex(uuidV7Pattern, "Expected UUIDv7");
+
+export const uuidV7Schema = uuidV7TextSchema.transform(
+  (value) => value as UuidV7,
+);
 
 function hexadecimal(bytes: Uint8Array): string {
   return Array.from(bytes, (byte) => byte.toString(16).padStart(2, "0")).join(

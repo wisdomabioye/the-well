@@ -8,6 +8,7 @@ const correlationId = "018f47f0-7b5c-7c5b-8d56-43d493d8f001";
 describe("registerHttpOperation", () => {
   it("preserves route, documentation, and typed execution", async () => {
     const operation = registerHttpOperation({
+      access: { kind: "public" },
       applicationErrors: [],
       execute: async ({ name }: { readonly name: string }) => ({
         ok: true as const,
@@ -30,7 +31,12 @@ describe("registerHttpOperation", () => {
     expect(operation.describe().operation.operationId).toBe("createGreeting");
     await expect(
       operation.execute(
-        { headers: {}, method: "POST", rawInput: { name: "Ada" } },
+        {
+          actorUserId: null,
+          headers: {},
+          method: "POST",
+          rawInput: { name: "Ada" },
+        },
         { createCorrelationId: () => correlationId },
       ),
     ).resolves.toMatchObject({ body: { greeting: "Hello Ada" }, status: 200 });
@@ -38,6 +44,7 @@ describe("registerHttpOperation", () => {
 
   it("retains boundary validation after erasing operation generics", async () => {
     const operation = registerHttpOperation({
+      access: { kind: "public" },
       applicationErrors: [],
       execute: async () => ({ ok: true as const, value: { accepted: true } }),
       idempotency: "none",
@@ -51,7 +58,7 @@ describe("registerHttpOperation", () => {
 
     await expect(
       operation.execute(
-        { headers: {}, method: "POST", rawInput: {} },
+        { actorUserId: null, headers: {}, method: "POST", rawInput: {} },
         { createCorrelationId: () => correlationId },
       ),
     ).resolves.toMatchObject({

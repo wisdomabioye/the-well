@@ -23,13 +23,13 @@ const surfaces = {
     eyebrow: "Platform operations",
     status: "Staff capability verified",
     title: "Admin console",
-    body: "Platform operations are available to an active staff assignment. Review workflows arrive with creator admission.",
+    body: "Platform operations are available to an active staff assignment. Creator admission reviews are separated from broader platform authority.",
   },
   studio: {
     eyebrow: "Private workspace",
     status: "Authenticated access",
     title: "Creator studio",
-    body: "Private draft tools will come online with creator admission. This session does not imply creator approval or publication authority.",
+    body: "Private creator-application drafts are available here. This session does not imply creator approval or publication authority.",
   },
 } as const;
 
@@ -63,6 +63,15 @@ export function AccountSurface({
             <ArcadeButton href="/studio" tone="yellow">
               Studio
             </ArcadeButton>
+            {surface === "studio" ? (
+              <ArcadeButton href="/studio/creator-application" tone="cyan">
+                Creator application
+              </ArcadeButton>
+            ) : surface === "admin" ? (
+              <ArcadeButton href="/admin/creator-applications" tone="yellow">
+                Creator reviews
+              </ArcadeButton>
+            ) : null}
           </div>
         </ArcadePanel>
       </section>

@@ -1,14 +1,20 @@
 import { randomUUID } from "node:crypto";
+import { cookies } from "next/headers";
 
 import {
   correlationHeaderName,
   httpErrorEnvelopeSchema,
 } from "@ador/shared/http";
+import { platformSessionCookieName } from "@ador/shared/auth";
+import type { UuidV7 } from "@ador/shared/identifiers";
+import { parseEnvironment } from "@repo/config/env";
 import {
   getOpenApiDocument,
   resolveApiOperation,
 } from "../../../../../../../configs/api";
 import { executeNextOperation } from "../../../../server/http/next-operation";
+import { resolvePageAccess } from "../../../../server/auth/page-access";
+import { getPageAccessDependencies } from "../../../../server/auth/runtime";
 
 export const runtime = "nodejs";
 
@@ -36,9 +42,67 @@ async function handle(request: Request, context: RouteContext) {
       { headers: { [correlationHeaderName]: correlationId }, status: 404 },
     );
   }
+  let actorUserId: UuidV7 | null = null;
+  if (operation.access.kind !== "public") {
+    const requestOrigin = request.headers.get("origin");
+    const canonicalOrigin = new URL(
+      parseEnvironment(process.env).PUBLIC_BASE_URL,
+    ).origin;
+    if (request.method !== "GET" && requestOrigin !== canonicalOrigin) {
+      const correlationId = randomUUID();
+      return Response.json(
+        httpErrorEnvelopeSchema.parse({
+          error: {
+            code: "forbidden",
+            correlationId,
+            message: "Mutation origin is not permitted.",
+          },
+        }),
+        {
+          headers: { [correlationHeaderName]: correlationId },
+          status: 403,
+        },
+      );
+    }
+    const token = (await cookies()).get(platformSessionCookieName)?.value;
+    const access = await resolvePageAccess(
+      operation.access,
+      token,
+      getPageAccessDependencies,
+    );
+    if (access.kind !== "allowed") {
+      const correlationId = randomUUID();
+      const code =
+        access.kind === "forbidden"
+          ? "forbidden"
+          : access.kind === "unavailable"
+            ? "internal_error"
+            : "unauthorized";
+      return Response.json(
+        httpErrorEnvelopeSchema.parse({
+          error: {
+            code,
+            correlationId,
+            message:
+              code === "forbidden"
+                ? "The actor lacks the required capability."
+                : code === "unauthorized"
+                  ? "Authentication is required."
+                  : "Authentication service unavailable.",
+          },
+        }),
+        {
+          headers: { [correlationHeaderName]: correlationId },
+          status:
+            code === "forbidden" ? 403 : code === "unauthorized" ? 401 : 503,
+        },
+      );
+    }
+    actorUserId = access.actorUserId;
+  }
   const rawInput: unknown =
     request.method === "GET" ? {} : await request.json().catch(() => undefined);
-  return executeNextOperation(operation, request, rawInput);
+  return executeNextOperation(operation, request, rawInput, actorUserId);
 }
 
 export {

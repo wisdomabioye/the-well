@@ -62,6 +62,52 @@
 .status-lamp--unavailable {
   color: var(--arcade-red);
 }
+.arcade-form {
+  display: grid;
+  gap: var(--arcade-space-medium);
+  margin-top: var(--arcade-space-medium);
+}
+.arcade-form label {
+  display: grid;
+  gap: var(--arcade-space-small);
+  color: var(--arcade-text-muted);
+  font-family: var(--arcade-font-pixel);
+  font-size: 0.625rem;
+  line-height: 1.5;
+  text-transform: uppercase;
+}
+.arcade-form label:has(input[type="checkbox"]) {
+  grid-template-columns: auto 1fr;
+  align-items: start;
+}
+.arcade-form input:not([type="checkbox"]),
+.arcade-form select,
+.arcade-form textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 0.125rem solid var(--arcade-text-muted);
+  border-radius: var(--arcade-radius-small);
+  background: var(--arcade-surface-recessed);
+  color: var(--arcade-text);
+  font: inherit;
+  line-height: 1.6;
+  text-transform: none;
+}
+.arcade-form textarea {
+  min-height: 7rem;
+  resize: vertical;
+}
+.arcade-form input:focus-visible,
+.arcade-form select:focus-visible,
+.arcade-form textarea:focus-visible {
+  border-color: var(--arcade-cyan);
+  outline: 0.1875rem solid var(--arcade-cyan);
+  outline-offset: 0.1875rem;
+}
+.arcade-form button:disabled {
+  cursor: wait;
+  opacity: 0.6;
+}
 @media (prefers-reduced-motion: reduce) {
   .arcade-button {
     transition: none;

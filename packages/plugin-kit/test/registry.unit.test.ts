@@ -160,6 +160,7 @@ describe("createFeatureRegistry", () => {
         id: "catalog",
         operations: [
           registerHttpOperation({
+            access: { kind: "public" },
             applicationErrors: [],
             execute: async () => ({
               ok: true,

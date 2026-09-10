@@ -1,0 +1,3 @@
+ALTER TABLE "ador"."creator_admission_events" ADD CONSTRAINT "creator_events_policy_version_nonempty" CHECK (length("policy_version") > 0 and "policy_version" = btrim("policy_version"));--> statement-breakpoint
+ALTER TABLE "ador"."creator_application_snapshots" ADD CONSTRAINT "creator_snapshots_schema_version_supported" CHECK ("schema_version" = 1);--> statement-breakpoint
+ALTER TABLE "ador"."creator_application_snapshots" ADD CONSTRAINT "creator_snapshots_verified_email_nonempty" CHECK (length("verified_contact_email") > 0 and "verified_contact_email" = btrim("verified_contact_email"));

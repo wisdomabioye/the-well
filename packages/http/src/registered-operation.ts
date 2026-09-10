@@ -1,4 +1,5 @@
 import type { RouteContribution } from "@ador/shared/features";
+import type { PageAccessRequirement } from "@ador/shared/features";
 
 import {
   executeHttpOperation,
@@ -14,6 +15,7 @@ export type OpenApiOperationDescription = ReturnType<
 >;
 
 export interface RegisteredHttpOperation {
+  readonly access: PageAccessRequirement;
   readonly describe: () => OpenApiOperationDescription;
   readonly execute: (
     request: HttpAdapterRequest,
@@ -26,6 +28,7 @@ export function registerHttpOperation<Input, Output extends object>(
   operation: HttpOperation<Input, Output>,
 ): RegisteredHttpOperation {
   return Object.freeze({
+    access: operation.access,
     describe: () => describeOpenApiOperation(operation),
     execute: (
       request: HttpAdapterRequest,

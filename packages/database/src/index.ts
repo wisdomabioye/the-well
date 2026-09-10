@@ -46,6 +46,14 @@ export {
   type WalletIdentity,
 } from "./schema/auth.ts";
 export {
+  creatorAdmissionEvents,
+  creatorApplications,
+  creatorApplicationSnapshots,
+  type CreatorAdmissionEvent,
+  type CreatorApplication,
+  type CreatorApplicationSnapshot,
+} from "./schema/creator-admission.ts";
+export {
   outboxEvents,
   outboxStatus,
   type NewOutboxEvent,

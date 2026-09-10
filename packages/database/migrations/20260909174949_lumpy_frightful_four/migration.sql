@@ -1,0 +1,2 @@
+ALTER TABLE "ador"."creator_admission_events" ADD COLUMN "request_fingerprint" text NOT NULL;--> statement-breakpoint
+ALTER TABLE "ador"."creator_admission_events" ADD CONSTRAINT "creator_events_request_fingerprint_sha256" CHECK ("request_fingerprint" ~ '^[0-9a-f]{64}$');

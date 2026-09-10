@@ -102,7 +102,7 @@ test("serves the versioned platform contract with correlated truthful state", as
   expect(response.headers()["x-correlation-id"]).toBe(correlationId);
   expect(await response.json()).toEqual({
     apiVersion: "v1",
-    registeredFeatures: 2,
+    registeredFeatures: 3,
     stage: "foundation",
     transactionalActions: "gated",
   });
@@ -127,7 +127,13 @@ test("serves a generated domain-independent OpenAPI contract", async ({
 test("keeps authenticated route content closed without a session", async ({
   page,
 }) => {
-  for (const path of ["/account", "/studio", "/admin"]) {
+  for (const path of [
+    "/account",
+    "/studio",
+    "/admin",
+    "/studio/creator-application",
+    "/admin/creator-applications",
+  ]) {
     await page.goto(path);
     await expect(page.getByText("Authentication required")).toBeVisible();
     await expect(page.getByText(/session active/i)).toHaveCount(0);

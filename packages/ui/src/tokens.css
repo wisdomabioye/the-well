@@ -23,5 +23,7 @@
   --arcade-radius-medium: 0.625rem;
   --arcade-border-width: 0.1875rem;
   --arcade-shadow-depth: 0.375rem;
+  --arcade-space-small: 0.5rem;
+  --arcade-space-medium: 1rem;
   --arcade-transition-fast: 120ms ease;
 }

@@ -4,11 +4,13 @@
   "type": "module",
   "dependencies": {
     "@ador/feature-accounts": "workspace:*",
+    "@ador/feature-creator-admission": "workspace:*",
     "@ador/feature-platform-shell": "workspace:*",
     "@ador/http": "workspace:*",
     "@ador/plugin-kit": "workspace:*",
     "@ador/shared": "workspace:*",
-    "@ador/wallet": "workspace:*"
+    "@ador/wallet": "workspace:*",
+    "@repo/config": "workspace:*"
   },
   "scripts": {
     "build": "pnpm decision:check && pnpm contracts:typecheck && turbo run build",
