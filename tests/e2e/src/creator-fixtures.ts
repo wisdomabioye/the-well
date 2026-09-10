@@ -10,4 +10,9 @@ export const creatorE2EFixtures = {
     sessionToken: "e2e-reviewer-session-token",
     userId: "01994b10-0000-7000-8000-000000000003",
   },
+  passkeyUser: {
+    sessionId: "01994b10-0000-7000-8000-000000000008",
+    sessionToken: "e2e-passkey-session-token",
+    userId: "01994b10-0000-7000-8000-000000000007",
+  },
 } as const;

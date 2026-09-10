@@ -22,6 +22,7 @@ const application = {
   state: "draft" as const,
 };
 const context = {
+  actorSession: null,
   actorUserId,
   correlationId: createUuidV7(),
   idempotencyKey: "operation-request-0001",
@@ -92,7 +93,11 @@ describe("creator application operations", () => {
         context,
       ),
     ).resolves.toMatchObject({ ok: true });
-    expect(storage.saveDraft).toHaveBeenCalledWith(application.draft, context);
+    expect(storage.saveDraft).toHaveBeenCalledWith(application.draft, {
+      actorUserId,
+      correlationId: context.correlationId,
+      idempotencyKey: context.idempotencyKey,
+    });
     for (const [kind, error] of [
       ["conflict", "conflict"],
       ["contact-unverified", "forbidden"],
@@ -133,6 +138,7 @@ describe("creator application operations", () => {
       ),
     ).resolves.toMatchObject({ error: "unauthorized" });
     const incomplete = {
+      actorSession: null,
       actorUserId,
       correlationId: context.correlationId,
     };

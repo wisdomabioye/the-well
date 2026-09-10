@@ -18,9 +18,10 @@
     "test:coverage": "node --experimental-strip-types ../database/test/support/run-postgres.ts coverage"
   },
   "dependencies": {
-    "@ador/database": "workspace:*",
     "@ador/chain": "workspace:*",
+    "@ador/database": "workspace:*",
     "@ador/shared": "workspace:*",
+    "@simplewebauthn/server": "14.0.1",
     "bip322-js": "4.0.0",
     "drizzle-orm": "1.0.0-rc.4",
     "zod": "4.5.4"

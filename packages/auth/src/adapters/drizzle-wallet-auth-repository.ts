@@ -238,6 +238,7 @@ export function createDrizzleWalletAuthRepository(
           .where(eq(walletChallenges.id, challenge.challengeId));
         await transaction.insert(authSessions).values({
           absoluteExpiresAt: session.absoluteExpiresAt,
+          authenticatedAt: session.authenticatedAt,
           id: createUuidV7(),
           idleExpiresAt: session.idleExpiresAt,
           tokenHash: session.tokenHash,

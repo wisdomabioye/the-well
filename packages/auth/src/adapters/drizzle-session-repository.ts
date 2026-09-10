@@ -29,6 +29,7 @@ export function createDrizzleSessionRepository(
       if (session === undefined) return null;
       return {
         absoluteExpiresAt: session.absoluteExpiresAt,
+        authenticatedAt: session.authenticatedAt,
         idleExpiresAt: session.idleExpiresAt,
         sessionId: uuidV7Schema.parse(session.id),
         userId: uuidV7Schema.parse(session.userId),

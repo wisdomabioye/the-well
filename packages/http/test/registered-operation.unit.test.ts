@@ -32,6 +32,7 @@ describe("registerHttpOperation", () => {
     await expect(
       operation.execute(
         {
+          actorSession: null,
           actorUserId: null,
           headers: {},
           method: "POST",
@@ -58,7 +59,13 @@ describe("registerHttpOperation", () => {
 
     await expect(
       operation.execute(
-        { actorUserId: null, headers: {}, method: "POST", rawInput: {} },
+        {
+          actorSession: null,
+          actorUserId: null,
+          headers: {},
+          method: "POST",
+          rawInput: {},
+        },
         { createCorrelationId: () => correlationId },
       ),
     ).resolves.toMatchObject({

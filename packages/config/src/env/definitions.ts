@@ -94,6 +94,29 @@ export const environmentDefinitions = [
     required: true,
     secret: false,
   },
+  {
+    key: "AUTH_SESSION_ABSOLUTE_TIMEOUT_MS",
+    description:
+      "Absolute authenticated platform session lifetime in milliseconds.",
+    exposure: "server",
+    required: true,
+    secret: false,
+  },
+  {
+    key: "PASSKEY_CHALLENGE_TIMEOUT_MS",
+    description:
+      "Maximum passkey registration ceremony lifetime in milliseconds.",
+    exposure: "server",
+    required: true,
+    secret: false,
+  },
+  {
+    key: "PASSKEY_RECENT_AUTH_WINDOW_MS",
+    description: "Maximum age of authentication allowed for passkey changes.",
+    exposure: "server",
+    required: true,
+    secret: false,
+  },
 ] as const satisfies readonly EnvironmentDefinition[];
 
 export const environmentKeys = environmentDefinitions.map(({ key }) => key);

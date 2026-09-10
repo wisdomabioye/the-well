@@ -2,6 +2,7 @@ import type { UuidV7 } from "@ador/shared/identifiers";
 
 export interface ActiveSession {
   readonly absoluteExpiresAt: Date;
+  readonly authenticatedAt: Date;
   readonly idleExpiresAt: Date;
   readonly sessionId: UuidV7;
   readonly userId: UuidV7;

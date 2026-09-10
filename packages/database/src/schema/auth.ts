@@ -1,6 +1,8 @@
 import { sql } from "drizzle-orm";
 import { walletAuthActions } from "@ador/shared/auth";
 import {
+  bigint,
+  bytea,
   boolean,
   check,
   index,
@@ -41,6 +43,10 @@ export const authSessions = platformSchema.table(
       .notNull()
       .references(() => authUsers.id, { onDelete: "cascade" }),
     tokenHash: text("token_hash").notNull(),
+    authenticatedAt: timestamp("authenticated_at", {
+      mode: "date",
+      withTimezone: true,
+    }).notNull(),
     idleExpiresAt: timestamp("idle_expires_at", {
       mode: "date",
       withTimezone: true,
@@ -103,6 +109,11 @@ export const authChallengeAction = platformSchema.enum(
   walletAuthActions,
 );
 
+export const authSecurityAction = platformSchema.enum("auth_security_action", [
+  "passkey-linked",
+  "passkey-unlinked",
+]);
+
 export const walletChallenges = platformSchema.table(
   "wallet_challenges",
   {
@@ -164,7 +175,114 @@ export const walletChallenges = platformSchema.table(
   ],
 );
 
+export const passkeyChallenges = platformSchema.table(
+  "passkey_challenges",
+  {
+    id: uuid("id").primaryKey(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => authUsers.id, { onDelete: "cascade" }),
+    sessionId: uuid("session_id")
+      .notNull()
+      .references(() => authSessions.id, { onDelete: "cascade" }),
+    challengeHash: text("challenge_hash").notNull(),
+    origin: text("origin").notNull(),
+    relyingPartyId: text("relying_party_id").notNull(),
+    expiresAt: timestamp("expires_at", {
+      mode: "date",
+      withTimezone: true,
+    }).notNull(),
+    consumedAt: timestamp("consumed_at", { mode: "date", withTimezone: true }),
+    issuedAt: timestamp("issued_at", {
+      mode: "date",
+      withTimezone: true,
+    }).notNull(),
+  },
+  (table) => [
+    check(
+      "passkey_challenges_hash_sha256",
+      sql`${table.challengeHash} ~ '^[0-9a-f]{64}$'`,
+    ),
+    check(
+      "passkey_challenges_expiry_after_create",
+      sql`${table.expiresAt} > ${table.issuedAt}`,
+    ),
+    index("passkey_challenges_expiry_idx").on(table.expiresAt),
+  ],
+);
+
+export const passkeyCredentials = platformSchema.table(
+  "passkey_credentials",
+  {
+    id: uuid("id").primaryKey(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => authUsers.id, { onDelete: "cascade" }),
+    credentialId: text("credential_id").notNull(),
+    publicKey: bytea("public_key").notNull(),
+    counter: bigint("counter", { mode: "number" }).notNull(),
+    deviceType: text("device_type").notNull(),
+    backedUp: boolean("backed_up").notNull(),
+    transports: text("transports").array().notNull(),
+    ...timestamps(),
+  },
+  (table) => [
+    uniqueIndex("passkey_credentials_credential_id_unique").on(
+      table.credentialId,
+    ),
+    index("passkey_credentials_user_id_idx").on(table.userId),
+    check(
+      "passkey_credentials_counter_nonnegative",
+      sql`${table.counter} between 0 and 9007199254740991`,
+    ),
+    check(
+      "passkey_credentials_id_base64url",
+      sql`${table.credentialId} ~ '^[A-Za-z0-9_-]+$'`,
+    ),
+    check(
+      "passkey_credentials_public_key_nonempty",
+      sql`octet_length(${table.publicKey}) > 0`,
+    ),
+    check(
+      "passkey_credentials_device_type_supported",
+      sql`${table.deviceType} in ('multiDevice', 'singleDevice')`,
+    ),
+  ],
+);
+
+export const authSecurityEvents = platformSchema.table(
+  "auth_security_events",
+  {
+    id: uuid("id").primaryKey(),
+    action: authSecurityAction("action").notNull(),
+    actorUserId: uuid("actor_user_id")
+      .notNull()
+      .references(() => authUsers.id, { onDelete: "restrict" }),
+    sessionId: uuid("session_id")
+      .notNull()
+      .references(() => authSessions.id, { onDelete: "restrict" }),
+    credentialFingerprint: text("credential_fingerprint").notNull(),
+    correlationId: uuid("correlation_id").notNull(),
+    createdAt: timestamp("created_at", { mode: "date", withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    index("auth_security_events_actor_created_idx").on(
+      table.actorUserId,
+      table.createdAt,
+    ),
+    check(
+      "auth_security_events_credential_fingerprint_sha256",
+      sql`${table.credentialFingerprint} ~ '^[0-9a-f]{64}$'`,
+    ),
+  ],
+);
+
 export type AuthUser = typeof authUsers.$inferSelect;
 export type AuthSession = typeof authSessions.$inferSelect;
 export type WalletIdentity = typeof walletIdentities.$inferSelect;
 export type WalletChallenge = typeof walletChallenges.$inferSelect;
+export type PasskeyChallenge = typeof passkeyChallenges.$inferSelect;
+export type PasskeyCredential = typeof passkeyCredentials.$inferSelect;
+export type AuthSecurityEvent = typeof authSecurityEvents.$inferSelect;

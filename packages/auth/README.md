@@ -1,6 +1,6 @@
 # `@ador/auth`
 
-Detachable, server-only Bitcoin wallet authentication and session lifecycle logic.
+Detachable, server-only Bitcoin wallet authentication, passkey linking, and session lifecycle logic.
 
 ## Public API
 
@@ -12,6 +12,9 @@ Detachable, server-only Bitcoin wallet authentication and session lifecycle logi
 - `createDrizzleSessionRepository` stores only SHA-256 token hashes and enforces idle, absolute,
   and revocation predicates in PostgreSQL.
 - `strictBip322Verifier` contains the `bip322-js` boundary.
+- `createPasskeyLinkingService` owns recent-auth registration, conflict-safe linking, final-method
+  protection, session rotation, and provider-neutral contracts.
+- `simpleWebAuthnRegistrationAdapter` contains the exact-pinned SimpleWebAuthn server boundary.
 
 Callers compose these exports explicitly. Removing wallet authentication requires removing its
 registration and route adapter; no feature discovery or global registration is used.
@@ -30,6 +33,10 @@ registration and route adapter; no feature discovery or global registration is u
 - Wallet-first users receive a reserved `.invalid` internal email and it is never marked verified.
 - Better Auth must not own wallet sessions unless a future adapter proves that stored hashes can
   never be accepted as bearer credentials in lookup, listing, or revocation flows.
+- Passkey challenges bind one user, session, RP ID, origin, and expiry. Linking and unlinking lock
+  the active recent session, rotate all sessions, and atomically append privacy-preserving audit
+  evidence.
+- Linking does not imply that passkey assertion sign-in is enabled; the UI makes no recovery claim.
 
 ## Configuration
 

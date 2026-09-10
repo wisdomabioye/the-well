@@ -1,8 +1,9 @@
 import { defineFeature } from "@ador/plugin-kit";
+import { passkeyRoutes } from "@ador/auth";
 
 export const accountsFeature = defineFeature({
   manifest: {
-    capabilities: ["authenticated-page", "navigation"],
+    capabilities: ["api-routes", "authenticated-page", "navigation"],
     dependencies: [],
     id: "accounts",
     pages: [
@@ -15,7 +16,7 @@ export const accountsFeature = defineFeature({
     ],
     requiredDecisionGates: [],
     requiredProviderCapabilities: [],
-    routes: [],
+    routes: Object.values(passkeyRoutes),
     version: "1.0.0",
   },
   load: async () =>

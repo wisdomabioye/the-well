@@ -36,6 +36,7 @@ function operation(
 
 function request(overrides: object = {}) {
   return {
+    actorSession: null,
     actorUserId: null,
     headers: {},
     method: "POST",
@@ -67,12 +68,14 @@ describe("executeHttpOperation", () => {
 
     expect(response).toEqual({
       body: { message: "request-key-1234" },
+      effects: [],
       headers: { "x-correlation-id": suppliedCorrelationId },
       status: 200,
     });
     expect(execute).toHaveBeenCalledWith(
       { name: "Ada" },
       {
+        actorSession: null,
         actorUserId: null,
         correlationId: suppliedCorrelationId,
         idempotencyKey: "request-key-1234",

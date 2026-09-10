@@ -26,8 +26,8 @@ same change. Never infer completion from a commit, passing test, or partially de
 
 | Field                   | Value                                                               |
 | ----------------------- | ------------------------------------------------------------------- |
-| Active task             | None — `W2-08` completed and no later task has started              |
-| Next ordered task       | `W2-09` Authenticated passkey linking                               |
+| Active task             | None — `W2-09` completed and no later task has started              |
+| Next ordered task       | `W2-10` Wallet device/browser conformance                           |
 | Current milestone phase | Week 2 — Authentication, authorization, and shell                   |
 | Parallel security gate  | `SEC-D15-04` remains blocked                                        |
 | Mainnet                 | Outside this milestone and blocked by a separate readiness decision |
@@ -64,7 +64,7 @@ stored in `references/task-list.md`.
 | W2-06 | Implement the authenticated account, studio, and admin route family                     | completed | `references/authenticated-routes-task-record.md`                                                       |
 | W2-07 | Implement curated creator admission and minimal staff approval                          | completed | `references/creator-admission-task-record.md`; deep review converged after exhaustive mutation proof   |
 | W2-08 | Implement the remaining public product route families                                   | completed | `references/public-product-routes-task-record.md`; deep review converged after mutation proof          |
-| W2-09 | Add authenticated passkey linking with conflict and final-method protections            | pending   | Depends on W2-04 and a qualified passkey adapter decision                                              |
+| W2-09 | Add authenticated passkey linking with conflict and final-method protections            | completed | `references/passkey-linking-task-record.md`; deep review converged after dynamic mutation proof        |
 | W2-10 | Complete supported-wallet device/browser conformance and enable only passing providers  | pending   | Depends on W2-01; physical/provider evidence required                                                  |
 | W2-11 | Close the Week 2 visual, accessibility, keyboard, responsive, and reduced-motion matrix | pending   | Depends on W2-06 through W2-10                                                                         |
 

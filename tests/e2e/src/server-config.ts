@@ -3,7 +3,7 @@ export interface E2EServerConfig {
   readonly port: string;
 }
 
-const defaultBaseURL = "http://127.0.0.1:4173";
+const defaultBaseURL = "http://localhost:4173";
 
 export function resolveE2EServerConfig(
   configuredBaseURL?: string,

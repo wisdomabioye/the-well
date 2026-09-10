@@ -9,6 +9,7 @@ vi.mock("../src/server/auth/runtime", () => ({
   getPageAccessDependencies: () => ({
     findSession: async () => ({
       absoluteExpiresAt: new Date("2026-09-10T00:00:00.000Z"),
+      authenticatedAt: new Date("2026-09-09T00:00:00.000Z"),
       idleExpiresAt: new Date("2026-09-09T12:00:00.000Z"),
       sessionId: "01992bd8-a740-7000-8000-000000000001",
       userId: "01992bd8-a740-7000-8000-000000000002",

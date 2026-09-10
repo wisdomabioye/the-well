@@ -9,7 +9,11 @@ type ProtectedPageAccessRequirement = Exclude<
 >;
 
 export type PageAccessDecision =
-  | { readonly actorUserId: UuidV7; readonly kind: "allowed" }
+  | {
+      readonly actorUserId: UuidV7;
+      readonly kind: "allowed";
+      readonly session: ActiveSession;
+    }
   | { readonly kind: "forbidden" }
   | { readonly kind: "unauthenticated" }
   | { readonly kind: "unavailable" };
@@ -34,14 +38,14 @@ export async function resolvePageAccess(
     const session = await dependencies.findSession(token);
     if (session === null) return { kind: "unauthenticated" };
     if (requirement.kind === "authenticated") {
-      return { actorUserId: session.userId, kind: "allowed" };
+      return { actorUserId: session.userId, kind: "allowed", session };
     }
     const authorization = await dependencies.forPlatform({
       capability: requirement.capability,
       userId: session.userId,
     });
     return authorization.allowed
-      ? { actorUserId: session.userId, kind: "allowed" }
+      ? { actorUserId: session.userId, kind: "allowed", session }
       : { kind: "forbidden" };
   } catch {
     return { kind: "unavailable" };

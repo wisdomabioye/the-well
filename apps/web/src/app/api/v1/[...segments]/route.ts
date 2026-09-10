@@ -6,7 +6,7 @@ import {
   httpErrorEnvelopeSchema,
 } from "@ador/shared/http";
 import { platformSessionCookieName } from "@ador/shared/auth";
-import type { UuidV7 } from "@ador/shared/identifiers";
+import type { ActiveSession } from "@ador/auth";
 import { parseEnvironment } from "@repo/config/env";
 import {
   getOpenApiDocument,
@@ -42,7 +42,7 @@ async function handle(request: Request, context: RouteContext) {
       { headers: { [correlationHeaderName]: correlationId }, status: 404 },
     );
   }
-  let actorUserId: UuidV7 | null = null;
+  let actorSession: ActiveSession | null = null;
   if (operation.access.kind !== "public") {
     const requestOrigin = request.headers.get("origin");
     const canonicalOrigin = new URL(
@@ -98,11 +98,11 @@ async function handle(request: Request, context: RouteContext) {
         },
       );
     }
-    actorUserId = access.actorUserId;
+    actorSession = access.session;
   }
   const rawInput: unknown =
     request.method === "GET" ? {} : await request.json().catch(() => undefined);
-  return executeNextOperation(operation, request, rawInput, actorUserId);
+  return executeNextOperation(operation, request, rawInput, actorSession);
 }
 
 export {

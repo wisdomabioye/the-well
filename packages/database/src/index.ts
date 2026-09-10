@@ -37,11 +37,17 @@ export {
 } from "./schema/accounts.ts";
 export {
   authSessions,
+  authSecurityEvents,
   authUsers,
+  passkeyChallenges,
+  passkeyCredentials,
   walletChallenges,
   walletIdentities,
   type AuthSession,
+  type AuthSecurityEvent,
   type AuthUser,
+  type PasskeyChallenge,
+  type PasskeyCredential,
   type WalletChallenge,
   type WalletIdentity,
 } from "./schema/auth.ts";

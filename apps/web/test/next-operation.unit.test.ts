@@ -1,0 +1,69 @@
+import { registerHttpOperation } from "@ador/http/registered-operation";
+import {
+  passkeyEmptyInputSchema,
+  passkeyMutationResponseSchema,
+} from "@ador/auth";
+import { createUuidV7 } from "@ador/shared/identifiers";
+import { platformSessionCookieName } from "@ador/shared/auth";
+import { describe, expect, it, vi } from "vitest";
+
+const setCookie = vi.hoisted(() => vi.fn());
+vi.mock("next/headers", () => ({
+  cookies: async () => ({ set: setCookie }),
+}));
+vi.mock("@repo/config/env", () => ({
+  parseAuthSessionEnvironment: () => ({
+    AUTH_SESSION_IDLE_TIMEOUT_MS: 86_400_000,
+  }),
+}));
+
+import { executeNextOperation } from "../src/server/http/next-operation.ts";
+
+describe("Next operation response effects", () => {
+  it("sets a secure host-only cookie without exposing its token in JSON", async () => {
+    const operation = registerHttpOperation({
+      access: { kind: "authenticated" },
+      applicationErrors: [],
+      execute: async () => ({
+        effects: [
+          { kind: "replace-platform-session" as const, token: "secret" },
+        ],
+        ok: true as const,
+        value: { changed: true },
+      }),
+      idempotency: "none",
+      input: "json",
+      inputSchema: passkeyEmptyInputSchema,
+      method: "POST",
+      operationId: "rotateSession",
+      outputSchema: passkeyMutationResponseSchema,
+      path: "/api/v1/rotate",
+    });
+    const now = new Date();
+    const session = {
+      absoluteExpiresAt: new Date(now.getTime() + 60_000),
+      authenticatedAt: now,
+      idleExpiresAt: new Date(now.getTime() + 30_000),
+      sessionId: createUuidV7(),
+      userId: createUuidV7(),
+    };
+    const response = await executeNextOperation(
+      operation,
+      new Request("https://launch.invalid/api/v1/rotate", { method: "POST" }),
+      {},
+      session,
+    );
+    expect(await response.json()).toEqual({ changed: true });
+    expect(setCookie).toHaveBeenCalledWith(
+      platformSessionCookieName,
+      "secret",
+      {
+        httpOnly: true,
+        maxAge: 86_400,
+        path: "/",
+        sameSite: "lax",
+        secure: true,
+      },
+    );
+  });
+});

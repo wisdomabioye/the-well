@@ -28,6 +28,7 @@ export interface StoredWalletChallenge {
 
 export interface SessionMaterial {
   readonly absoluteExpiresAt: Date;
+  readonly authenticatedAt: Date;
   readonly idleExpiresAt: Date;
   readonly tokenHash: string;
 }

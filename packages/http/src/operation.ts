@@ -17,13 +17,31 @@ import type { PageAccessRequirement } from "@ador/shared/features";
 import type { UuidV7 } from "@ador/shared/identifiers";
 
 export interface HttpOperationContext {
+  readonly actorSession: HttpAuthenticatedSession | null;
   readonly actorUserId: UuidV7 | null;
   readonly correlationId: CorrelationId;
   readonly idempotencyKey?: IdempotencyKey;
 }
 
+export interface HttpAuthenticatedSession {
+  readonly absoluteExpiresAt: Date;
+  readonly authenticatedAt: Date;
+  readonly idleExpiresAt: Date;
+  readonly sessionId: UuidV7;
+  readonly userId: UuidV7;
+}
+
+export type HttpResponseEffect = {
+  readonly kind: "replace-platform-session";
+  readonly token: string;
+};
+
 export type HttpOperationResult<Output extends object> =
-  | { readonly ok: true; readonly value: Output }
+  | {
+      readonly effects?: readonly HttpResponseEffect[];
+      readonly ok: true;
+      readonly value: Output;
+    }
   | {
       readonly error: ApplicationHttpErrorCode;
       readonly message: string;
@@ -47,6 +65,7 @@ export interface HttpOperation<Input, Output extends object> {
 }
 
 export interface HttpAdapterRequest {
+  readonly actorSession: HttpAuthenticatedSession | null;
   readonly actorUserId: UuidV7 | null;
   readonly headers: Readonly<Record<string, string | undefined>>;
   readonly method: string;
@@ -56,6 +75,7 @@ export interface HttpAdapterRequest {
 
 export interface HttpAdapterResponse<Output extends object> {
   readonly body: Output | HttpErrorEnvelope;
+  readonly effects: readonly HttpResponseEffect[];
   readonly headers: Readonly<
     Record<typeof correlationHeaderName, CorrelationId>
   >;
@@ -88,6 +108,7 @@ function errorResponse<Output extends object>(
     body: httpErrorEnvelopeSchema.parse({
       error: { code, correlationId, message: publicMessage },
     }),
+    effects: [],
     headers: { [correlationHeaderName]: correlationId },
     status: errorStatuses[code],
   };
@@ -156,6 +177,7 @@ export async function executeHttpOperation<Input, Output extends object>(
   try {
     const result = await operation.execute(inputResult.data, {
       actorUserId: request.actorUserId,
+      actorSession: request.actorSession,
       correlationId,
       ...(idempotencyResult.success
         ? { idempotencyKey: idempotencyResult.data }
@@ -175,6 +197,7 @@ export async function executeHttpOperation<Input, Output extends object>(
     return outputResult.success
       ? {
           body: outputResult.data,
+          effects: result.effects ?? [],
           headers: { [correlationHeaderName]: correlationId },
           status: 200,
         }

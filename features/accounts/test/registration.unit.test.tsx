@@ -1,11 +1,12 @@
 import { describe, expect, it } from "vitest";
 
 import { accountsFeature } from "../src/registration.ts";
+import { passkeyRoutes } from "@ador/auth";
 
 describe("accounts feature registration", () => {
   it("declares the complete detachable access contract", () => {
     expect(accountsFeature.manifest).toMatchObject({
-      capabilities: ["authenticated-page", "navigation"],
+      capabilities: ["api-routes", "authenticated-page", "navigation"],
       id: "accounts",
       pages: [
         { access: { kind: "authenticated" }, path: "/account" },
@@ -15,7 +16,7 @@ describe("accounts feature registration", () => {
           path: "/admin",
         },
       ],
-      routes: [],
+      routes: Object.values(passkeyRoutes),
     });
   });
 
@@ -35,5 +36,8 @@ describe("accounts feature registration", () => {
       "/studio",
       "/admin",
     ]);
+    expect(entrypoint.operations?.map(({ route }) => route)).toEqual(
+      Object.values(passkeyRoutes),
+    );
   });
 });

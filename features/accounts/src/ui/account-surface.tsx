@@ -5,6 +5,7 @@ import {
   ArcadePanel,
   StatusLamp,
 } from "@repo/ui/arcade";
+import { PasskeyPanel } from "./passkey-panel.tsx";
 
 const navigation = [
   { href: "/", label: "Home" },
@@ -35,9 +36,13 @@ const surfaces = {
 
 export function AccountSurface({
   actorUserId,
+  passkeyCredentialIds = [],
+  passkeysUnavailable = false,
   surface,
 }: {
   readonly actorUserId: UuidV7;
+  readonly passkeyCredentialIds?: readonly string[];
+  readonly passkeysUnavailable?: boolean;
   readonly surface: keyof typeof surfaces;
 }) {
   const content = surfaces[surface];
@@ -74,6 +79,12 @@ export function AccountSurface({
             ) : null}
           </div>
         </ArcadePanel>
+        {surface === "account" ? (
+          <PasskeyPanel
+            initialCredentialIds={passkeyCredentialIds}
+            initialUnavailable={passkeysUnavailable}
+          />
+        ) : null}
       </section>
     </AppShell>
   );

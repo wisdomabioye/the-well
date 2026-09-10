@@ -1,6 +1,6 @@
 import { createUuidV7 } from "@ador/shared/identifiers";
 import { renderToStaticMarkup } from "react-dom/server";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
 import { createAccountsEntrypoint } from "../src/entrypoint.tsx";
 
@@ -10,7 +10,12 @@ describe("accounts entrypoint", () => {
     ["/studio", "Creator studio", "Authenticated access"],
     ["/admin", "Admin console", "Staff capability verified"],
   ])("renders the authorized %s surface", async (path, title, status) => {
-    const entrypoint = createAccountsEntrypoint();
+    const entrypoint = createAccountsEntrypoint(() => ({
+      begin: vi.fn(),
+      finish: vi.fn(),
+      list: vi.fn(async () => []),
+      unlink: vi.fn(),
+    }));
     const page = entrypoint.pages?.find((candidate) => candidate.path === path);
     expect(page).toBeDefined();
     const markup = renderToStaticMarkup(
@@ -21,7 +26,13 @@ describe("accounts entrypoint", () => {
   });
 
   it("does not render private content without an actor", async () => {
-    const pages = createAccountsEntrypoint().pages ?? [];
+    const pages =
+      createAccountsEntrypoint(() => ({
+        begin: vi.fn(),
+        finish: vi.fn(),
+        list: vi.fn(async () => []),
+        unlink: vi.fn(),
+      })).pages ?? [];
 
     for (const page of pages) {
       expect(
@@ -30,5 +41,20 @@ describe("accounts entrypoint", () => {
         ),
       ).toBe("");
     }
+  });
+
+  it("fails closed when passkey status persistence is unavailable", async () => {
+    const entrypoint = createAccountsEntrypoint(() => ({
+      begin: vi.fn(),
+      finish: vi.fn(),
+      list: vi.fn().mockRejectedValue(new Error("database unavailable")),
+      unlink: vi.fn(),
+    }));
+    const page = entrypoint.pages?.find(({ path }) => path === "/account");
+    const markup = renderToStaticMarkup(
+      await page?.render({ actorUserId: createUuidV7(), params: {} }),
+    );
+    expect(markup).toContain("Passkey status is unavailable");
+    expect(markup).not.toContain("Passkey 1");
   });
 });

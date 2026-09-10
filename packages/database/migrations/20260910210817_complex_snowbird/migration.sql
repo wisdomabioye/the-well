@@ -1,0 +1,1 @@
+ALTER TABLE "ador"."auth_sessions" ALTER COLUMN "authenticated_at" DROP DEFAULT;

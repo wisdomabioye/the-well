@@ -73,6 +73,7 @@ describe("authentication persistence failures", () => {
         stored,
         {
           absoluteExpiresAt: new Date(now.getTime() + 2_000),
+          authenticatedAt: now,
           idleExpiresAt: new Date(now.getTime() + 1_000),
           tokenHash: "invalid",
         },

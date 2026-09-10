@@ -168,6 +168,7 @@ export function createWalletAuthService(dependencies: {
           absoluteExpiresAt: new Date(
             now.getTime() + dependencies.policy.sessionAbsoluteLifetimeMs,
           ),
+          authenticatedAt: now,
           idleExpiresAt: new Date(
             now.getTime() + dependencies.policy.sessionIdleLifetimeMs,
           ),

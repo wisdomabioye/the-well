@@ -8,6 +8,7 @@ import {
   createDatabaseClient,
   createDatabasePool,
   platformRoleAssignments,
+  walletIdentities,
 } from "@ador/database";
 import { withDisposablePostgres } from "../../../packages/database/test/support/postgres-container.ts";
 
@@ -44,10 +45,17 @@ async function seed(databaseUrl: string): Promise<void> {
         id: creatorE2EFixtures.reviewer.userId,
         name: "E2E Reviewer",
       },
+      {
+        email: "passkey@example.test",
+        emailVerified: true,
+        id: creatorE2EFixtures.passkeyUser.userId,
+        name: "E2E Passkey User",
+      },
     ]);
     await database.insert(authSessions).values([
       {
         absoluteExpiresAt: expiry,
+        authenticatedAt: new Date(),
         id: creatorE2EFixtures.applicant.sessionId,
         idleExpiresAt: expiry,
         tokenHash: hash(creatorE2EFixtures.applicant.sessionToken),
@@ -55,10 +63,19 @@ async function seed(databaseUrl: string): Promise<void> {
       },
       {
         absoluteExpiresAt: expiry,
+        authenticatedAt: new Date(),
         id: creatorE2EFixtures.reviewer.sessionId,
         idleExpiresAt: expiry,
         tokenHash: hash(creatorE2EFixtures.reviewer.sessionToken),
         userId: creatorE2EFixtures.reviewer.userId,
+      },
+      {
+        absoluteExpiresAt: expiry,
+        authenticatedAt: new Date(),
+        id: creatorE2EFixtures.passkeyUser.sessionId,
+        idleExpiresAt: expiry,
+        tokenHash: hash(creatorE2EFixtures.passkeyUser.sessionToken),
+        userId: creatorE2EFixtures.passkeyUser.userId,
       },
     ]);
     await database.insert(platformRoleAssignments).values({
@@ -66,6 +83,14 @@ async function seed(databaseUrl: string): Promise<void> {
       role: "reviewer",
       status: "active",
       userId: creatorE2EFixtures.reviewer.userId,
+    });
+    await database.insert(walletIdentities).values({
+      address: "tb1qe2eapplicant",
+      id: "01994b10-0000-7000-8000-000000000006",
+      network: "signet",
+      scriptIdentity: "0014e2eapplicant",
+      userId: creatorE2EFixtures.passkeyUser.userId,
+      walletAdapter: "e2e-fixture",
     });
   } finally {
     await pool.end();
@@ -83,6 +108,7 @@ async function runPlaywright(databaseUrl: string): Promise<void> {
         env: {
           ...process.env,
           APP_ENV: "test",
+          AUTH_SESSION_ABSOLUTE_TIMEOUT_MS: "604800000",
           AUTH_SESSION_IDLE_TIMEOUT_MS: "86400000",
           DATABASE_ACQUIRE_TIMEOUT_MS: "5000",
           DATABASE_IDLE_TIMEOUT_MS: "1000",
@@ -92,6 +118,8 @@ async function runPlaywright(databaseUrl: string): Promise<void> {
           DATABASE_STATEMENT_TIMEOUT_MS: "5000",
           DATABASE_URL: databaseUrl,
           NEXT_PUBLIC_APP_NAME: "Adorbitals E2E",
+          PASSKEY_CHALLENGE_TIMEOUT_MS: "300000",
+          PASSKEY_RECENT_AUTH_WINDOW_MS: "600000",
           PUBLIC_BASE_URL: baseURL,
         },
         stdio: "inherit",

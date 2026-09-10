@@ -9,7 +9,10 @@ export const environmentSchema = z.object({
 });
 
 export const authSessionEnvironmentSchema = z.object({
+  AUTH_SESSION_ABSOLUTE_TIMEOUT_MS: z.coerce.number().int().positive(),
   AUTH_SESSION_IDLE_TIMEOUT_MS: z.coerce.number().int().positive(),
+  PASSKEY_CHALLENGE_TIMEOUT_MS: z.coerce.number().int().positive(),
+  PASSKEY_RECENT_AUTH_WINDOW_MS: z.coerce.number().int().positive(),
 });
 
 export type AppEnvironment = z.infer<typeof environmentSchema>;
@@ -29,6 +32,9 @@ export function parseAuthSessionEnvironment(
   source: NodeJS.ProcessEnv,
 ): AuthSessionEnvironment {
   return authSessionEnvironmentSchema.parse({
+    AUTH_SESSION_ABSOLUTE_TIMEOUT_MS: source.AUTH_SESSION_ABSOLUTE_TIMEOUT_MS,
     AUTH_SESSION_IDLE_TIMEOUT_MS: source.AUTH_SESSION_IDLE_TIMEOUT_MS,
+    PASSKEY_CHALLENGE_TIMEOUT_MS: source.PASSKEY_CHALLENGE_TIMEOUT_MS,
+    PASSKEY_RECENT_AUTH_WINDOW_MS: source.PASSKEY_RECENT_AUTH_WINDOW_MS,
   });
 }

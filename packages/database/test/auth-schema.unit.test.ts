@@ -4,7 +4,10 @@ import { describe, expect, it } from "vitest";
 
 import {
   authSessions,
+  authSecurityEvents,
   authUsers,
+  passkeyChallenges,
+  passkeyCredentials,
   walletChallenges,
   walletIdentities,
 } from "../src/index.ts";
@@ -42,6 +45,40 @@ describe("authentication schema", () => {
     );
     expect(config.foreignKeys).toHaveLength(1);
     expect(referencedTables(config)).toEqual(["auth_users"]);
+    expect(config.columns.map((column) => column.name)).toContain(
+      "authenticated_at",
+    );
+  });
+
+  it("constrains passkey challenges, credentials, and immutable audit evidence", () => {
+    const challenges = getTableConfig(passkeyChallenges);
+    expect(names(challenges.checks)).toEqual(
+      expect.arrayContaining([
+        "passkey_challenges_hash_sha256",
+        "passkey_challenges_expiry_after_create",
+      ]),
+    );
+    expect(referencedTables(challenges)).toEqual([
+      "auth_users",
+      "auth_sessions",
+    ]);
+    const credentials = getTableConfig(passkeyCredentials);
+    expect(names(credentials.checks)).toEqual(
+      expect.arrayContaining([
+        "passkey_credentials_counter_nonnegative",
+        "passkey_credentials_id_base64url",
+        "passkey_credentials_public_key_nonempty",
+        "passkey_credentials_device_type_supported",
+      ]),
+    );
+    expect(indexNames(credentials.indexes)).toContain(
+      "passkey_credentials_credential_id_unique",
+    );
+    const events = getTableConfig(authSecurityEvents);
+    expect(names(events.checks)).toContain(
+      "auth_security_events_credential_fingerprint_sha256",
+    );
+    expect(referencedTables(events)).toEqual(["auth_users", "auth_sessions"]);
   });
 
   it("defines wallet identity uniqueness and supported-value checks", () => {

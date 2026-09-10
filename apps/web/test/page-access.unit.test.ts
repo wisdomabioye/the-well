@@ -10,6 +10,7 @@ import {
 const userId = createUuidV7();
 const activeSession: ActiveSession = {
   absoluteExpiresAt: new Date("2026-09-10T00:00:00.000Z"),
+  authenticatedAt: new Date("2026-09-09T00:00:00.000Z"),
   idleExpiresAt: new Date("2026-09-09T12:00:00.000Z"),
   sessionId: createUuidV7(),
   userId,
@@ -46,7 +47,11 @@ describe("resolvePageAccess", () => {
       resolvePageAccess({ kind: "authenticated" }, "token", () =>
         dependencies(),
       ),
-    ).resolves.toEqual({ actorUserId: userId, kind: "allowed" });
+    ).resolves.toEqual({
+      actorUserId: userId,
+      kind: "allowed",
+      session: activeSession,
+    });
   });
 
   it("rejects an invalid or expired session", async () => {
@@ -68,7 +73,7 @@ describe("resolvePageAccess", () => {
         ),
       ).resolves.toEqual(
         allowed
-          ? { actorUserId: userId, kind: "allowed" }
+          ? { actorUserId: userId, kind: "allowed", session: activeSession }
           : { kind: "forbidden" },
       );
     },
