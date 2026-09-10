@@ -21,7 +21,10 @@ export function createPlatformShellEntrypoint(
         access: { kind: "public" },
         path: "/",
         render: () => (
-          <PlatformHome registeredFeatures={context.registeredFeatureCount} />
+          <PlatformHome
+            registeredFeatureIds={context.registeredFeatureIds}
+            registeredFeatures={context.registeredFeatureCount}
+          />
         ),
       },
     ],

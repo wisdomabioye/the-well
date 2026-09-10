@@ -19,10 +19,17 @@ export interface FeaturePageContribution {
 
 export interface PageRenderContext {
   readonly actorUserId: UuidV7 | null;
+  readonly params: Readonly<Record<string, string>>;
+}
+
+export interface ResolvedFeaturePage {
+  readonly page: FeaturePageContribution;
+  readonly params: Readonly<Record<string, string>>;
 }
 
 export interface FeatureLoadContext {
   readonly registeredFeatureCount: number;
+  readonly registeredFeatureIds: readonly FeatureId[];
 }
 
 export interface FeatureEntrypoint {
@@ -43,7 +50,33 @@ export interface FeatureRegistry {
   list(): readonly FeatureManifest[];
   load(id: FeatureId): Promise<FeatureEntrypoint>;
   loadAll(): Promise<readonly FeatureEntrypoint[]>;
-  resolvePage(path: string): Promise<FeaturePageContribution | undefined>;
+  resolvePage(path: string): Promise<ResolvedFeaturePage | undefined>;
+}
+
+function matchPage(
+  page: FeaturePageContribution,
+  path: string,
+): ResolvedFeaturePage | undefined {
+  const templateSegments = page.path.split("/");
+  const pathSegments = path.split("/");
+  if (templateSegments.length !== pathSegments.length) return undefined;
+  const params: Record<string, string> = {};
+  for (let index = 0; index < templateSegments.length; index += 1) {
+    const template = templateSegments[index];
+    const value = pathSegments[index];
+    if (template === value) continue;
+    if (!template || !value) return undefined;
+    if (template.startsWith("[") && template.endsWith("]")) {
+      params[template.slice(1, -1)] = value;
+      continue;
+    }
+    return undefined;
+  }
+  return { page, params: Object.freeze(params) };
+}
+
+function dynamicSegmentCount(path: string): number {
+  return path.split("/").filter((segment) => segment.startsWith("[")).length;
 }
 
 function freezeManifest(manifest: FeatureManifest): FeatureManifest {
@@ -153,6 +186,7 @@ export function createFeatureRegistry(
   }
 
   assertDependencyGraph(registrations);
+  const registeredFeatureIds = Object.freeze([...registrations.keys()]);
 
   const load = async (id: FeatureId): Promise<FeatureEntrypoint> => {
     const registration = registrations.get(id);
@@ -160,6 +194,7 @@ export function createFeatureRegistry(
 
     const entrypoint = await registration.load({
       registeredFeatureCount: registrations.size,
+      registeredFeatureIds,
     });
     if (
       entrypoint.id !== registration.manifest.id ||
@@ -186,9 +221,17 @@ export function createFeatureRegistry(
     loadAll,
     resolvePage: async (path) => {
       const entrypoints = await loadAll();
-      return entrypoints
+      const pages = entrypoints
         .flatMap(({ pages = [] }) => pages)
-        .find((page) => page.path === path);
+        .sort(
+          (left, right) =>
+            dynamicSegmentCount(left.path) - dynamicSegmentCount(right.path),
+        );
+      for (const page of pages) {
+        const match = matchPage(page, path);
+        if (match) return match;
+      }
+      return undefined;
     },
   };
 }

@@ -89,6 +89,21 @@
   border-top: var(--arcade-border-width) solid var(--arcade-border);
   background: var(--arcade-surface);
 }
+.arcade-section--catalog {
+  min-height: calc(100vh - 12rem);
+}
+.arcade-section--catalog .arcade-panel {
+  max-width: 52rem;
+  margin-top: 2rem;
+}
+.arcade-section--catalog .arcade-panel p:not(.arcade-eyebrow) {
+  color: var(--arcade-text-muted);
+  font-size: 1.125rem;
+  line-height: 1.7;
+}
+.arcade-section--catalog .arcade-button {
+  margin-top: 1rem;
+}
 .arcade-section--raised {
   background: var(--arcade-surface-raised);
 }

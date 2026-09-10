@@ -9,6 +9,7 @@ import {
 import {
   createFeatureRegistry,
   defineFeature,
+  type FeatureLoadContext,
   type FeatureRegistration,
 } from "../src/registry.js";
 
@@ -37,11 +38,25 @@ function registration(
 
 describe("createFeatureRegistry", () => {
   it("lists, locates, and loads a valid registration", async () => {
-    const registry = createFeatureRegistry([registration("catalog")]);
+    let loadContext: FeatureLoadContext | undefined;
+    const catalog = registration("catalog");
+    const registry = createFeatureRegistry([
+      {
+        ...catalog,
+        load: async (context) => {
+          loadContext = context;
+          return catalog.load(context);
+        },
+      },
+    ]);
     expect(registry.has("catalog")).toBe(true);
     expect(registry.list()).toHaveLength(1);
     await expect(registry.load("catalog")).resolves.toMatchObject({
       id: "catalog",
+    });
+    expect(loadContext).toEqual({
+      registeredFeatureCount: 1,
+      registeredFeatureIds: ["catalog"],
     });
   });
 
@@ -128,7 +143,8 @@ describe("createFeatureRegistry", () => {
     const registry = createFeatureRegistry([detachable]);
 
     await expect(registry.resolvePage("/catalog")).resolves.toMatchObject({
-      path: "/catalog",
+      page: { path: "/catalog" },
+      params: {},
     });
     await expect(
       createFeatureRegistry([]).resolvePage("/catalog"),
@@ -205,6 +221,51 @@ describe("createFeatureRegistry", () => {
     await expect(
       createFeatureRegistry([pageDrift]).load("catalog"),
     ).rejects.toThrow("pages");
+  });
+
+  it("matches dynamic pages, extracts parameters, and prefers static pages", async () => {
+    const dynamic: FeatureRegistration = {
+      ...registration("catalog"),
+      manifest: {
+        ...registration("catalog").manifest,
+        pages: [
+          { access: { kind: "public" }, path: "/catalog/new" },
+          { access: { kind: "public" }, path: "/catalog/[slug]" },
+        ],
+      },
+      load: async () => ({
+        capabilities: ["public-page"],
+        id: "catalog",
+        pages: [
+          {
+            access: { kind: "public" },
+            path: "/catalog/[slug]",
+            render: () => "detail",
+          },
+          {
+            access: { kind: "public" },
+            path: "/catalog/new",
+            render: () => "new",
+          },
+        ],
+        version: "1.0.0",
+      }),
+    };
+    const registry = createFeatureRegistry([dynamic]);
+
+    await expect(
+      registry.resolvePage("/catalog/orbit-one"),
+    ).resolves.toMatchObject({
+      page: { path: "/catalog/[slug]" },
+      params: { slug: "orbit-one" },
+    });
+    await expect(registry.resolvePage("/catalog/new")).resolves.toMatchObject({
+      page: { path: "/catalog/new" },
+      params: {},
+    });
+    await expect(
+      registry.resolvePage("/catalog/a/extra"),
+    ).resolves.toBeUndefined();
   });
 });
 

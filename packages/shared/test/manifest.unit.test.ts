@@ -21,6 +21,15 @@ describe("featureManifestSchema", () => {
     expect(featureManifestSchema.parse(validManifest)).toEqual(validManifest);
   });
 
+  it("accepts named dynamic page segments", () => {
+    expect(
+      featureManifestSchema.parse({
+        ...validManifest,
+        pages: [{ access: { kind: "public" }, path: "/catalog/[slug]" }],
+      }).pages[0]?.path,
+    ).toBe("/catalog/[slug]");
+  });
+
   it.each([
     { ...validManifest, id: "Platform Shell" },
     { ...validManifest, version: "latest" },
@@ -38,6 +47,14 @@ describe("featureManifestSchema", () => {
     {
       ...validManifest,
       pages: [{ access: { kind: "public" }, path: "/catalog/" }],
+    },
+    {
+      ...validManifest,
+      pages: [{ access: { kind: "public" }, path: "/catalog/[Slug]" }],
+    },
+    {
+      ...validManifest,
+      pages: [{ access: { kind: "public" }, path: "/catalog/[slug]/[slug]" }],
     },
     {
       ...validManifest,

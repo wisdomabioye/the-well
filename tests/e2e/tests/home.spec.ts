@@ -34,14 +34,14 @@ test("serves the arcade design stylesheet in the production build", async ({
   expect(stylesheetStatuses).not.toContain(404);
 });
 
-test("navigates to the planned game from the primary control", async ({
-  page,
-}) => {
+test("navigates to the truthful empty games catalog", async ({ page }) => {
   await page.goto("/");
   await page.getByRole("link", { name: "Enter arcade" }).click();
 
-  await expect(page).toHaveURL(/#games$/);
-  await expect(page.getByRole("heading", { name: "Frostbite" })).toBeVisible();
+  await expect(page).toHaveURL(/\/games$/);
+  await expect(
+    page.getByRole("heading", { name: "No games online" }),
+  ).toBeVisible();
 });
 
 test("keeps shell navigation keyboard-accessible at every viewport", async ({
@@ -102,9 +102,43 @@ test("serves the versioned platform contract with correlated truthful state", as
   expect(response.headers()["x-correlation-id"]).toBe(correlationId);
   expect(await response.json()).toEqual({
     apiVersion: "v1",
-    registeredFeatures: 3,
+    registeredFeatures: 7,
     stage: "foundation",
     transactionalActions: "gated",
+  });
+});
+
+test("serves every public catalog and validates detail identifiers", async ({
+  page,
+}) => {
+  for (const path of ["launches", "collections", "creators", "games"]) {
+    await page.goto(`/${path}`);
+    await expect(page.getByText("Catalog empty")).toBeVisible();
+  }
+  await page.goto("/games/frostbite");
+  await expect(page.getByText("Record not published")).toBeVisible();
+  await page.goto("/games/Frostbite");
+  await expect(page.getByText("Invalid identifier")).toBeVisible();
+});
+
+test("keeps public discovery accessible and reduced-motion safe", async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/collections");
+  await expect(page.locator(".scanlines")).toHaveCSS("display", "none");
+  const results = await new AxeBuilder({ page })
+    .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"])
+    .analyze();
+  expect(results.violations).toEqual([]);
+});
+
+test("matches the public discovery visual baseline", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/launches");
+  await expect(page).toHaveScreenshot("public-discovery.png", {
+    animations: "disabled",
+    fullPage: true,
   });
 });
 

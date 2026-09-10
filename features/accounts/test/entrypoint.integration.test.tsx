@@ -14,7 +14,7 @@ describe("accounts entrypoint", () => {
     const page = entrypoint.pages?.find((candidate) => candidate.path === path);
     expect(page).toBeDefined();
     const markup = renderToStaticMarkup(
-      await page?.render({ actorUserId: createUuidV7() }),
+      await page?.render({ actorUserId: createUuidV7(), params: {} }),
     );
     expect(markup).toContain(title);
     expect(markup).toContain(status);
@@ -25,7 +25,9 @@ describe("accounts entrypoint", () => {
 
     for (const page of pages) {
       expect(
-        renderToStaticMarkup(await page.render({ actorUserId: null })),
+        renderToStaticMarkup(
+          await page.render({ actorUserId: null, params: {} }),
+        ),
       ).toBe("");
     }
   });

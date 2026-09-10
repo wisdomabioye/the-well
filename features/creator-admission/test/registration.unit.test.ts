@@ -30,6 +30,7 @@ describe("creator admission registration", () => {
     process.env.DATABASE_STATEMENT_TIMEOUT_MS = "1000";
     const entrypoint = await creatorAdmissionFeature.load({
       registeredFeatureCount: 3,
+      registeredFeatureIds: ["accounts", "creator-admission", "platform-shell"],
     });
     expect(entrypoint.id).toBe("creator-admission");
     expect(entrypoint.operations).toHaveLength(4);

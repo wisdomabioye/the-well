@@ -22,6 +22,7 @@ describe("accounts feature registration", () => {
   it("loads the matching detachable entrypoint", async () => {
     const entrypoint = await accountsFeature.load({
       registeredFeatureCount: 1,
+      registeredFeatureIds: ["accounts"],
     });
 
     expect(entrypoint).toMatchObject({

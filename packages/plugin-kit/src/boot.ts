@@ -81,7 +81,21 @@ function assertUniqueRoutes(
 }
 
 function assertUniquePages(features: readonly FeatureManifest[]): void {
-  const owners = new Map<string, string>();
+  const ownedPages: { readonly owner: string; readonly path: string }[] = [];
+  const isDynamic = (segment: string) => segment.startsWith("[");
+  const overlaps = (left: string, right: string) => {
+    const leftSegments = left.split("/");
+    const rightSegments = right.split("/");
+    return (
+      leftSegments.length === rightSegments.length &&
+      leftSegments.every(
+        (segment, index) =>
+          segment === rightSegments[index] ||
+          isDynamic(segment) ||
+          isDynamic(rightSegments[index] ?? ""),
+      )
+    );
+  };
   for (const feature of features) {
     for (const page of feature.pages) {
       const requiredCapability =
@@ -91,12 +105,18 @@ function assertUniquePages(features: readonly FeatureManifest[]): void {
           `Feature ${feature.id} contributes a ${page.access.kind} page without the ${requiredCapability} capability.`,
         );
       }
-      const owner = owners.get(page.path);
-      if (owner)
+      const conflictingPage = ownedPages.find(
+        ({ path }) =>
+          path === page.path ||
+          (path.includes("[") &&
+            page.path.includes("[") &&
+            overlaps(path, page.path)),
+      );
+      if (conflictingPage)
         throw new Error(
-          `Page collision for ${page.path}: ${owner} and ${feature.id}.`,
+          `Page collision between ${conflictingPage.path} and ${page.path}: ${conflictingPage.owner} and ${feature.id}.`,
         );
-      owners.set(page.path, feature.id);
+      ownedPages.push({ owner: feature.id, path: page.path });
     }
   }
 }

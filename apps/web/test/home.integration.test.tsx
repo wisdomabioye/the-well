@@ -11,9 +11,9 @@ describe("home navigation", () => {
     });
     const markup = renderToStaticMarkup(page);
 
-    expect(markup).toContain('href="#launches"');
+    expect(markup).toContain('href="/launches"');
     expect(markup).toContain('id="launches"');
-    expect(markup).toContain('href="#games"');
+    expect(markup).toContain('href="/games"');
     expect(markup).toContain('id="games"');
     expect(markup).toContain("Frostbite");
   });

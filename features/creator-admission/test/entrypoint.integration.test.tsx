@@ -36,16 +36,18 @@ describe("creator admission entrypoint", () => {
     if (studio === undefined || review === undefined)
       throw new Error("Expected pages");
     expect(
-      renderToStaticMarkup(await studio.render({ actorUserId })),
+      renderToStaticMarkup(await studio.render({ actorUserId, params: {} })),
     ).toContain("Apply to create");
     expect(
-      renderToStaticMarkup(await studio.render({ actorUserId: null })),
+      renderToStaticMarkup(
+        await studio.render({ actorUserId: null, params: {} }),
+      ),
     ).toBe("");
     expect(
-      renderToStaticMarkup(await studio.render({ actorUserId })),
+      renderToStaticMarkup(await studio.render({ actorUserId, params: {} })),
     ).toContain("No state is being inferred");
     expect(
-      renderToStaticMarkup(await review.render({ actorUserId })),
+      renderToStaticMarkup(await review.render({ actorUserId, params: {} })),
     ).toContain("Admission review");
   });
 });

@@ -12,11 +12,11 @@ export default async function FeaturePage({
 }: PageProps<"/[[...path]]">) {
   const { path = [] } = await params;
   const routePath = `/${path.join("/")}`;
-  const contribution =
-    await platformComposition.features.resolvePage(routePath);
-  if (!contribution) notFound();
+  const match = await platformComposition.features.resolvePage(routePath);
+  if (!match) notFound();
+  const { page: contribution, params: routeParams } = match;
   if (contribution.access.kind === "public") {
-    return contribution.render({ actorUserId: null });
+    return contribution.render({ actorUserId: null, params: routeParams });
   }
   const token = (await cookies()).get(platformSessionCookieName)?.value;
   const access = await resolvePageAccess(
@@ -27,5 +27,8 @@ export default async function FeaturePage({
   if (access.kind !== "allowed") {
     return <AccessState retryHref={routePath} state={access.kind} />;
   }
-  return contribution.render({ actorUserId: access.actorUserId });
+  return contribution.render({
+    actorUserId: access.actorUserId,
+    params: routeParams,
+  });
 }

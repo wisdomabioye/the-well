@@ -161,7 +161,7 @@ describe("validatePlatformBoot", () => {
     );
   });
 
-  it("rejects duplicate page ownership at boot", () => {
+  it("rejects duplicate dynamic page ownership at boot", () => {
     const first = feature("catalog", catalogRoute);
     const second = feature("launches", {
       method: "GET",
@@ -177,7 +177,7 @@ describe("validatePlatformBoot", () => {
             manifest: {
               ...first.manifest,
               capabilities: ["api-routes", "public-page"],
-              pages: [{ access: { kind: "public" }, path: "/browse" }],
+              pages: [{ access: { kind: "public" }, path: "/[group]/edit" }],
             },
           },
           {
@@ -185,13 +185,13 @@ describe("validatePlatformBoot", () => {
             manifest: {
               ...second.manifest,
               capabilities: ["api-routes", "public-page"],
-              pages: [{ access: { kind: "public" }, path: "/browse" }],
+              pages: [{ access: { kind: "public" }, path: "/admin/[action]" }],
             },
           },
         ]),
         providerRegistry: createProviderRegistry([]),
       }),
-    ).toThrow("Page collision for /browse");
+    ).toThrow("Page collision between /[group]/edit and /admin/[action]");
   });
 
   it("rejects page contributions without the matching capability", () => {

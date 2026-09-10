@@ -50,10 +50,16 @@ export const pageContributionSchema = z
     path: z
       .string()
       .regex(
-        /^\/$|^\/[a-z0-9]+(?:-[a-z0-9]+)*(?:\/[a-z0-9]+(?:-[a-z0-9]+)*)*$/,
+        /^\/$|^\/(?:[a-z0-9]+(?:-[a-z0-9]+)*|\[[a-z][A-Za-z0-9]*\])(?:\/(?:[a-z0-9]+(?:-[a-z0-9]+)*|\[[a-z][A-Za-z0-9]*\]))*$/,
       ),
   })
   .strict()
+  .refine(({ path }) => {
+    const names = [...path.matchAll(/\[([a-z][A-Za-z0-9]*)\]/gu)].map(
+      ([, name]) => name,
+    );
+    return new Set(names).size === names.length;
+  }, "Page parameter names must be unique.")
   .readonly();
 
 export const featureIdSchema = z.string().regex(featureIdPattern);
