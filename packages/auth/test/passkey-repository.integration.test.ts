@@ -72,6 +72,17 @@ const credential = {
   transports: ["internal"] as const,
 };
 
+async function insertCredential(credentialId = credential.credentialId) {
+  await database.insert(passkeyCredentials).values({
+    ...credential,
+    credentialId,
+    id: createUuidV7(),
+    publicKey: Buffer.from(credential.publicKey),
+    transports: [...credential.transports],
+    userId,
+  });
+}
+
 function replacementSession(digit: string) {
   return {
     absoluteExpiresAt: new Date(now.getTime() + 60_000),
@@ -211,13 +222,8 @@ describe("Drizzle passkey repository", () => {
   });
 
   it("protects the final method and unlinks when a wallet remains", async () => {
-    await database.insert(passkeyCredentials).values({
-      ...credential,
-      id: createUuidV7(),
-      publicKey: Buffer.from(credential.publicKey),
-      transports: [...credential.transports],
-      userId,
-    });
+    await insertCredential();
+    await insertCredential("credential-two");
     await expect(
       repository.unlink({
         ...activeSessionContext(),
@@ -244,7 +250,9 @@ describe("Drizzle passkey repository", () => {
         userId,
       }),
     ).resolves.toEqual({ kind: "unlinked" });
-    expect(await repository.listCredentialIds(userId)).toEqual([]);
+    expect(await repository.listCredentialIds(userId)).toEqual([
+      "credential-two",
+    ]);
     expect(await database.select().from(authSecurityEvents)).toEqual([
       expect.objectContaining({ action: "passkey-unlinked", sessionId }),
     ]);
@@ -253,13 +261,7 @@ describe("Drizzle passkey repository", () => {
   it("rejects future-authenticated or revoked bound sessions", async () => {
     const issued = challenge();
     await repository.issueChallenge(issued);
-    await database.insert(passkeyCredentials).values({
-      ...credential,
-      id: createUuidV7(),
-      publicKey: Buffer.from(credential.publicKey),
-      transports: [...credential.transports],
-      userId,
-    });
+    await insertCredential();
     await database.update(authSessions).set({
       authenticatedAt: new Date(now.getTime() + 1),
     });

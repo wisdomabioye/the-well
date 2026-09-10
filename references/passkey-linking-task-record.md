@@ -45,6 +45,6 @@ no deprecation marker, and these versions as the current latest releases on 2026
   `pnpm test:integration`, `pnpm test:coverage`, `pnpm migration:check`, and `pnpm build` passed.
 - Passkey domain, adapter, and repository coverage is 100% for statements, branches, functions,
   and lines; merged repository line and branch coverage remains above 90%.
-- `pnpm --filter @repo/e2e test:e2e` passed 66 tests with 6 intentional viewport exclusions,
-  including a real Chromium virtual-authenticator registration and unlink journey on all four
-  configured viewports.
+- `pnpm --filter @repo/e2e test:e2e` passed 66 tests with 6 intentional project exclusions. The
+  stateful Chromium virtual-authenticator registration and unlink journey ran once in the desktop
+  project; responsive account-page coverage remains part of the broader route matrix.

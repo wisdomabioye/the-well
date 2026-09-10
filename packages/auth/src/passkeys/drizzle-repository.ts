@@ -206,12 +206,7 @@ export function createDrizzlePasskeyRepository(
           .select({ count: sql<number>`count(*)::int` })
           .from(walletIdentities)
           .where(eq(walletIdentities.userId, userId));
-        const passkeys = await transaction
-          .select({ count: sql<number>`count(*)::int` })
-          .from(passkeyCredentials)
-          .where(eq(passkeyCredentials.userId, userId));
-        if (readAggregateCount(wallets) + readAggregateCount(passkeys) <= 1)
-          return { kind: "final-method" };
+        if (readAggregateCount(wallets) === 0) return { kind: "final-method" };
         await transaction
           .delete(passkeyCredentials)
           .where(eq(passkeyCredentials.id, credential.id));
