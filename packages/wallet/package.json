@@ -5,6 +5,7 @@
   "type": "module",
   "exports": {
     "./client": "./src/client/provider.tsx",
+    "./conformance": "./src/conformance/evaluate.ts",
     "./contracts": "./src/contracts.ts",
     "./qualification": "./src/qualification.ts",
     "./registration": "./src/registration.ts",

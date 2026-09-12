@@ -6,10 +6,18 @@ import { describe, expect, it } from "vitest";
 
 import { createLaserEyesSigner } from "../src/bridge/laser-eyes-signer.ts";
 import { WalletProvider } from "../src/client/provider.tsx";
+import { laserEyesProviderIds } from "../src/conformance/contracts.ts";
 import { qualifiedLaserEyes } from "../src/qualification.ts";
 
 const packageManifest = readFileSync(
   new URL("../package.json", import.meta.url),
+  "utf8",
+);
+const walletDeclarations = readFileSync(
+  new URL(
+    "../node_modules/@omnisat/lasereyes-core/dist/constants/wallets.d.ts",
+    import.meta.url,
+  ),
   "utf8",
 );
 
@@ -21,6 +29,18 @@ describe("LaserEyes package boundary", () => {
     expect(packageManifest).toContain(
       `"@omnisat/lasereyes-react": "${qualifiedLaserEyes.reactVersion}"`,
     );
+  });
+
+  it("keeps typed provider identifiers aligned with the pinned LaserEyes artifact", () => {
+    const addressConstantsStart = walletDeclarations.indexOf(
+      "export declare const P2TR",
+    );
+    expect(addressConstantsStart).toBeGreaterThan(0);
+    const constantsSection = walletDeclarations.slice(0, addressConstantsStart);
+    const declaredProviders = [...constantsSection.matchAll(/= "([^"]+)";/gu)]
+      .map((match) => match[1])
+      .sort();
+    expect([...laserEyesProviderIds].sort()).toEqual(declaredProviders);
   });
 
   it("accepts the exact-pinned client through the signer bridge", () => {

@@ -3,7 +3,7 @@
 Status: active  
 Milestone: Launchpad Beta  
 Canonical status source: this file  
-Last synchronized: 2026-09-10
+Last synchronized: 2026-09-12
 
 This ledger tracks every implementation task in the eight-week Launchpad Beta milestone. The
 milestone defines scope and acceptance criteria; this file records execution status. Task records
@@ -26,8 +26,8 @@ same change. Never infer completion from a commit, passing test, or partially de
 
 | Field                   | Value                                                               |
 | ----------------------- | ------------------------------------------------------------------- |
-| Active task             | None — `W2-09` completed and no later task has started              |
-| Next ordered task       | `W2-10` Wallet device/browser conformance                           |
+| Active task             | None                                                                |
+| Next ordered task       | `W2-11` Week 2 experience-quality matrix                            |
 | Current milestone phase | Week 2 — Authentication, authorization, and shell                   |
 | Parallel security gate  | `SEC-D15-04` remains blocked                                        |
 | Mainnet                 | Outside this milestone and blocked by a separate readiness decision |
@@ -54,19 +54,20 @@ same change. Never infer completion from a commit, passing test, or partially de
 These tasks retain their dependency order. `W2-01` through `W2-08` are the ordered sequence formerly
 stored in `references/task-list.md`.
 
-| ID    | Task                                                                                    | Status    | Evidence or blocker                                                                                    |
-| ----- | --------------------------------------------------------------------------------------- | --------- | ------------------------------------------------------------------------------------------------------ |
-| W2-01 | Qualify and exact-pin the LaserEyes and Alkanes SDK wallet stack                        | completed | `references/wallet-stack-qualification-task-record.md`                                                 |
-| W2-02 | Resolve the LaserEyes advisory gate for beta                                            | completed | `references/lasereyes-advisory-resolution-task-record.md`; accepted beta exception remains constrained |
-| W2-03 | Enforce detachable feature and wallet-provider composition                              | completed | `references/detachable-composition-task-record.md`                                                     |
-| W2-04 | Implement canonical wallet authentication and hash-only sessions                        | completed | `references/wallet-authentication-task-record.md`                                                      |
-| W2-05 | Implement UUIDv7 accounts, organizations, memberships, roles, and authorization         | completed | `references/authorization-accounts-task-record.md`                                                     |
-| W2-06 | Implement the authenticated account, studio, and admin route family                     | completed | `references/authenticated-routes-task-record.md`                                                       |
-| W2-07 | Implement curated creator admission and minimal staff approval                          | completed | `references/creator-admission-task-record.md`; deep review converged after exhaustive mutation proof   |
-| W2-08 | Implement the remaining public product route families                                   | completed | `references/public-product-routes-task-record.md`; deep review converged after mutation proof          |
-| W2-09 | Add authenticated passkey linking with conflict and final-method protections            | completed | `references/passkey-linking-task-record.md`; deep review converged after dynamic mutation proof        |
-| W2-10 | Complete supported-wallet device/browser conformance and enable only passing providers  | pending   | Depends on W2-01; physical/provider evidence required                                                  |
-| W2-11 | Close the Week 2 visual, accessibility, keyboard, responsive, and reduced-motion matrix | pending   | Depends on W2-06 through W2-10                                                                         |
+| ID     | Task                                                                                    | Status    | Evidence or blocker                                                                                    |
+| ------ | --------------------------------------------------------------------------------------- | --------- | ------------------------------------------------------------------------------------------------------ |
+| W2-01  | Qualify and exact-pin the LaserEyes and Alkanes SDK wallet stack                        | completed | `references/wallet-stack-qualification-task-record.md`                                                 |
+| W2-02  | Resolve the LaserEyes advisory gate for beta                                            | completed | `references/lasereyes-advisory-resolution-task-record.md`; accepted beta exception remains constrained |
+| W2-03  | Enforce detachable feature and wallet-provider composition                              | completed | `references/detachable-composition-task-record.md`                                                     |
+| W2-04  | Implement canonical wallet authentication and hash-only sessions                        | completed | `references/wallet-authentication-task-record.md`                                                      |
+| W2-05  | Implement UUIDv7 accounts, organizations, memberships, roles, and authorization         | completed | `references/authorization-accounts-task-record.md`                                                     |
+| W2-06  | Implement the authenticated account, studio, and admin route family                     | completed | `references/authenticated-routes-task-record.md`                                                       |
+| W2-07  | Implement curated creator admission and minimal staff approval                          | completed | `references/creator-admission-task-record.md`; deep review converged after exhaustive mutation proof   |
+| W2-08  | Implement the remaining public product route families                                   | completed | `references/public-product-routes-task-record.md`; deep review converged after mutation proof          |
+| W2-09  | Add authenticated passkey linking with conflict and final-method protections            | completed | `references/passkey-linking-task-record.md`; deep review converged after dynamic mutation proof        |
+| W2-10A | Implement automated fail-closed wallet conformance architecture                         | completed | `references/wallet-device-conformance-task-record.md`; mutation-proven, 100% branch coverage           |
+| W2-10B | Qualify and enable supported wallets on real browsers and devices                       | blocked   | Beta-release gate; needs selected candidates and physical/provider evidence                            |
+| W2-11  | Close the Week 2 visual, accessibility, keyboard, responsive, and reduced-motion matrix | pending   | Depends on W2-06 through W2-10A                                                                        |
 
 ## Week 3 — Upload pipeline
 
@@ -133,17 +134,17 @@ stored in `references/task-list.md`.
 
 ## Week 8 — Frostbite catalog, hardening, and beta release
 
-| ID    | Task                                                                                                                  | Status  | Evidence or blocker                       |
-| ----- | --------------------------------------------------------------------------------------------------------------------- | ------- | ----------------------------------------- |
-| W8-01 | Implement the versioned game manifest, games catalog, and game detail feature                                         | pending | Depends on public product routes          |
-| W8-02 | Register Frostbite with configurable play URL, base path, return URL, and network                                     | pending | Depends on W8-01                          |
-| W8-03 | Verify subdomain-style and domain-path-style game hosting                                                             | pending | Depends on W8-02                          |
-| W8-04 | Complete critical collector, creator, staff, transaction, game, and degradation E2E coverage                          | blocked | Depends on Weeks 3 through 7              |
-| W8-05 | Complete all-route visual, accessibility, responsive, keyboard, and state matrices                                    | blocked | Depends on all route families             |
-| W8-06 | Add rate limits, security headers, health checks, dashboards, and alerts                                              | pending | Depends on deployment configuration       |
-| W8-07 | Verify backup/restore and write authentication, upload, provider, indexer, transaction, launch, and rollback runbooks | pending | Depends on implemented operational flows  |
-| W8-08 | Deploy the beta and seed an honestly represented demonstration launch                                                 | blocked | Depends on all milestone acceptance gates |
-| W8-09 | Record the smoke test, rollback exercise, release notes, and remaining limitations                                    | blocked | Depends on W8-08                          |
+| ID    | Task                                                                                                                  | Status  | Evidence or blocker                                         |
+| ----- | --------------------------------------------------------------------------------------------------------------------- | ------- | ----------------------------------------------------------- |
+| W8-01 | Implement the versioned game manifest, games catalog, and game detail feature                                         | pending | Depends on public product routes                            |
+| W8-02 | Register Frostbite with configurable play URL, base path, return URL, and network                                     | pending | Depends on W8-01                                            |
+| W8-03 | Verify subdomain-style and domain-path-style game hosting                                                             | pending | Depends on W8-02                                            |
+| W8-04 | Complete critical collector, creator, staff, transaction, game, and degradation E2E coverage                          | blocked | Depends on Weeks 3 through 7                                |
+| W8-05 | Complete all-route visual, accessibility, responsive, keyboard, and state matrices                                    | blocked | Depends on all route families                               |
+| W8-06 | Add rate limits, security headers, health checks, dashboards, and alerts                                              | pending | Depends on deployment configuration                         |
+| W8-07 | Verify backup/restore and write authentication, upload, provider, indexer, transaction, launch, and rollback runbooks | pending | Depends on implemented operational flows                    |
+| W8-08 | Deploy the beta and seed an honestly represented demonstration launch                                                 | blocked | Depends on all milestone acceptance gates, including W2-10B |
+| W8-09 | Record the smoke test, rollback exercise, release notes, and remaining limitations                                    | blocked | Depends on W8-08                                            |
 
 ## Parallel security and product-decision gates
 

@@ -10,6 +10,8 @@ The single platform boundary around the exact-pinned LaserEyes React/Core pair.
   by Alkanes application services.
 - Wallet contracts normalize account, network, and signed-PSBT results without leaking broad vendor
   response types.
+- `@ador/wallet/conformance` evaluates explicit device/browser evidence and returns only candidates
+  whose requested capabilities have a complete passing matrix for the pinned LaserEyes versions.
 
 ## Invariants
 
@@ -42,3 +44,15 @@ changing app routes, features, or wallet-specific conditionals.
 
 Network selection is provided by validated configuration. Platform engineering owns this package.
 Run its `typecheck`, `test:unit`, `test:integration`, or `test:coverage` scripts.
+
+## Conformance boundary
+
+The evaluator is the shared automated half of wallet qualification. A deployment supplies typed
+candidates with exact wallet versions, an explicit browser/device/network/address/signing-scheme
+policy, deterministic fixture identity, and physical evidence. Empty policy dimensions, missing
+checks, duplicate candidates/capabilities or evidence, failures, stale/future timestamps, and
+version/fixture drift all fail closed.
+
+Physical runs record only environment metadata, fixture identity, time, and outcome. Never record
+wallet addresses, keys, signatures, PSBT contents, balances, extension profiles, or seed material.
+No individual provider is currently advertised; that requires the separate W2-10B physical gate.
