@@ -51,6 +51,18 @@ async function seed(databaseUrl: string): Promise<void> {
         id: creatorE2EFixtures.passkeyUser.userId,
         name: "E2E Passkey User",
       },
+      {
+        email: "staff@example.test",
+        emailVerified: true,
+        id: creatorE2EFixtures.staff.userId,
+        name: "E2E Staff",
+      },
+      {
+        email: "visual@example.test",
+        emailVerified: true,
+        id: creatorE2EFixtures.visualUser.userId,
+        name: "E2E Visual User",
+      },
     ]);
     await database.insert(authSessions).values([
       {
@@ -77,13 +89,37 @@ async function seed(databaseUrl: string): Promise<void> {
         tokenHash: hash(creatorE2EFixtures.passkeyUser.sessionToken),
         userId: creatorE2EFixtures.passkeyUser.userId,
       },
+      {
+        absoluteExpiresAt: expiry,
+        authenticatedAt: new Date(),
+        id: creatorE2EFixtures.staff.sessionId,
+        idleExpiresAt: expiry,
+        tokenHash: hash(creatorE2EFixtures.staff.sessionToken),
+        userId: creatorE2EFixtures.staff.userId,
+      },
+      {
+        absoluteExpiresAt: expiry,
+        authenticatedAt: new Date(),
+        id: creatorE2EFixtures.visualUser.sessionId,
+        idleExpiresAt: expiry,
+        tokenHash: hash(creatorE2EFixtures.visualUser.sessionToken),
+        userId: creatorE2EFixtures.visualUser.userId,
+      },
     ]);
-    await database.insert(platformRoleAssignments).values({
-      id: creatorE2EFixtures.reviewer.roleId,
-      role: "reviewer",
-      status: "active",
-      userId: creatorE2EFixtures.reviewer.userId,
-    });
+    await database.insert(platformRoleAssignments).values([
+      {
+        id: creatorE2EFixtures.reviewer.roleId,
+        role: "reviewer",
+        status: "active",
+        userId: creatorE2EFixtures.reviewer.userId,
+      },
+      {
+        id: creatorE2EFixtures.staff.roleId,
+        role: "staff",
+        status: "active",
+        userId: creatorE2EFixtures.staff.userId,
+      },
+    ]);
     await database.insert(walletIdentities).values({
       address: "tb1qe2eapplicant",
       id: "01994b10-0000-7000-8000-000000000006",

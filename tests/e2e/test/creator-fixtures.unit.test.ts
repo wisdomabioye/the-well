@@ -11,6 +11,13 @@ describe("creator E2E fixtures", () => {
       creatorE2EFixtures.reviewer.roleId,
       creatorE2EFixtures.reviewer.sessionId,
       creatorE2EFixtures.reviewer.userId,
+      creatorE2EFixtures.passkeyUser.sessionId,
+      creatorE2EFixtures.passkeyUser.userId,
+      creatorE2EFixtures.staff.roleId,
+      creatorE2EFixtures.staff.sessionId,
+      creatorE2EFixtures.staff.userId,
+      creatorE2EFixtures.visualUser.sessionId,
+      creatorE2EFixtures.visualUser.userId,
     ];
     expect(ids.map((id) => uuidV7TextSchema.parse(id))).toHaveLength(
       ids.length,
@@ -18,9 +25,14 @@ describe("creator E2E fixtures", () => {
     expect(new Set(ids).size).toBe(ids.length);
   });
 
-  it("keeps applicant and reviewer session credentials distinct", () => {
-    expect(creatorE2EFixtures.applicant.sessionToken).not.toBe(
+  it("keeps every seeded session credential distinct", () => {
+    const tokens = [
+      creatorE2EFixtures.applicant.sessionToken,
+      creatorE2EFixtures.passkeyUser.sessionToken,
       creatorE2EFixtures.reviewer.sessionToken,
-    );
+      creatorE2EFixtures.staff.sessionToken,
+      creatorE2EFixtures.visualUser.sessionToken,
+    ];
+    expect(new Set(tokens).size).toBe(tokens.length);
   });
 });

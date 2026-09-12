@@ -27,8 +27,8 @@ same change. Never infer completion from a commit, passing test, or partially de
 | Field                   | Value                                                               |
 | ----------------------- | ------------------------------------------------------------------- |
 | Active task             | None                                                                |
-| Next ordered task       | `W2-11` Week 2 experience-quality matrix                            |
-| Current milestone phase | Week 2 — Authentication, authorization, and shell                   |
+| Next ordered task       | `W3-01` Provider-neutral object-storage port and R2 adapter         |
+| Current milestone phase | Week 3 — Upload pipeline                                            |
 | Parallel security gate  | `SEC-D15-04` remains blocked                                        |
 | Mainnet                 | Outside this milestone and blocked by a separate readiness decision |
 
@@ -67,7 +67,7 @@ stored in `references/task-list.md`.
 | W2-09  | Add authenticated passkey linking with conflict and final-method protections            | completed | `references/passkey-linking-task-record.md`; deep review converged after dynamic mutation proof        |
 | W2-10A | Implement automated fail-closed wallet conformance architecture                         | completed | `references/wallet-device-conformance-task-record.md`; mutation-proven, 100% branch coverage           |
 | W2-10B | Qualify and enable supported wallets on real browsers and devices                       | blocked   | Beta-release gate; needs selected candidates and physical/provider evidence                            |
-| W2-11  | Close the Week 2 visual, accessibility, keyboard, responsive, and reduced-motion matrix | pending   | Depends on W2-06 through W2-10A                                                                        |
+| W2-11  | Close the Week 2 visual, accessibility, keyboard, responsive, and reduced-motion matrix | completed | `references/week-two-experience-quality-task-record.md`; 20 route/viewport checks                      |
 
 ## Week 3 — Upload pipeline
 

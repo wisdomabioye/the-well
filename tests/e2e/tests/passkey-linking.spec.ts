@@ -1,22 +1,7 @@
-import { expect, test, type BrowserContext } from "@playwright/test";
-import { platformSessionCookieName } from "@ador/shared/auth";
+import { expect, test } from "@playwright/test";
 
 import { creatorE2EFixtures } from "../src/creator-fixtures.ts";
-
-async function usePasskeySession(context: BrowserContext, baseURL: string) {
-  const url = new URL(baseURL);
-  await context.addCookies([
-    {
-      domain: url.hostname,
-      httpOnly: true,
-      name: platformSessionCookieName,
-      path: "/",
-      sameSite: "Lax",
-      secure: true,
-      value: creatorE2EFixtures.passkeyUser.sessionToken,
-    },
-  ]);
-}
+import { useE2ESession } from "../src/session.ts";
 
 test("links and removes a platform passkey with a real browser ceremony", async ({
   baseURL,
@@ -46,7 +31,11 @@ test("links and removes a platform passkey with a real browser ceremony", async 
     { data: {}, headers: { origin: new URL(baseURL).origin } },
   );
   expect(unauthenticated.status()).toBe(401);
-  await usePasskeySession(context, baseURL);
+  await useE2ESession(
+    context,
+    baseURL,
+    creatorE2EFixtures.passkeyUser.sessionToken,
+  );
   const malformed = await context.request.post(
     "/api/v1/passkeys/registration/verify",
     {

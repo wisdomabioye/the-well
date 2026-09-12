@@ -1,28 +1,8 @@
-import { expect, test, type BrowserContext } from "@playwright/test";
-import { platformSessionCookieName } from "@ador/shared/auth";
+import { expect, test } from "@playwright/test";
 import { creatorApplicationResponseSchema } from "@ador/shared/creator-admission";
 
 import { creatorE2EFixtures } from "../src/creator-fixtures.ts";
-
-async function useSession(
-  context: BrowserContext,
-  baseURL: string,
-  token: string,
-) {
-  await context.clearCookies();
-  const url = new URL(baseURL);
-  await context.addCookies([
-    {
-      domain: url.hostname,
-      httpOnly: true,
-      name: platformSessionCookieName,
-      path: "/",
-      sameSite: "Strict",
-      secure: true,
-      value: token,
-    },
-  ]);
-}
+import { useE2ESession } from "../src/session.ts";
 
 test("persists, submits, and reviews a creator application", async ({
   baseURL,
@@ -31,7 +11,11 @@ test("persists, submits, and reviews a creator application", async ({
 }, testInfo) => {
   test.skip(testInfo.project.name !== "desktop", "One stateful E2E journey");
   if (baseURL === undefined) throw new Error("Expected configured base URL");
-  await useSession(context, baseURL, creatorE2EFixtures.applicant.sessionToken);
+  await useE2ESession(
+    context,
+    baseURL,
+    creatorE2EFixtures.applicant.sessionToken,
+  );
   await page.goto("/studio/creator-application");
   await expect(
     page.getByRole("heading", { name: "Apply to create" }),
@@ -68,7 +52,11 @@ test("persists, submits, and reviews a creator application", async ({
   );
   if (mine.application === null) throw new Error("Expected application");
 
-  await useSession(context, baseURL, creatorE2EFixtures.reviewer.sessionToken);
+  await useE2ESession(
+    context,
+    baseURL,
+    creatorE2EFixtures.reviewer.sessionToken,
+  );
   await page.goto("/admin/creator-applications");
   await expect(
     page.getByRole("heading", { name: "Review creator admission" }),
