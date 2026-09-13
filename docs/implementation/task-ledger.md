@@ -26,7 +26,7 @@ same change. Never infer completion from a commit, passing test, or partially de
 
 | Field                   | Value                                                               |
 | ----------------------- | ------------------------------------------------------------------- |
-| Active task             | None; `W3-01` converged and is ready to land                        |
+| Active task             | None — `W3-01A` is ready to land                                    |
 | Next ordered task       | `W3-02` Short-lived direct-upload intents and authorization         |
 | Current milestone phase | Week 3 — Upload pipeline                                            |
 | Parallel security gate  | `SEC-D15-04` remains blocked                                        |
@@ -71,16 +71,17 @@ stored in `references/task-list.md`.
 
 ## Week 3 — Upload pipeline
 
-| ID    | Task                                                                            | Status    | Evidence or blocker                        |
-| ----- | ------------------------------------------------------------------------------- | --------- | ------------------------------------------ |
-| W3-01 | Implement the provider-neutral object-storage port and R2 adapter               | completed | `references/object-storage-task-record.md` |
-| W3-02 | Implement short-lived direct-upload intents and authorization                   | pending   | Depends on W3-01                           |
-| W3-03 | Add asset/upload persistence and idempotent processing jobs                     | pending   | Depends on W3-01 and workflow foundation   |
-| W3-04 | Validate file signatures, MIME, size, decoded dimensions, and checksums         | pending   | Depends on W3-03                           |
-| W3-05 | Generate thumbnails and previews for PNG, JPEG, and WebP                        | pending   | Depends on W3-04                           |
-| W3-06 | Build upload progress, retry, validation-error, and asset-library UI            | pending   | Depends on W3-02 through W3-05             |
-| W3-07 | Enforce private draft access and abandoned-upload cleanup                       | pending   | Depends on W3-03 and authorization         |
-| W3-08 | Close positive, negative, unauthorized, retry, and idempotency acceptance tests | pending   | Depends on W3-01 through W3-07             |
+| ID     | Task                                                                            | Status    | Evidence or blocker                          |
+| ------ | ------------------------------------------------------------------------------- | --------- | -------------------------------------------- |
+| W3-01  | Implement the provider-neutral object-storage port and R2 adapter               | completed | `references/object-storage-task-record.md`   |
+| W3-01A | Expose typed provider runtime resolution without vendor imports in features     | completed | `references/provider-runtime-task-record.md` |
+| W3-02  | Implement short-lived direct-upload intents and authorization                   | pending   | Depends on W3-01A                            |
+| W3-03  | Add asset/upload persistence and idempotent processing jobs                     | pending   | Depends on W3-01 and workflow foundation     |
+| W3-04  | Validate file signatures, MIME, size, decoded dimensions, and checksums         | pending   | Depends on W3-03                             |
+| W3-05  | Generate thumbnails and previews for PNG, JPEG, and WebP                        | pending   | Depends on W3-04                             |
+| W3-06  | Build upload progress, retry, validation-error, and asset-library UI            | pending   | Depends on W3-02 through W3-05               |
+| W3-07  | Enforce private draft access and abandoned-upload cleanup                       | pending   | Depends on W3-03 and authorization           |
+| W3-08  | Close positive, negative, unauthorized, retry, and idempotency acceptance tests | pending   | Depends on W3-01 through W3-07               |
 
 ## Week 4 — Collection and creator workflow
 

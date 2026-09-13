@@ -721,6 +721,9 @@ importers:
 
   packages/object-storage:
     dependencies:
+      '@ador/plugin-kit':
+        specifier: workspace:*
+        version: link:../plugin-kit
       zod:
         specifier: 4.5.4
         version: 4.5.4

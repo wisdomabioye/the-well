@@ -9,7 +9,7 @@ export const r2ObjectStorageProvider = defineProvider({
   },
   load: async () =>
     import("./provider-entrypoint.ts").then(
-      ({ r2ObjectStorageProviderEntrypoint }) =>
-        r2ObjectStorageProviderEntrypoint,
+      ({ createR2ObjectStorageProviderEntrypoint }) =>
+        createR2ObjectStorageProviderEntrypoint(process.env),
     ),
 });

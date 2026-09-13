@@ -23,6 +23,10 @@ side effects.
 - A loaded entrypoint must match its manifest identity, version, and capabilities.
 - Loading is explicit and lazy.
 - Required provider capabilities must exist at boot.
+- Exactly one provider owns each capability; typed runtime services match declared capabilities and
+  repeated resolution returns the same process-local instance.
+- Neutral contract packages own capability-to-service type mappings; provider adapters only implement
+  them, so replacing an adapter does not change feature imports.
 - Required decision gates must be open before a feature or provider can register at boot.
 - Method/path pairs and operation IDs are globally unique; parameter names do not hide collisions.
 - Routes are static until the shared HTTP contract defines typed path-parameter validation.

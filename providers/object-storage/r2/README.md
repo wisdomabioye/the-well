@@ -7,6 +7,8 @@ Cloudflare R2 adapter for the platform-owned `ObjectStoragePort`.
 `createR2ObjectStorage` accepts validated configuration and returns only the provider-neutral port.
 `r2ObjectStorageProvider` is the explicit one-line registration used by the platform provider list.
 Removing that registration detaches the provider without changing features or domain packages.
+The registry resolves the same process-local `ObjectStoragePort` through the typed
+`object-storage:s3-compatible` capability and validates configuration only when that service is used.
 
 ## Configuration
 

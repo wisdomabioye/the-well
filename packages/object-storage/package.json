@@ -16,6 +16,7 @@
     "test:coverage": "vitest run --config vitest.config.ts --coverage"
   },
   "dependencies": {
+    "@ador/plugin-kit": "workspace:*",
     "zod": "4.5.4"
   },
   "devDependencies": {
