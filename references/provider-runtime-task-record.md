@@ -46,6 +46,9 @@ The review repaired two findings: the original provider-owned type augmentation 
 ownership into consumers, and the first provider-free type test violated the lint contract. It also
 added explicit concurrent-resolution coverage during the execution-path review.
 
+A post-landing fresh-eyes audit corrected the stale ledger position and strengthened the missing-R2-
+configuration integration assertion so only the expected schema-validation failure satisfies it.
+
 Mutation proofs observed the intended red result for duplicate ownership, load/service caching,
 unregistered capabilities, absent factories, absent selected services, undeclared services, R2
 registration wiring, valid resolution, missing configuration, and provider-free type mapping. Exact
@@ -59,4 +62,5 @@ registry measured 100% statements, branches, functions, and lines. Playwright re
 
 Deep-review clean streak: M1 whole-file sequential read, M5 mutation/runtime proof, and M11 house-rule
 audit, with the required M4 producer/consumer contract diff completed before the streak. Verdict:
-Converged. Landing commit: this task's `feat(plugins): resolve typed provider runtimes` commit.
+Converged. Implementation commit: `c61efe6387900bb5974ea3b0b4248504f4314229`
+(`feat(plugins): resolve typed provider runtimes`).

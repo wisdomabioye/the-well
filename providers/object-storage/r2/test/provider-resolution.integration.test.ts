@@ -3,6 +3,7 @@ import {
   defineProvider,
 } from "@ador/plugin-kit/providers";
 import { describe, expect, it } from "vitest";
+import { ZodError } from "zod";
 
 import { createR2ObjectStorageProviderEntrypoint } from "../src/provider-entrypoint.ts";
 
@@ -43,6 +44,6 @@ describe("R2 provider runtime resolution", () => {
   it("fails closed when selected-provider configuration is absent", async () => {
     await expect(
       registry({}).resolve("object-storage:s3-compatible"),
-    ).rejects.toThrow();
+    ).rejects.toBeInstanceOf(ZodError);
   });
 });

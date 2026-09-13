@@ -26,7 +26,7 @@ same change. Never infer completion from a commit, passing test, or partially de
 
 | Field                   | Value                                                               |
 | ----------------------- | ------------------------------------------------------------------- |
-| Active task             | None — `W3-01A` is ready to land                                    |
+| Active task             | None — `W3-01A` landed; `W3-02` awaits upload-policy decisions      |
 | Next ordered task       | `W3-02` Short-lived direct-upload intents and authorization         |
 | Current milestone phase | Week 3 — Upload pipeline                                            |
 | Parallel security gate  | `SEC-D15-04` remains blocked                                        |
