@@ -35,4 +35,10 @@ describe("creator E2E fixtures", () => {
     ];
     expect(new Set(tokens).size).toBe(tokens.length);
   });
+
+  it("keeps role-bearing credentials attached to their named actor", () => {
+    expect(creatorE2EFixtures.reviewer.sessionToken).toContain("reviewer");
+    expect(creatorE2EFixtures.staff.sessionToken).toContain("staff");
+    expect(creatorE2EFixtures.visualUser.sessionToken).toContain("visual");
+  });
 });

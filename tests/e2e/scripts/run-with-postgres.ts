@@ -13,6 +13,7 @@ import {
 import { withDisposablePostgres } from "../../../packages/database/test/support/postgres-container.ts";
 
 import { creatorE2EFixtures } from "../src/creator-fixtures.ts";
+import { normalizePlaywrightArguments } from "../src/playwright-arguments.ts";
 import { resolveE2EServerConfig } from "../src/server-config.ts";
 
 function hash(token: string): string {
@@ -139,7 +140,12 @@ async function runPlaywright(databaseUrl: string): Promise<void> {
   await new Promise<void>((resolve, reject) => {
     const child = spawn(
       "pnpm",
-      ["exec", "playwright", "test", ...process.argv.slice(2)],
+      [
+        "exec",
+        "playwright",
+        "test",
+        ...normalizePlaywrightArguments(process.argv.slice(2)),
+      ],
       {
         env: {
           ...process.env,

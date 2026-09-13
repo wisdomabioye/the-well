@@ -52,9 +52,9 @@ for (const surface of authenticatedSurfaces) {
       page.getByRole("heading", { level: 1, name: surface.heading }),
     ).toBeVisible();
     await expect(page.locator(".scanlines")).toHaveCSS("display", "none");
-    await expect(page.locator("body")).toHaveJSProperty(
+    await expect(page.locator(".app-shell")).toHaveJSProperty(
       "scrollWidth",
-      await page.locator("body").evaluate((body) => body.clientWidth),
+      await page.locator(".app-shell").evaluate((shell) => shell.clientWidth),
     );
 
     await page.keyboard.press("Tab");

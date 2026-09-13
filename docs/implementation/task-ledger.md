@@ -3,7 +3,7 @@
 Status: active  
 Milestone: Launchpad Beta  
 Canonical status source: this file  
-Last synchronized: 2026-09-12
+Last synchronized: 2026-09-13
 
 This ledger tracks every implementation task in the eight-week Launchpad Beta milestone. The
 milestone defines scope and acceptance criteria; this file records execution status. Task records
@@ -54,20 +54,20 @@ same change. Never infer completion from a commit, passing test, or partially de
 These tasks retain their dependency order. `W2-01` through `W2-08` are the ordered sequence formerly
 stored in `references/task-list.md`.
 
-| ID     | Task                                                                                    | Status    | Evidence or blocker                                                                                    |
-| ------ | --------------------------------------------------------------------------------------- | --------- | ------------------------------------------------------------------------------------------------------ |
-| W2-01  | Qualify and exact-pin the LaserEyes and Alkanes SDK wallet stack                        | completed | `references/wallet-stack-qualification-task-record.md`                                                 |
-| W2-02  | Resolve the LaserEyes advisory gate for beta                                            | completed | `references/lasereyes-advisory-resolution-task-record.md`; accepted beta exception remains constrained |
-| W2-03  | Enforce detachable feature and wallet-provider composition                              | completed | `references/detachable-composition-task-record.md`                                                     |
-| W2-04  | Implement canonical wallet authentication and hash-only sessions                        | completed | `references/wallet-authentication-task-record.md`                                                      |
-| W2-05  | Implement UUIDv7 accounts, organizations, memberships, roles, and authorization         | completed | `references/authorization-accounts-task-record.md`                                                     |
-| W2-06  | Implement the authenticated account, studio, and admin route family                     | completed | `references/authenticated-routes-task-record.md`                                                       |
-| W2-07  | Implement curated creator admission and minimal staff approval                          | completed | `references/creator-admission-task-record.md`; deep review converged after exhaustive mutation proof   |
-| W2-08  | Implement the remaining public product route families                                   | completed | `references/public-product-routes-task-record.md`; deep review converged after mutation proof          |
-| W2-09  | Add authenticated passkey linking with conflict and final-method protections            | completed | `references/passkey-linking-task-record.md`; deep review converged after dynamic mutation proof        |
-| W2-10A | Implement automated fail-closed wallet conformance architecture                         | completed | `references/wallet-device-conformance-task-record.md`; mutation-proven, 100% branch coverage           |
-| W2-10B | Qualify and enable supported wallets on real browsers and devices                       | blocked   | Beta-release gate; needs selected candidates and physical/provider evidence                            |
-| W2-11  | Close the Week 2 visual, accessibility, keyboard, responsive, and reduced-motion matrix | completed | `references/week-two-experience-quality-task-record.md`; 20 route/viewport checks                      |
+| ID     | Task                                                                                    | Status    | Evidence or blocker                                                                                        |
+| ------ | --------------------------------------------------------------------------------------- | --------- | ---------------------------------------------------------------------------------------------------------- |
+| W2-01  | Qualify and exact-pin the LaserEyes and Alkanes SDK wallet stack                        | completed | `references/wallet-stack-qualification-task-record.md`                                                     |
+| W2-02  | Resolve the LaserEyes advisory gate for beta                                            | completed | `references/lasereyes-advisory-resolution-task-record.md`; accepted beta exception remains constrained     |
+| W2-03  | Enforce detachable feature and wallet-provider composition                              | completed | `references/detachable-composition-task-record.md`                                                         |
+| W2-04  | Implement canonical wallet authentication and hash-only sessions                        | completed | `references/wallet-authentication-task-record.md`                                                          |
+| W2-05  | Implement UUIDv7 accounts, organizations, memberships, roles, and authorization         | completed | `references/authorization-accounts-task-record.md`                                                         |
+| W2-06  | Implement the authenticated account, studio, and admin route family                     | completed | `references/authenticated-routes-task-record.md`                                                           |
+| W2-07  | Implement curated creator admission and minimal staff approval                          | completed | `references/creator-admission-task-record.md`; deep review converged after exhaustive mutation proof       |
+| W2-08  | Implement the remaining public product route families                                   | completed | `references/public-product-routes-task-record.md`; deep review converged after mutation proof              |
+| W2-09  | Add authenticated passkey linking with conflict and final-method protections            | completed | `references/passkey-linking-task-record.md`; deep review converged after dynamic mutation proof            |
+| W2-10A | Implement automated fail-closed wallet conformance architecture                         | completed | `references/wallet-device-conformance-task-record.md`; mutation-proven, 100% branch coverage               |
+| W2-10B | Qualify and enable supported wallets on real browsers and devices                       | blocked   | Beta-release gate; needs selected candidates and physical/provider evidence                                |
+| W2-11  | Close the Week 2 visual, accessibility, keyboard, responsive, and reduced-motion matrix | completed | `references/week-two-experience-quality-task-record.md`; repaired and mutation-proven deep-review findings |
 
 ## Week 3 — Upload pipeline
 

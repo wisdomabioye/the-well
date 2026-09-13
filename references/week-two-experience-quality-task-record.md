@@ -38,20 +38,20 @@ and passkey journeys separate; this task verifies their stable entry states with
 Verdict: **Converged**. Three consecutive independent passes found no remaining verified defect and
 changed nothing:
 
-1. M1 line-by-line review after correcting stale fixture-invariant coverage, adding a true staff
-   session for `/admin`, and stabilizing keyboard-focus screenshots.
-2. M5 adversarial mutation review proved that route drift, duplicate seeded identities, a broken
-   session cookie name, and cookie-policy drift each make their guarding tests fail.
-3. M4 producer/consumer review traced seeded users, sessions, role assignments, cookies, route
+1. M4 producer/consumer review traced seeded users, sessions, role assignments, cookies, route
    requirements, Playwright projects, and screenshot names end to end.
+2. M11 walked every repository rule over the repaired diff and found no further verified defect.
+3. M7 reran the complete runtime gate set on the unchanged repaired tree.
 
-An additional M11 repository-rule audit found no policy violation. Every changed source/test file is
-below 250 lines. The E2E utility workspace reports 100% statement, branch, function, and line
-coverage; merged repository line and branch coverage remains above 90%.
+The earlier M5 mutation pass proved every changed test can fail for its claimed reason. Every changed
+source/test file is below 250 lines. The E2E utility workspace reports 100% statement, branch,
+function, and line coverage; merged repository line and branch coverage remains above 90%.
 
 Full verification passed: formatting, lint/repository policy, TypeScript and Rust checks, unit tests,
 real-PostgreSQL integration tests, production build, merged TypeScript/Rust coverage, and Playwright
 (86 passed, 6 intentionally skipped). The new matrix contributes 20 stable checks across account,
 studio, creator application, creator review, and staff admin surfaces on mobile, tablet, desktop, and
 wide viewports; each asserts semantics, WCAG 2.2 AA automation, keyboard entry, reduced motion,
-horizontal containment, and a reviewed full-page baseline.
+horizontal containment, and a reviewed full-page baseline. The final deep review additionally fixed
+two harness defects: containment now measures the clipped `.app-shell` scroll area rather than the
+body, and pnpm's argument separator is removed before focused arguments reach Playwright.
