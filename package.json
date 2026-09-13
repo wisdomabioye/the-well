@@ -9,6 +9,7 @@
     "@ador/feature-public-products": "workspace:*",
     "@ador/http": "workspace:*",
     "@ador/plugin-kit": "workspace:*",
+    "@ador/provider-object-storage-r2": "workspace:*",
     "@ador/shared": "workspace:*",
     "@ador/wallet": "workspace:*",
     "@repo/config": "workspace:*"

@@ -87,6 +87,48 @@ export const environmentDefinitions = [
     secret: false,
   },
   {
+    key: "R2_ENDPOINT",
+    description: "Cloudflare R2 S3 API HTTPS endpoint.",
+    exposure: "server",
+    required: true,
+    secret: false,
+  },
+  {
+    key: "R2_REGION",
+    description: "S3 signing region configured for the R2 account.",
+    exposure: "server",
+    required: true,
+    secret: false,
+  },
+  {
+    key: "R2_ACCESS_KEY_ID",
+    description: "Server-only R2 S3 API access-key identifier.",
+    exposure: "server",
+    required: true,
+    secret: true,
+  },
+  {
+    key: "R2_SECRET_ACCESS_KEY",
+    description: "Server-only R2 S3 API secret access key.",
+    exposure: "server",
+    required: true,
+    secret: true,
+  },
+  {
+    key: "R2_PRIVATE_BUCKET",
+    description: "Private R2 bucket for draft and quarantined originals.",
+    exposure: "server",
+    required: true,
+    secret: false,
+  },
+  {
+    key: "R2_PUBLIC_BUCKET",
+    description: "Public R2 bucket for approved derivatives.",
+    exposure: "server",
+    required: true,
+    secret: false,
+  },
+  {
     key: "AUTH_SESSION_IDLE_TIMEOUT_MS",
     description:
       "Sliding idle lifetime for authenticated platform sessions in milliseconds.",

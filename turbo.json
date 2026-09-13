@@ -12,7 +12,13 @@
     "DATABASE_URL",
     "E2E_BASE_URL",
     "NEXT_PUBLIC_APP_NAME",
-    "PUBLIC_BASE_URL"
+    "PUBLIC_BASE_URL",
+    "R2_ACCESS_KEY_ID",
+    "R2_ENDPOINT",
+    "R2_PRIVATE_BUCKET",
+    "R2_PUBLIC_BUCKET",
+    "R2_REGION",
+    "R2_SECRET_ACCESS_KEY"
   ],
   "ui": "tui",
   "tasks": {

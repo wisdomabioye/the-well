@@ -1,0 +1,36 @@
+{
+  "name": "@ador/provider-object-storage-r2",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/create-adapter.ts",
+    "./config": "./src/config.ts",
+    "./registration": "./src/registration.ts"
+  },
+  "scripts": {
+    "env:check": "node --experimental-strip-types ../../../packages/config/src/env/check-files.ts",
+    "lint": "eslint . --max-warnings 0",
+    "typecheck": "tsc --noEmit",
+    "test:unit": "vitest run --config vitest.config.ts --project unit",
+    "test:integration": "node --experimental-strip-types test/support/run-s3.ts integration",
+    "test:coverage": "node --experimental-strip-types test/support/run-s3.ts coverage"
+  },
+  "dependencies": {
+    "@ador/object-storage": "workspace:*",
+    "@ador/plugin-kit": "workspace:*",
+    "@aws-sdk/client-s3": "3.1131.0",
+    "@aws-sdk/s3-request-presigner": "3.1131.0",
+    "@smithy/protocol-http": "5.3.1",
+    "zod": "4.5.4"
+  },
+  "devDependencies": {
+    "@repo/eslint-config": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
+    "@types/node": "26.4.0",
+    "@vitest/coverage-v8": "4.1.11",
+    "eslint": "10.9.1",
+    "typescript": "5.9.3",
+    "vitest": "4.1.11"
+  }
+}

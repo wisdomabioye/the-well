@@ -28,6 +28,38 @@ async function readPackage(directory: string): Promise<Workspace> {
   return { directory, name: parsed.name, scripts: parsed.scripts ?? {} };
 }
 
+async function expandPattern(
+  root: string,
+  pattern: string,
+): Promise<readonly string[]> {
+  const segments = pattern.split("/");
+  if (
+    segments.some(
+      (segment) =>
+        segment.length === 0 || (segment.includes("*") && segment !== "*"),
+    )
+  ) {
+    throw new Error(`Unsupported workspace pattern: ${pattern}`);
+  }
+
+  let directories = [root];
+  for (const segment of segments) {
+    if (segment === "*") {
+      const children = await Promise.all(
+        directories.map(async (directory) =>
+          (await readdir(directory, { withFileTypes: true }))
+            .filter((entry) => entry.isDirectory())
+            .map((entry) => resolve(directory, entry.name)),
+        ),
+      );
+      directories = children.flat();
+    } else {
+      directories = directories.map((directory) => resolve(directory, segment));
+    }
+  }
+  return directories;
+}
+
 export async function discoverWorkspaces(
   root: string,
 ): Promise<readonly Workspace[]> {
@@ -38,13 +70,9 @@ export async function discoverWorkspaces(
   const directories: string[] = [];
 
   for (const pattern of patterns) {
-    if (!pattern.endsWith("/*") || pattern.slice(0, -2).includes("*")) {
+    if (!pattern.includes("*"))
       throw new Error(`Unsupported workspace pattern: ${pattern}`);
-    }
-    const parent = resolve(root, pattern.slice(0, -2));
-    for (const entry of await readdir(parent, { withFileTypes: true })) {
-      if (entry.isDirectory()) directories.push(resolve(parent, entry.name));
-    }
+    directories.push(...(await expandPattern(root, pattern)));
   }
 
   return Promise.all(directories.sort().map(readPackage));

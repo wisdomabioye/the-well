@@ -10,6 +10,7 @@ const roots: string[] = [];
 async function repository(
   workspacePattern: string,
   packageJson: object,
+  packageDirectory = "packages/example",
 ): Promise<string> {
   const root = await mkdtemp(resolve(tmpdir(), "workspace-policy-"));
   roots.push(root);
@@ -17,9 +18,9 @@ async function repository(
     root + "/pnpm-workspace.yaml",
     `packages:\n  - "${workspacePattern}"\n`,
   );
-  await mkdir(root + "/packages/example", { recursive: true });
+  await mkdir(`${root}/${packageDirectory}`, { recursive: true });
   await writeFile(
-    root + "/packages/example/package.json",
+    `${root}/${packageDirectory}/package.json`,
     JSON.stringify(packageJson),
   );
   return root;
@@ -38,6 +39,21 @@ describe("workspace discovery", () => {
       {
         directory: resolve(root, "packages/example"),
         name: "example",
+        scripts: {},
+      },
+    ]);
+  });
+
+  it("discovers explicit two-level provider packages", async () => {
+    const root = await repository(
+      "providers/*/*",
+      { name: "nested-provider" },
+      "providers/object-storage/r2",
+    );
+    await expect(discoverWorkspaces(root)).resolves.toEqual([
+      {
+        directory: resolve(root, "providers/object-storage/r2"),
+        name: "nested-provider",
         scripts: {},
       },
     ]);
