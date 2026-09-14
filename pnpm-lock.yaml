@@ -924,6 +924,9 @@ importers:
       '@ador/database':
         specifier: workspace:*
         version: link:../database
+      '@ador/events':
+        specifier: workspace:*
+        version: link:../events
       '@ador/object-storage':
         specifier: workspace:*
         version: link:../object-storage

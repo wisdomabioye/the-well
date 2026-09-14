@@ -19,6 +19,31 @@ export const createUploadIntentInputSchema = z
   })
   .strict();
 
+export const completeUploadIntentInputSchema = z
+  .object({ intentId: uuidV7TextSchema })
+  .strict();
+
+export const assetProcessingStates = ["pending-validation"] as const;
+export const assetProcessingStateSchema = z.enum(assetProcessingStates);
+export const assetProcessingRequestedEvent = {
+  name: "uploads.assetprocessing.requested.v1",
+  schemaVersion: 1,
+} as const;
+export const assetProcessingRequestedPayloadSchema = z
+  .object({ assetId: uuidV7TextSchema, uploadIntentId: uuidV7TextSchema })
+  .strict();
+
+export const completedUploadAssetSchema = z
+  .object({
+    id: uuidV7TextSchema,
+    processingState: assetProcessingStateSchema,
+  })
+  .strict();
+
+export const completedUploadResponseSchema = z
+  .object({ asset: completedUploadAssetSchema })
+  .strict();
+
 export const uploadIntentResponseSchema = z
   .object({
     intent: z
@@ -42,6 +67,11 @@ export const uploadIntentResponseSchema = z
   .strict();
 
 export const uploadIntentRoutes = {
+  complete: {
+    method: "POST",
+    operationId: "completeUploadIntent",
+    path: "/api/v1/uploads/intents/complete",
+  },
   create: {
     method: "POST",
     operationId: "createUploadIntent",
@@ -52,4 +82,12 @@ export const uploadIntentRoutes = {
 export type CreateUploadIntentInput = z.infer<
   typeof createUploadIntentInputSchema
 >;
+export type CompleteUploadIntentInput = z.infer<
+  typeof completeUploadIntentInputSchema
+>;
+export type CompletedUploadAsset = z.infer<typeof completedUploadAssetSchema>;
+export type CompletedUploadResponse = z.infer<
+  typeof completedUploadResponseSchema
+>;
+export type AssetProcessingState = z.infer<typeof assetProcessingStateSchema>;
 export type UploadIntentResponse = z.infer<typeof uploadIntentResponseSchema>;

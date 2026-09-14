@@ -1,6 +1,7 @@
 import type { Readable } from "node:stream";
 
 import { z } from "zod";
+import type { ProviderId } from "@ador/shared/providers";
 
 const objectKeySchema = z
   .string()
@@ -49,6 +50,7 @@ export interface PresignedUpload {
 }
 
 export interface ObjectStoragePort {
+  readonly providerId: ProviderId;
   copyPrivateToPublicIfAbsent(input: {
     readonly key: ObjectKey;
     readonly sourceEntityTag: string;

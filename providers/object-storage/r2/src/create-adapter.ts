@@ -10,6 +10,7 @@ import { toStoredMetadata, toStoredObject } from "./metadata.ts";
 import { createR2Client, type R2ClientPort } from "./r2-client.ts";
 import { translateProviderError } from "./provider-errors.ts";
 import { objectTransferSchema, presignSchema } from "./validation.ts";
+import { r2ObjectStorageProviderId } from "./identity.ts";
 
 function bucketFor(config: R2Config, scope: StorageScope): string {
   return scope === "private" ? config.privateBucket : config.publicBucket;
@@ -73,6 +74,7 @@ export function createR2ObjectStorage(
   const client = clientOverride ?? createR2Client(config);
 
   return {
+    providerId: r2ObjectStorageProviderId,
     copyPrivateToPublicIfAbsent: async ({ key, sourceEntityTag }) => {
       try {
         await providerRequest(() =>

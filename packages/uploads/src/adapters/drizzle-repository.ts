@@ -1,8 +1,14 @@
 import type { DatabaseClient } from "@ador/database/connection";
+import { enqueueOutboxEvent } from "@ador/database/outbox";
 import { authUsers } from "@ador/database/schema/auth";
-import { uploadIntents } from "@ador/database/schema/uploads";
+import { assets, uploadIntents } from "@ador/database/schema/uploads";
 import { parseObjectKey } from "@ador/object-storage/contracts";
 import { uuidV7Schema } from "@ador/shared/identifiers";
+import { providerIdSchema } from "@ador/shared/providers";
+import {
+  assetProcessingRequestedEvent,
+  assetProcessingRequestedPayloadSchema,
+} from "@ador/shared/uploads";
 import { and, count, eq, gt } from "drizzle-orm";
 
 import type { UploadIntentRepository } from "../application/repository.ts";
@@ -15,13 +21,126 @@ function view(row: typeof uploadIntents.$inferSelect) {
     id: uuidV7Schema.parse(row.id),
     objectKey: parseObjectKey(row.objectKey),
     purpose: row.purpose,
+    storageProviderId: providerIdSchema.parse(row.storageProviderId),
   };
+}
+
+function assertMatchingProcessingEvent(
+  input: Parameters<UploadIntentRepository["complete"]>[0],
+): void {
+  const payload = assetProcessingRequestedPayloadSchema.parse(
+    input.event.payload,
+  );
+  if (
+    input.event.name !== assetProcessingRequestedEvent.name ||
+    input.event.schemaVersion !== assetProcessingRequestedEvent.schemaVersion ||
+    payload.assetId !== input.assetId ||
+    payload.uploadIntentId !== input.intentId
+  ) {
+    throw new Error("Processing event does not match the completed upload.");
+  }
 }
 
 export function createDrizzleUploadIntentRepository(
   database: DatabaseClient,
 ): UploadIntentRepository {
   return {
+    async complete(input) {
+      return database.transaction(async (transaction) => {
+        assertMatchingProcessingEvent(input);
+        const [intent] = await transaction
+          .select()
+          .from(uploadIntents)
+          .where(
+            and(
+              eq(uploadIntents.id, input.intentId),
+              eq(uploadIntents.userId, input.userId),
+            ),
+          )
+          .limit(1)
+          .for("update");
+        if (intent === undefined) return { kind: "unavailable" };
+        const [existing] = await transaction
+          .select({ id: assets.id, processingState: assets.processingState })
+          .from(assets)
+          .where(eq(assets.uploadIntentId, intent.id))
+          .limit(1);
+        if (existing !== undefined) {
+          return {
+            asset: {
+              id: uuidV7Schema.parse(existing.id),
+              processingState: existing.processingState,
+            },
+            kind: "replayed",
+          };
+        }
+        if (
+          intent.state !== "reserved" ||
+          intent.expiresAt <= input.completedAt ||
+          intent.storageProviderId !== input.object.providerId
+        )
+          return { kind: "unavailable" };
+        const [asset] = await transaction
+          .insert(assets)
+          .values({
+            id: input.assetId,
+            objectKey: intent.objectKey,
+            observedByteLength: input.object.contentLength,
+            observedContentType: input.object.contentType,
+            observedEntityTag: input.object.entityTag,
+            observedLastModifiedAt: input.object.lastModified,
+            processingState: "pending-validation",
+            storageProviderId: input.object.providerId,
+            uploadIntentId: intent.id,
+            userId: intent.userId,
+          })
+          .returning({
+            id: assets.id,
+            processingState: assets.processingState,
+          });
+        /* v8 ignore next -- INSERT RETURNING either throws or returns its inserted row. */
+        if (asset === undefined) return { kind: "unavailable" };
+        await transaction
+          .update(uploadIntents)
+          .set({ state: "completed", updatedAt: input.completedAt })
+          .where(eq(uploadIntents.id, intent.id));
+        await enqueueOutboxEvent(transaction, input.event);
+        return {
+          asset: {
+            id: uuidV7Schema.parse(asset.id),
+            processingState: asset.processingState,
+          },
+          kind: "completed",
+        };
+      });
+    },
+    async findForCompletion({ intentId, now, userId }) {
+      const [intent] = await database
+        .select()
+        .from(uploadIntents)
+        .where(
+          and(eq(uploadIntents.id, intentId), eq(uploadIntents.userId, userId)),
+        )
+        .limit(1);
+      if (intent === undefined) return { kind: "unavailable" };
+      const [asset] = await database
+        .select({ id: assets.id, processingState: assets.processingState })
+        .from(assets)
+        .where(eq(assets.uploadIntentId, intent.id))
+        .limit(1);
+      if (asset !== undefined) {
+        return {
+          asset: {
+            id: uuidV7Schema.parse(asset.id),
+            processingState: asset.processingState,
+          },
+          kind: "completed",
+        };
+      }
+      if (intent.state !== "reserved" || intent.expiresAt <= now)
+        return { kind: "unavailable" };
+      return { intent: view(intent), kind: "ready" };
+    },
     async markSigningFailed({ failedAt, intentId, userId }) {
       await database
         .update(uploadIntents)

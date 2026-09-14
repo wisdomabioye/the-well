@@ -4,12 +4,17 @@ import { describe, expect, it } from "vitest";
 import { createUploadsFeature } from "../src/registration.ts";
 
 describe("uploads feature registration", () => {
-  it("declares one detachable route and its provider capability", async () => {
+  it("declares detachable routes and their provider capability", async () => {
     const feature = createUploadsFeature(createProviderRegistry([]));
     expect(feature.manifest).toMatchObject({
       id: "uploads",
       requiredProviderCapabilities: ["object-storage:s3-compatible"],
       routes: [
+        {
+          method: "POST",
+          operationId: "completeUploadIntent",
+          path: "/api/v1/uploads/intents/complete",
+        },
         {
           method: "POST",
           operationId: "createUploadIntent",

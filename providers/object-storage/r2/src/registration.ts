@@ -1,9 +1,10 @@
 import { defineProvider } from "@ador/plugin-kit/providers";
+import { r2ObjectStorageProviderId } from "./identity.ts";
 
 export const r2ObjectStorageProvider = defineProvider({
   manifest: {
     capabilities: ["object-storage:s3-compatible"],
-    id: "r2-object-storage",
+    id: r2ObjectStorageProviderId,
     requiredDecisionGates: [],
     version: "1.0.0",
   },

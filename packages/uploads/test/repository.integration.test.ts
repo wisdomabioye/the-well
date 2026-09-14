@@ -1,5 +1,6 @@
 import {
   authUsers,
+  assets,
   createDatabaseClient,
   createDatabasePool,
   parseDatabaseEnvironment,
@@ -13,6 +14,7 @@ import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { createDrizzleUploadIntentRepository } from "../src/adapters/drizzle-repository.ts";
 import type { UploadIntentView } from "../src/application/repository.ts";
 import { parseObjectKey } from "@ador/object-storage/contracts";
+import { providerIdSchema } from "@ador/shared/providers";
 
 const environment = parseDatabaseEnvironment(process.env);
 const pool = createDatabasePool(environment);
@@ -22,6 +24,7 @@ const now = new Date("2026-09-13T12:00:00.000Z");
 
 beforeAll(async () => runMigrations(environment));
 beforeEach(async () => {
+  await database.delete(assets);
   await database.delete(uploadIntents);
   await database.delete(authUsers);
 });
@@ -62,6 +65,7 @@ function intent(suffix: string): UploadIntentView {
     id: createUuidV7(),
     objectKey: parseObjectKey(`drafts/${suffix}`),
     purpose: "creator-avatar",
+    storageProviderId: providerIdSchema.parse("test-object-storage"),
   };
 }
 

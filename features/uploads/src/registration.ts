@@ -11,7 +11,7 @@ export function createUploadsFeature(providers: ProviderRegistry) {
       pages: [],
       requiredDecisionGates: [],
       requiredProviderCapabilities: ["object-storage:s3-compatible"],
-      routes: [uploadIntentRoutes.create],
+      routes: [uploadIntentRoutes.complete, uploadIntentRoutes.create],
       version: "1.0.0",
     },
     load: async () =>

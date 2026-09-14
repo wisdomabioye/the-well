@@ -29,6 +29,7 @@ describe("R2 object-storage adapter", () => {
 
   it("writes, heads, and streams an exact private object", async () => {
     const storage = createR2ObjectStorage(config, client);
+    expect(storage.providerId).toBe("r2-object-storage");
     const metadata = await storage.write({
       body: Readable.from([Buffer.from("image")]),
       contentLength: 5,

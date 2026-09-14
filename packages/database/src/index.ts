@@ -66,7 +66,10 @@ export {
   type OutboxEvent,
 } from "./schema/outbox.ts";
 export {
+  assets,
+  assetProcessingState,
   uploadIntents,
   uploadIntentState,
   type UploadIntent,
+  type Asset,
 } from "./schema/uploads.ts";

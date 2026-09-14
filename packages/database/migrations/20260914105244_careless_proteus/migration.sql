@@ -1,0 +1,1 @@
+ALTER TABLE "ador"."upload_intents" ALTER COLUMN "storage_provider_id" DROP DEFAULT;

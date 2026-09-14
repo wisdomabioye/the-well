@@ -6,7 +6,8 @@ Provider-neutral server-side object-storage contracts.
 
 `ObjectStoragePort` owns exact-key presigning, metadata lookup, streamed reads/writes, conditional
 private-to-public copy, and deletion. `parseObjectKey` validates untrusted key text before it becomes
-an owned `ObjectKey`. Stable `ObjectStorageError` codes keep provider failures out of consumers.
+an owned `ObjectKey`. Each adapter exposes a validated stable provider ID for persisted object
+provenance. Stable `ObjectStorageError` codes keep provider failures out of consumers.
 
 ## Invariants and ownership
 

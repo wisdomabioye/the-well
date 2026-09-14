@@ -3,6 +3,7 @@ import type { ObjectStorageProviderServices } from "@ador/object-storage";
 
 import { parseR2Environment } from "./config.ts";
 import { createR2ObjectStorage } from "./create-adapter.ts";
+import { r2ObjectStorageProviderId } from "./identity.ts";
 
 export function createR2ObjectStorageProviderEntrypoint(
   environment: NodeJS.ProcessEnv,
@@ -14,7 +15,7 @@ export function createR2ObjectStorageProviderEntrypoint(
         parseR2Environment(environment),
       ),
     }),
-    id: "r2-object-storage",
+    id: r2ObjectStorageProviderId,
     version: "1.0.0",
   };
 }

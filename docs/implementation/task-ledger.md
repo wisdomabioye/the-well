@@ -3,7 +3,7 @@
 Status: active  
 Milestone: Launchpad Beta  
 Canonical status source: this file  
-Last synchronized: 2026-09-13
+Last synchronized: 2026-09-14
 
 This ledger tracks every implementation task in the eight-week Launchpad Beta milestone. The
 milestone defines scope and acceptance criteria; this file records execution status. Task records
@@ -27,7 +27,7 @@ same change. Never infer completion from a commit, passing test, or partially de
 | Field                   | Value                                                               |
 | ----------------------- | ------------------------------------------------------------------- |
 | Active task             | None                                                                |
-| Next ordered task       | `W3-03` Asset persistence and idempotent processing jobs            |
+| Next ordered task       | `W3-04` Media signature, MIME, size, dimension, and checksum checks |
 | Current milestone phase | Week 3 — Upload pipeline                                            |
 | Parallel security gate  | `SEC-D15-04` remains blocked                                        |
 | Mainnet                 | Outside this milestone and blocked by a separate readiness decision |
@@ -76,7 +76,7 @@ stored in `references/task-list.md`.
 | W3-01  | Implement the provider-neutral object-storage port and R2 adapter               | completed | `references/object-storage-task-record.md`   |
 | W3-01A | Expose typed provider runtime resolution without vendor imports in features     | completed | `references/provider-runtime-task-record.md` |
 | W3-02  | Persist and authorize short-lived direct-upload intents before signing          | completed | `references/upload-intents-task-record.md`   |
-| W3-03  | Add asset persistence and idempotent processing jobs for completed uploads      | pending   | Depends on W3-02 and workflow foundation     |
+| W3-03  | Add asset persistence and idempotent processing jobs for completed uploads      | completed | `references/asset-processing-task-record.md` |
 | W3-04  | Validate file signatures, MIME, size, decoded dimensions, and checksums         | pending   | Depends on W3-03                             |
 | W3-05  | Generate thumbnails and previews for PNG, JPEG, and WebP                        | pending   | Depends on W3-04                             |
 | W3-06  | Build upload progress, retry, validation-error, and asset-library UI            | pending   | Depends on W3-02 through W3-05               |

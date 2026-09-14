@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@ador/database": "workspace:*",
+    "@ador/events": "workspace:*",
     "@ador/object-storage": "workspace:*",
     "@ador/shared": "workspace:*",
     "drizzle-orm": "1.0.0-rc.4"

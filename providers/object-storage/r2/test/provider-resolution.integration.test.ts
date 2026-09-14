@@ -37,6 +37,7 @@ describe("R2 provider runtime resolution", () => {
     ).resolves.toMatchObject({
       head: expect.any(Function),
       presignPrivateUpload: expect.any(Function),
+      providerId: "r2-object-storage",
       write: expect.any(Function),
     });
   });

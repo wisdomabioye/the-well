@@ -2,7 +2,13 @@ import { getTableName } from "drizzle-orm";
 import { getTableConfig } from "drizzle-orm/pg-core";
 import { describe, expect, expectTypeOf, it } from "vitest";
 
-import { authUsers, type UploadIntent, uploadIntents } from "../src/index.ts";
+import {
+  assets,
+  authUsers,
+  type Asset,
+  type UploadIntent,
+  uploadIntents,
+} from "../src/index.ts";
 
 describe("upload-intent schema", () => {
   it("owns authorization, lifecycle, idempotency, and quota lookup evidence", () => {
@@ -21,6 +27,7 @@ describe("upload-intent schema", () => {
     expect(config.checks.map(({ name }) => name)).toEqual(
       expect.arrayContaining([
         "upload_intents_byte_length_positive",
+        "upload_intents_storage_provider_nonempty",
         "upload_intents_fingerprint_sha256",
         "upload_intents_cleanup_after_expiry",
         "upload_intents_retention_after_cleanup",
@@ -33,5 +40,38 @@ describe("upload-intent schema", () => {
     expectTypeOf<UploadIntent["state"]>().toEqualTypeOf<
       "reserved" | "completed" | "cancelled" | "failed"
     >();
+  });
+});
+
+describe("asset schema", () => {
+  it("owns its intent, user, storage observation, and processing state", () => {
+    const config = getTableConfig(assets);
+    expect(
+      config.foreignKeys.map((key) =>
+        getTableName(key.reference().foreignTable),
+      ),
+    ).toEqual([getTableName(uploadIntents), getTableName(authUsers)]);
+    expect(config.indexes.map(({ config: index }) => index.name)).toEqual(
+      expect.arrayContaining([
+        "assets_upload_intent_unique",
+        "assets_user_created_idx",
+      ]),
+    );
+    expect(config.checks.map(({ name }) => name)).toEqual(
+      expect.arrayContaining([
+        "assets_observed_bytes_positive",
+        "assets_storage_provider_nonempty",
+        "assets_object_key_nonempty",
+        "assets_content_type_nonempty",
+        "assets_entity_tag_nonempty",
+      ]),
+    );
+  });
+
+  it("infers asset state and measured bytes from Drizzle", () => {
+    expectTypeOf<
+      Asset["processingState"]
+    >().toEqualTypeOf<"pending-validation">();
+    expectTypeOf<Asset["observedByteLength"]>().toEqualTypeOf<number>();
   });
 });

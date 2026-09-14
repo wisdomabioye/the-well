@@ -16,6 +16,9 @@ beforeAll(() => {
 const routeContext = {
   params: Promise.resolve({ segments: ["uploads", "intents"] }),
 };
+const completionRouteContext = {
+  params: Promise.resolve({ segments: ["uploads", "intents", "complete"] }),
+};
 
 describe("upload-intent API boundary", () => {
   it("rejects unauthenticated upload authorization before provider loading", async () => {
@@ -62,5 +65,25 @@ describe("upload-intent API boundary", () => {
     expect(
       httpErrorEnvelopeSchema.parse(await response.json()).error.code,
     ).toBe("forbidden");
+  });
+
+  it("rejects unauthenticated completion before storage inspection", async () => {
+    const response = await POST(
+      new Request("https://launch.example/api/v1/uploads/intents/complete", {
+        body: JSON.stringify({
+          intentId: "018f22f2-9c1a-7b21-8c45-000000000002",
+        }),
+        headers: {
+          "content-type": "application/json",
+          origin: "https://launch.example",
+        },
+        method: "POST",
+      }),
+      completionRouteContext,
+    );
+    expect(response.status).toBe(401);
+    expect(
+      httpErrorEnvelopeSchema.parse(await response.json()).error.code,
+    ).toBe("unauthorized");
   });
 });

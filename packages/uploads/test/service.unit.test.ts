@@ -6,6 +6,7 @@ import type {
 } from "@ador/object-storage/contracts";
 import { idempotencyKeySchema } from "@ador/shared/http";
 import { uuidV7Schema } from "@ador/shared/identifiers";
+import { providerIdSchema } from "@ador/shared/providers";
 import { describe, expect, it, vi } from "vitest";
 
 import type { UploadIntentRepository } from "../src/application/repository.ts";
@@ -25,6 +26,8 @@ const input = {
 function dependencies() {
   const events: string[] = [];
   const repository: UploadIntentRepository = {
+    complete: vi.fn(),
+    findForCompletion: vi.fn(),
     markSigningFailed: vi.fn(async () => undefined),
     reserve: vi.fn(async (input): Promise<ReserveUploadIntentResult> => {
       events.push("reserved");
@@ -35,6 +38,7 @@ function dependencies() {
     copyPrivateToPublicIfAbsent: vi.fn(),
     delete: vi.fn(),
     head: vi.fn(),
+    providerId: providerIdSchema.parse("test-object-storage"),
     presignPrivateUpload: vi.fn(async (): Promise<PresignedUpload> => {
       events.push("signed");
       return {
@@ -154,6 +158,30 @@ describe("upload intent service", () => {
         intent: {
           ...request,
           expiresAt: new Date(now.getTime() + 999),
+        },
+        kind: "replayed",
+      }),
+    );
+    const service = createUploadIntentService({
+      clock: () => now,
+      createDraftKey: () => "unused",
+      createId: () => intentId,
+      repository: values.repository,
+      storage: values.storage,
+    });
+    await expect(
+      service.create(input, { idempotencyKey, userId }),
+    ).resolves.toEqual({ kind: "conflict" });
+    expect(values.storage.presignPrivateUpload).not.toHaveBeenCalled();
+  });
+
+  it("does not sign a replay through a different storage provider", async () => {
+    const values = dependencies();
+    vi.mocked(values.repository.reserve).mockImplementationOnce(
+      async (request) => ({
+        intent: {
+          ...request,
+          storageProviderId: providerIdSchema.parse("previous-storage"),
         },
         kind: "replayed",
       }),

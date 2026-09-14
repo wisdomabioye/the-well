@@ -9,11 +9,14 @@ import type {
   UploadIntentRepository,
   createUploadIntentService as CreateUploadIntentService,
 } from "@ador/uploads";
+import { providerIdSchema } from "@ador/shared/providers";
 import { describe, expect, it, vi } from "vitest";
 
 type ServiceDependencies = Parameters<typeof CreateUploadIntentService>[0];
 
 const mockedRepository: UploadIntentRepository = {
+  complete: vi.fn(),
+  findForCompletion: vi.fn(),
   markSigningFailed: vi.fn(async () => undefined),
   reserve: vi.fn(async (): Promise<ReserveUploadIntentResult> => ({
     kind: "conflict",
@@ -31,7 +34,7 @@ const runtimeMocks = vi.hoisted(() => ({
     dependencies.clock();
     dependencies.createDraftKey();
     dependencies.createId();
-    return { create: vi.fn() };
+    return { complete: vi.fn(), create: vi.fn() };
   }),
 }));
 
@@ -51,6 +54,7 @@ const unusedStorage: ObjectStoragePort = {
   presignPrivateUpload: vi.fn(async () => {
     throw new Error("unused");
   }),
+  providerId: providerIdSchema.parse("test-object-storage"),
   read: vi.fn(async () => {
     throw new Error("unused");
   }),

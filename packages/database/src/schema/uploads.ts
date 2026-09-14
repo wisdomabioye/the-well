@@ -1,6 +1,7 @@
 import {
   uploadContentTypes,
   uploadPurposes,
+  assetProcessingStates,
   type UploadContentType,
 } from "@ador/shared/uploads";
 import { sql } from "drizzle-orm";
@@ -35,6 +36,10 @@ export const uploadContentType = platformSchema.enum(
   "upload_content_type",
   uploadContentTypes,
 );
+export const assetProcessingState = platformSchema.enum(
+  "asset_processing_state",
+  assetProcessingStates,
+);
 
 export const uploadIntents = platformSchema.table(
   "upload_intents",
@@ -48,6 +53,7 @@ export const uploadIntents = platformSchema.table(
       .$type<UploadContentType>()
       .notNull(),
     byteLength: bigint("byte_length", { mode: "number" }).notNull(),
+    storageProviderId: text("storage_provider_id").notNull(),
     objectKey: text("object_key").notNull().unique(),
     state: uploadIntentState("state").notNull().default("reserved"),
     idempotencyKey: text("idempotency_key").notNull(),
@@ -83,6 +89,10 @@ export const uploadIntents = platformSchema.table(
     ),
     check("upload_intents_byte_length_positive", sql`${table.byteLength} > 0`),
     check(
+      "upload_intents_storage_provider_nonempty",
+      sql`length(btrim(${table.storageProviderId})) > 0`,
+    ),
+    check(
       "upload_intents_fingerprint_sha256",
       sql`${table.requestFingerprint} ~ '^[0-9a-f]{64}$'`,
     ),
@@ -97,4 +107,59 @@ export const uploadIntents = platformSchema.table(
   ],
 );
 
+export const assets = platformSchema.table(
+  "assets",
+  {
+    id: uuid("id").primaryKey(),
+    uploadIntentId: uuid("upload_intent_id")
+      .notNull()
+      .references(() => uploadIntents.id, { onDelete: "restrict" }),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => authUsers.id, { onDelete: "restrict" }),
+    storageProviderId: text("storage_provider_id").notNull(),
+    objectKey: text("object_key").notNull(),
+    observedByteLength: bigint("observed_byte_length", {
+      mode: "number",
+    }).notNull(),
+    observedContentType: text("observed_content_type").notNull(),
+    observedEntityTag: text("observed_entity_tag").notNull(),
+    observedLastModifiedAt: timestamp("observed_last_modified_at", {
+      mode: "date",
+      withTimezone: true,
+    }).notNull(),
+    processingState: assetProcessingState("processing_state")
+      .notNull()
+      .default("pending-validation"),
+    createdAt: timestamp("created_at", { mode: "date", withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp("updated_at", { mode: "date", withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    uniqueIndex("assets_upload_intent_unique").on(table.uploadIntentId),
+    index("assets_user_created_idx").on(table.userId, table.createdAt),
+    check(
+      "assets_observed_bytes_positive",
+      sql`${table.observedByteLength} > 0`,
+    ),
+    check(
+      "assets_storage_provider_nonempty",
+      sql`length(btrim(${table.storageProviderId})) > 0`,
+    ),
+    check("assets_object_key_nonempty", sql`length(${table.objectKey}) > 0`),
+    check(
+      "assets_content_type_nonempty",
+      sql`length(btrim(${table.observedContentType})) > 0`,
+    ),
+    check(
+      "assets_entity_tag_nonempty",
+      sql`length(btrim(${table.observedEntityTag})) > 0`,
+    ),
+  ],
+);
+
 export type UploadIntent = typeof uploadIntents.$inferSelect;
+export type Asset = typeof assets.$inferSelect;

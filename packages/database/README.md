@@ -9,6 +9,7 @@ Server-only, provider-neutral PostgreSQL infrastructure for the platform.
 - Drizzle client construction and explicit migration application.
 - The shared `ador` PostgreSQL schema boundary.
 - UUIDv7 auth user, wallet identity, challenge, and hashed-session tables.
+- Durable upload-intent and private asset-observation tables with explicit processing state.
 - Transactional outbox insertion, lease-based claiming, acknowledgement, retry, and exhausted
   failure transitions.
 
@@ -27,6 +28,10 @@ adapters as domain tables are accepted; it never exports database rows as HTTP c
 - Public identifiers are application-generated UUIDv7 values stored in native `uuid` columns.
 - Wallet challenges are single-use records; session storage contains hashes rather than bearer
   tokens and separately models idle expiry, absolute expiry, and revocation.
+- One upload intent can create at most one asset. Provider identity, private key, measured metadata,
+  and pending-validation state are persisted without storing temporary upload URLs.
+- The W3-03 expand migration backfills pre-existing intents to `r2-object-storage`, the only adapter
+  that could issue them, then removes that temporary default so all new writes remain explicit.
 
 ## Verification
 

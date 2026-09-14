@@ -39,6 +39,7 @@ describe("create upload intent operation", () => {
   it("serializes dates and the temporary URL", async () => {
     const expiresAt = new Date("2026-09-13T12:15:00.000Z");
     const operation = createUploadIntentOperation(async () => ({
+      complete: vi.fn(),
       create: vi.fn(async () => ({
         intent: { ...input, expiresAt, id: userId },
         kind: "created" as const,
@@ -68,6 +69,7 @@ describe("create upload intent operation", () => {
     ["invalid-size", "exceeds the limit"],
   ] as const)("maps %s without exposing internals", async (kind, message) => {
     const operation = createUploadIntentOperation(async () => ({
+      complete: vi.fn(),
       create: vi.fn(async () => ({ kind })),
     }));
     await expect(operation.execute(input, context)).resolves.toMatchObject({

@@ -6,6 +6,7 @@
   "exports": {
     ".": "./src/index.ts",
     "./connection": "./src/connection/index.ts",
+    "./outbox": "./src/outbox/repository.ts",
     "./schema/accounts": "./src/schema/accounts.ts",
     "./schema/auth": "./src/schema/auth.ts",
     "./schema/creator-admission": "./src/schema/creator-admission.ts",
