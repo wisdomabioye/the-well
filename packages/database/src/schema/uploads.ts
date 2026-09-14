@@ -1,0 +1,100 @@
+import {
+  uploadContentTypes,
+  uploadPurposes,
+  type UploadContentType,
+} from "@ador/shared/uploads";
+import { sql } from "drizzle-orm";
+import {
+  bigint,
+  check,
+  index,
+  text,
+  timestamp,
+  uniqueIndex,
+  uuid,
+} from "drizzle-orm/pg-core";
+
+import { authUsers } from "./auth.ts";
+import { platformSchema } from "./platform.ts";
+
+export const uploadIntentStates = [
+  "reserved",
+  "completed",
+  "cancelled",
+  "failed",
+] as const;
+export const uploadIntentState = platformSchema.enum(
+  "upload_intent_state",
+  uploadIntentStates,
+);
+export const uploadPurpose = platformSchema.enum(
+  "upload_purpose",
+  uploadPurposes,
+);
+export const uploadContentType = platformSchema.enum(
+  "upload_content_type",
+  uploadContentTypes,
+);
+
+export const uploadIntents = platformSchema.table(
+  "upload_intents",
+  {
+    id: uuid("id").primaryKey(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => authUsers.id, { onDelete: "restrict" }),
+    purpose: uploadPurpose("purpose").notNull(),
+    contentType: uploadContentType("content_type")
+      .$type<UploadContentType>()
+      .notNull(),
+    byteLength: bigint("byte_length", { mode: "number" }).notNull(),
+    objectKey: text("object_key").notNull().unique(),
+    state: uploadIntentState("state").notNull().default("reserved"),
+    idempotencyKey: text("idempotency_key").notNull(),
+    requestFingerprint: text("request_fingerprint").notNull(),
+    expiresAt: timestamp("expires_at", {
+      mode: "date",
+      withTimezone: true,
+    }).notNull(),
+    cleanupEligibleAt: timestamp("cleanup_eligible_at", {
+      mode: "date",
+      withTimezone: true,
+    }).notNull(),
+    retainUntil: timestamp("retain_until", {
+      mode: "date",
+      withTimezone: true,
+    }).notNull(),
+    createdAt: timestamp("created_at", { mode: "date", withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp("updated_at", { mode: "date", withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    uniqueIndex("upload_intents_user_idempotency_unique").on(
+      table.userId,
+      table.idempotencyKey,
+    ),
+    index("upload_intents_active_user_idx").on(
+      table.userId,
+      table.state,
+      table.expiresAt,
+    ),
+    check("upload_intents_byte_length_positive", sql`${table.byteLength} > 0`),
+    check(
+      "upload_intents_fingerprint_sha256",
+      sql`${table.requestFingerprint} ~ '^[0-9a-f]{64}$'`,
+    ),
+    check(
+      "upload_intents_cleanup_after_expiry",
+      sql`${table.cleanupEligibleAt} > ${table.expiresAt}`,
+    ),
+    check(
+      "upload_intents_retention_after_cleanup",
+      sql`${table.retainUntil} > ${table.cleanupEligibleAt}`,
+    ),
+  ],
+);
+
+export type UploadIntent = typeof uploadIntents.$inferSelect;

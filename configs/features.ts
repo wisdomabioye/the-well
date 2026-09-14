@@ -8,6 +8,8 @@ import {
   launchesFeature,
 } from "@ador/feature-public-products";
 import { createFeatureRegistry } from "@ador/plugin-kit";
+import { createUploadsFeature } from "@ador/feature-uploads";
+import { providerRegistry } from "./providers.ts";
 
 export const featureRegistry = createFeatureRegistry([
   platformShellFeature,
@@ -17,4 +19,5 @@ export const featureRegistry = createFeatureRegistry([
   collectionsFeature,
   creatorsFeature,
   gamesFeature,
+  createUploadsFeature(providerRegistry),
 ]);

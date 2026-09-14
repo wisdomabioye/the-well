@@ -1,3 +1,6 @@
+import { readFile } from "node:fs/promises";
+import { resolve } from "node:path";
+
 import { describe, expect, it } from "vitest";
 
 import { findBoundaryViolations } from "../src/boundary-policy.ts";
@@ -18,5 +21,12 @@ describe("repository policy integration", () => {
     expect(findScriptPolicyViolations(workspaces)).toEqual([]);
     await expect(findOversizedFiles(root, files)).resolves.toEqual([]);
     await expect(findBoundaryViolations(root, files)).resolves.toEqual([]);
+  });
+
+  it("invalidates cached tasks when shared platform configuration changes", async () => {
+    const root = repositoryRoot(import.meta.url);
+    const turboConfig = await readFile(resolve(root, "turbo.json"), "utf8");
+
+    expect(turboConfig).toContain('"globalDependencies": ["configs/**"]');
   });
 });

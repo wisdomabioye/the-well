@@ -65,3 +65,8 @@ export {
   type NewOutboxEvent,
   type OutboxEvent,
 } from "./schema/outbox.ts";
+export {
+  uploadIntents,
+  uploadIntentState,
+  type UploadIntent,
+} from "./schema/uploads.ts";

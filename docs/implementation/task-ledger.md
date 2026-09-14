@@ -26,8 +26,8 @@ same change. Never infer completion from a commit, passing test, or partially de
 
 | Field                   | Value                                                               |
 | ----------------------- | ------------------------------------------------------------------- |
-| Active task             | None — `W3-01A` landed; `W3-02` awaits upload-policy decisions      |
-| Next ordered task       | `W3-02` Short-lived direct-upload intents and authorization         |
+| Active task             | None                                                                |
+| Next ordered task       | `W3-03` Asset persistence and idempotent processing jobs            |
 | Current milestone phase | Week 3 — Upload pipeline                                            |
 | Parallel security gate  | `SEC-D15-04` remains blocked                                        |
 | Mainnet                 | Outside this milestone and blocked by a separate readiness decision |
@@ -75,8 +75,8 @@ stored in `references/task-list.md`.
 | ------ | ------------------------------------------------------------------------------- | --------- | -------------------------------------------- |
 | W3-01  | Implement the provider-neutral object-storage port and R2 adapter               | completed | `references/object-storage-task-record.md`   |
 | W3-01A | Expose typed provider runtime resolution without vendor imports in features     | completed | `references/provider-runtime-task-record.md` |
-| W3-02  | Implement short-lived direct-upload intents and authorization                   | pending   | Depends on W3-01A                            |
-| W3-03  | Add asset/upload persistence and idempotent processing jobs                     | pending   | Depends on W3-01 and workflow foundation     |
+| W3-02  | Persist and authorize short-lived direct-upload intents before signing          | completed | `references/upload-intents-task-record.md`   |
+| W3-03  | Add asset persistence and idempotent processing jobs for completed uploads      | pending   | Depends on W3-02 and workflow foundation     |
 | W3-04  | Validate file signatures, MIME, size, decoded dimensions, and checksums         | pending   | Depends on W3-03                             |
 | W3-05  | Generate thumbnails and previews for PNG, JPEG, and WebP                        | pending   | Depends on W3-04                             |
 | W3-06  | Build upload progress, retry, validation-error, and asset-library UI            | pending   | Depends on W3-02 through W3-05               |

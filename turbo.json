@@ -1,5 +1,6 @@
 {
   "$schema": "https://turborepo.dev/schema.json",
+  "globalDependencies": ["configs/**"],
   "globalEnv": [
     "CI",
     "APP_ENV",
