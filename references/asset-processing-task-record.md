@@ -58,8 +58,8 @@ The clean streak restarted after that repair:
 | Pass | Method                                      | Result |
 | ---- | ------------------------------------------- | ------ |
 | 1    | M1 line-by-line control and data-flow trace | Clean  |
-| 2    | M4 adversarial security and failure review  | Clean  |
-| 3    | M11 cross-boundary consistency review       | Clean  |
+| 2    | M4 producer/consumer contract diff          | Clean  |
+| 3    | M11 house-rule audit                        | Clean  |
 
 Verdict: **Converged**. The final three independent passes found no new verified defect and changed
 nothing. W3-04 may now consume only the pending asset and private-object evidence; it must independently
