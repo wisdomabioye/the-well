@@ -92,6 +92,14 @@ export function createUploadIntentService(dependencies: {
           expiresInSeconds: remainingLifetimeSeconds,
           key: reserved.intent.objectKey,
         });
+        if (
+          !Number.isFinite(upload.expiresAt.getTime()) ||
+          upload.expiresAt > reserved.intent.expiresAt
+        ) {
+          throw new Error(
+            "Upload credential exceeds its persisted authorization expiry.",
+          );
+        }
         return {
           intent: {
             byteLength: reserved.intent.byteLength,

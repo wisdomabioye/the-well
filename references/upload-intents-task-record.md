@@ -80,6 +80,9 @@ These approved values are implemented as typed policy rather than repeated sourc
   readiness windows because Docker storage initialized PostgreSQL 18 too slowly. Disposable database
   data now uses container tmpfs, and repository integration and coverage orchestration limit task
   concurrency to two. Tests retain isolated real PostgreSQL boundaries without storage contention.
+- The provider-neutral upload service trusted the expiry reported by a storage adapter. It now rejects
+  malformed or overlong bearer credentials and releases the durable reservation, so a provider cannot
+  return an upload contract that outlives the persisted authorization.
 
 ## Verification evidence
 
@@ -87,12 +90,13 @@ These approved values are implemented as typed policy rather than repeated sourc
   migration drift, TypeScript, unit tests, integration tests, production build, merged coverage,
   contract coverage, and Playwright E2E.
 - Merged line and branch coverage remained above 90%. The upload feature reported 100% line and
-  branch coverage; the upload domain package reported 100% lines and 91.66% branches.
+  branch coverage; the upload domain package reported 100% lines and 92.85% branches.
 - Playwright reported 86 passed and 6 intentionally skipped tests across mobile, tablet, desktop,
   and wide viewports.
 - Mutation checks produced the expected failures for policy defaults, schema indexes, size policy,
-  quota serialization, authentication/error mapping, runtime caching, route registration, API
-  access metadata, feature count, Turbo cache invalidation, and all four visual baselines.
+  quota serialization, provider-expiry enforcement, authentication/error mapping, runtime caching,
+  route registration, API access metadata, feature count, Turbo cache invalidation, and all four
+  visual baselines.
 
 ## Convergence review
 

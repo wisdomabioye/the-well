@@ -109,6 +109,12 @@ describe("upload intent service", () => {
         kind: "replayed",
       }),
     );
+    vi.mocked(values.storage.presignPrivateUpload).mockResolvedValueOnce({
+      expiresAt: replayExpiry,
+      headers: { "content-length": "100" },
+      method: "PUT",
+      url: new URL("https://uploads.example.test/private"),
+    });
     const service = createUploadIntentService({
       clock: () => now,
       createDraftKey: () => "unused-on-replay",
@@ -193,4 +199,36 @@ describe("upload intent service", () => {
       userId,
     });
   });
+
+  it.each([
+    ["outlives", new Date(now.getTime() + 900_001)],
+    ["has an invalid expiry for", new Date(Number.NaN)],
+  ])(
+    "rejects a provider credential that %s its authorization",
+    async (_, expiry) => {
+      const values = dependencies();
+      vi.mocked(values.storage.presignPrivateUpload).mockResolvedValueOnce({
+        expiresAt: expiry,
+        headers: { "content-length": "100" },
+        method: "PUT",
+        url: new URL("https://uploads.example.test/private"),
+      });
+      const service = createUploadIntentService({
+        clock: () => now,
+        createDraftKey: () => "opaque-key",
+        createId: () => intentId,
+        repository: values.repository,
+        storage: values.storage,
+      });
+
+      await expect(
+        service.create(input, { idempotencyKey, userId }),
+      ).rejects.toThrow("authorization expiry");
+      expect(values.repository.markSigningFailed).toHaveBeenCalledWith({
+        failedAt: now,
+        intentId,
+        userId,
+      });
+    },
+  );
 });
