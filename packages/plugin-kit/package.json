@@ -6,6 +6,7 @@
   "exports": {
     ".": "./src/registry.ts",
     "./boot": "./src/boot.ts",
+    "./navigation": "./src/navigation.ts",
     "./providers": "./src/provider-registry.ts"
   },
   "scripts": {

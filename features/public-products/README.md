@@ -15,6 +15,7 @@ and honest pre-data states aligned without coupling their registration lifecycle
 - Detail paths validate their slug and never imply an unknown record exists.
 - The feature performs no persistence, wallet, mint, publication, or on-chain operation.
 - All navigation and state presentation uses shared arcade UI.
+- Each public catalog contributes its own navigation item through its validated manifest.
 
 ## Dependencies and configuration
 

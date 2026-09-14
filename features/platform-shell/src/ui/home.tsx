@@ -5,22 +5,19 @@ import {
   StatusLamp,
 } from "@repo/ui/arcade";
 import type { FeatureId } from "@ador/shared/features";
+import type { NavigationItem } from "@ador/plugin-kit/navigation";
 
 export function PlatformHome({
   registeredFeatureIds,
   registeredFeatures,
+  navigation,
 }: {
+  readonly navigation: readonly NavigationItem[];
   readonly registeredFeatureIds: readonly FeatureId[];
   readonly registeredFeatures: number;
 }) {
   const hasLaunches = registeredFeatureIds.includes("launches");
   const hasGames = registeredFeatureIds.includes("games");
-  const navigation = [
-    ...(hasLaunches ? [{ href: "/launches", label: "Launches" }] : []),
-    ...(hasGames
-      ? [{ href: "/games", label: "Games", tone: "yellow" as const }]
-      : []),
-  ];
   const status = [
     ["Features", `${registeredFeatures} REGISTERED`],
     ["Network", "UNSET"],

@@ -4,7 +4,8 @@ The first registered platform feature. It owns the public shell capabilities cur
 by the web application: primary navigation and the public landing page.
 
 Its manifest declares its page and operation contributions, while the lazy entrypoint supplies
-their implementations. The delivery app knows only the plugin-kit contracts.
+their implementations. Primary navigation is the validated aggregate contributed by every enabled
+feature; this feature does not own a hard-coded product menu.
 
 ## Public API
 

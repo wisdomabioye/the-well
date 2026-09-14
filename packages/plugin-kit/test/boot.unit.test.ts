@@ -25,6 +25,7 @@ function feature(
     manifest: {
       capabilities: ["api-routes"],
       dependencies: [],
+      navigation: [],
       id,
       pages: [],
       requiredDecisionGates: [],

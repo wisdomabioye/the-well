@@ -2,6 +2,10 @@ import { notFound } from "next/navigation";
 import { cookies } from "next/headers";
 import { platformSessionCookieName } from "@ador/shared/auth";
 import { AccessState } from "@repo/ui/arcade";
+import {
+  navigationForAudience,
+  navigationForUser,
+} from "@ador/plugin-kit/navigation";
 
 import { platformComposition } from "../../../../../configs/platform";
 import { resolvePageAccess } from "../../server/auth/page-access";
@@ -15,8 +19,17 @@ export default async function FeaturePage({
   const match = await platformComposition.features.resolvePage(routePath);
   if (!match) notFound();
   const { page: contribution, params: routeParams } = match;
+  const navigationContributions = platformComposition.features.listNavigation();
+  const publicNavigation = navigationForAudience(
+    navigationContributions,
+    "public",
+  );
   if (contribution.access.kind === "public") {
-    return contribution.render({ actorUserId: null, params: routeParams });
+    return contribution.render({
+      actorUserId: null,
+      navigation: publicNavigation,
+      params: routeParams,
+    });
   }
   const token = (await cookies()).get(platformSessionCookieName)?.value;
   const access = await resolvePageAccess(
@@ -25,10 +38,27 @@ export default async function FeaturePage({
     getPageAccessDependencies,
   );
   if (access.kind !== "allowed") {
-    return <AccessState retryHref={routePath} state={access.kind} />;
+    return (
+      <AccessState
+        navigation={publicNavigation}
+        retryHref={routePath}
+        state={access.kind}
+      />
+    );
   }
+  const navigation = await navigationForUser(
+    navigationContributions,
+    async (capability) => {
+      const decision = await getPageAccessDependencies().forPlatform({
+        capability,
+        userId: access.actorUserId,
+      });
+      return decision.allowed;
+    },
+  );
   return contribution.render({
     actorUserId: access.actorUserId,
+    navigation,
     params: routeParams,
   });
 }

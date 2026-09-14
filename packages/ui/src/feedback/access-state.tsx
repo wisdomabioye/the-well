@@ -2,6 +2,7 @@ import { AppShell } from "../patterns/app-shell.tsx";
 import { ArcadeButton } from "../primitives/arcade-button.tsx";
 import { ArcadePanel } from "../arcade/arcade-panel.tsx";
 import { StatusLamp } from "../arcade/status-lamp.tsx";
+import type { ShellNavigationItem } from "../patterns/app-shell.tsx";
 
 const states = {
   forbidden: {
@@ -13,7 +14,7 @@ const states = {
   },
   unauthenticated: {
     action: "Return home",
-    body: "Connect and authenticate with a supported wallet to enter this private route.",
+    body: "Wallet sign-in is not enabled in this build. This private route remains closed until a supported wallet completes qualification.",
     label: "Authentication required",
     title: "Insert player identity",
     tone: "attention",
@@ -28,9 +29,11 @@ const states = {
 } as const;
 
 export function AccessState({
+  navigation = [{ href: "/", label: "Home" }],
   retryHref = "/",
   state,
 }: {
+  readonly navigation?: readonly ShellNavigationItem[];
   readonly retryHref?: string;
   readonly state: keyof typeof states;
 }) {
@@ -40,7 +43,7 @@ export function AccessState({
       brand="Adorbitals"
       footerLabel="Protected platform route"
       homeHref="/"
-      navigation={[{ href: "/", label: "Home" }]}
+      navigation={navigation}
       notices={["◆ PRIVATE ROUTE", "▲ SERVER VERIFIED", "★ FAIL CLOSED"]}
     >
       <section className="arcade-section arcade-section--raised">

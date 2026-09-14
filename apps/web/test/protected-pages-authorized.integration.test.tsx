@@ -33,5 +33,9 @@ describe("authorized protected page delivery", () => {
     const markup = renderToStaticMarkup(page);
     expect(markup).toContain(heading);
     expect(markup).toContain("01992bd8-a740-7000-8000-000000000002");
+    expect(markup).toContain('href="/studio"');
+    expect(markup).toContain('href="/studio/creator-application"');
+    expect(markup).toContain('href="/admin"');
+    expect(markup).toContain('href="/admin/creator-applications"');
   });
 });

@@ -7,6 +7,7 @@ import type {
   WalletQualificationPolicy,
   WalletQualificationResult,
 } from "./contracts.ts";
+export { laserEyesProviderIds } from "./contracts.ts";
 import { environmentParts, matrixKey } from "./matrix-key.ts";
 import { policyFailures } from "./validate-policy.ts";
 

@@ -9,18 +9,13 @@ import {
   ArcadePanel,
   StatusLamp,
 } from "@repo/ui/arcade";
+import type { NavigationItem } from "@ador/plugin-kit/navigation";
 
 import {
   AdmissionField,
   sendCreatorAdmissionRequest,
 } from "./form-helpers.tsx";
 import { ReviewerForm } from "./reviewer-form.tsx";
-
-const navigation = [
-  { href: "/", label: "Home" },
-  { href: "/account", label: "Account", tone: "cyan" },
-  { href: "/studio", label: "Studio", tone: "yellow" },
-] as const;
 
 type SurfaceStatus = "idle" | "working" | "success" | "error";
 
@@ -209,10 +204,12 @@ function CreatorDraftForm({
 export function CreatorApplicationSurface({
   application,
   mode,
+  navigation = [],
   unavailable,
 }: {
   readonly application: CreatorApplicationResponse["application"] | null;
   readonly mode: "studio" | "review";
+  readonly navigation?: readonly NavigationItem[];
   readonly unavailable: boolean;
 }) {
   return (

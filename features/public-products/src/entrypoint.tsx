@@ -16,14 +16,17 @@ export function createPublicProductEntrypoint(
       {
         access: { kind: "public" as const },
         path: catalog.path,
-        render: () => <ProductIndex catalog={catalog} />,
+        render: ({ navigation }) => (
+          <ProductIndex catalog={catalog} navigation={navigation} />
+        ),
       },
       {
         access: { kind: "public" as const },
         path: `${catalog.path}/[slug]` as const,
-        render: ({ params }) => (
+        render: ({ navigation, params }) => (
           <ProductDetailUnavailable
             catalog={catalog}
+            navigation={navigation}
             slug={parseProductSlug(params.slug)}
           />
         ),

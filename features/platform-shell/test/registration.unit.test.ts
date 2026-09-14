@@ -9,6 +9,7 @@ describe("platform shell manifest", () => {
       version: "1.0.0",
       capabilities: ["api-routes", "navigation", "public-page"],
       dependencies: [],
+      navigation: [],
       requiredDecisionGates: [],
       requiredProviderCapabilities: [],
       pages: [{ access: { kind: "public" }, path: "/" }],

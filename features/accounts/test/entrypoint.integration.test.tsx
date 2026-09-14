@@ -19,7 +19,11 @@ describe("accounts entrypoint", () => {
     const page = entrypoint.pages?.find((candidate) => candidate.path === path);
     expect(page).toBeDefined();
     const markup = renderToStaticMarkup(
-      await page?.render({ actorUserId: createUuidV7(), params: {} }),
+      await page?.render({
+        actorUserId: createUuidV7(),
+        navigation: [],
+        params: {},
+      }),
     );
     expect(markup).toContain(title);
     expect(markup).toContain(status);
@@ -37,7 +41,7 @@ describe("accounts entrypoint", () => {
     for (const page of pages) {
       expect(
         renderToStaticMarkup(
-          await page.render({ actorUserId: null, params: {} }),
+          await page.render({ actorUserId: null, navigation: [], params: {} }),
         ),
       ).toBe("");
     }
@@ -52,7 +56,11 @@ describe("accounts entrypoint", () => {
     }));
     const page = entrypoint.pages?.find(({ path }) => path === "/account");
     const markup = renderToStaticMarkup(
-      await page?.render({ actorUserId: createUuidV7(), params: {} }),
+      await page?.render({
+        actorUserId: createUuidV7(),
+        navigation: [],
+        params: {},
+      }),
     );
     expect(markup).toContain("Passkey status is unavailable");
     expect(markup).not.toContain("Passkey 1");

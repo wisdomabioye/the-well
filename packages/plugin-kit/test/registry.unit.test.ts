@@ -16,13 +16,18 @@ import {
 function registration(
   id: string,
   dependencies: readonly string[] = [],
+  navigation: FeatureRegistration["manifest"]["navigation"] = [],
 ): FeatureRegistration {
+  const capabilities = navigation.length
+    ? (["public-page", "navigation"] as const)
+    : (["public-page"] as const);
   return {
     manifest: {
       id,
       version: "1.0.0",
-      capabilities: ["public-page"],
+      capabilities,
       dependencies,
+      navigation,
       requiredDecisionGates: [],
       requiredProviderCapabilities: [],
       pages: [],
@@ -31,7 +36,7 @@ function registration(
     load: async () => ({
       id,
       version: "1.0.0",
-      capabilities: ["public-page"],
+      capabilities,
     }),
   };
 }

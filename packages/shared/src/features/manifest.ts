@@ -35,18 +35,20 @@ export const routeContributionSchema = z
   .strict()
   .readonly();
 
+export const pageAccessRequirementSchema = z.discriminatedUnion("kind", [
+  z.object({ kind: z.literal("public") }).strict(),
+  z.object({ kind: z.literal("authenticated") }).strict(),
+  z
+    .object({
+      capability: capabilitySchema,
+      kind: z.literal("platform"),
+    })
+    .strict(),
+]);
+
 export const pageContributionSchema = z
   .object({
-    access: z.discriminatedUnion("kind", [
-      z.object({ kind: z.literal("public") }).strict(),
-      z.object({ kind: z.literal("authenticated") }).strict(),
-      z
-        .object({
-          capability: capabilitySchema,
-          kind: z.literal("platform"),
-        })
-        .strict(),
-    ]),
+    access: pageAccessRequirementSchema,
     path: z
       .string()
       .regex(
@@ -62,6 +64,19 @@ export const pageContributionSchema = z
   }, "Page parameter names must be unique.")
   .readonly();
 
+export const navigationContributionSchema = z
+  .object({
+    access: pageAccessRequirementSchema,
+    href: z
+      .string()
+      .regex(
+        /^\/$|^\/[a-z0-9]+(?:-[a-z0-9]+)*(?:\/[a-z0-9]+(?:-[a-z0-9]+)*)*$/,
+      ),
+    label: z.string().trim().min(1).max(32),
+  })
+  .strict()
+  .readonly();
+
 export const featureIdSchema = z.string().regex(featureIdPattern);
 export const providerIdSchema = z.string().regex(featureIdPattern);
 
@@ -75,6 +90,13 @@ export const featureManifestSchema = z
       .refine((items) => new Set(items).size === items.length)
       .readonly(),
     dependencies: z.array(featureIdSchema).readonly(),
+    navigation: z
+      .array(navigationContributionSchema)
+      .refine(
+        (items) => new Set(items.map(({ href }) => href)).size === items.length,
+        "Navigation destinations must be unique within a feature.",
+      )
+      .readonly(),
     requiredProviderCapabilities: z
       .array(providerCapabilitySchema)
       .refine((items) => new Set(items).size === items.length)
@@ -87,6 +109,16 @@ export const featureManifestSchema = z
     routes: z.array(routeContributionSchema).readonly(),
   })
   .strict()
+  .refine(
+    ({ capabilities, navigation }) =>
+      navigation.length === 0 || capabilities.includes("navigation"),
+    "A feature with navigation contributions must declare navigation capability.",
+  )
+  .refine(
+    ({ navigation, pages }) =>
+      navigation.every(({ href }) => pages.some(({ path }) => path === href)),
+    "Every navigation destination must be an owned static page.",
+  )
   .readonly();
 
 export const providerManifestSchema = z
@@ -115,4 +147,7 @@ export type ProviderId = z.infer<typeof providerIdSchema>;
 export type ProviderManifest = z.infer<typeof providerManifestSchema>;
 export type PageContribution = z.infer<typeof pageContributionSchema>;
 export type PageAccessRequirement = PageContribution["access"];
+export type NavigationContribution = z.infer<
+  typeof navigationContributionSchema
+>;
 export type RouteContribution = z.infer<typeof routeContributionSchema>;

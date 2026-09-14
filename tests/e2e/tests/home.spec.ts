@@ -102,7 +102,7 @@ test("serves the versioned platform contract with correlated truthful state", as
   expect(response.headers()["x-correlation-id"]).toBe(correlationId);
   expect(await response.json()).toEqual({
     apiVersion: "v1",
-    registeredFeatures: 8,
+    registeredFeatures: 9,
     stage: "foundation",
     transactionalActions: "gated",
   });

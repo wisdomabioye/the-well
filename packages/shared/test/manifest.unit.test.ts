@@ -10,6 +10,7 @@ const validManifest = {
   version: "1.0.0",
   capabilities: ["public-page"],
   dependencies: [],
+  navigation: [],
   requiredDecisionGates: [],
   requiredProviderCapabilities: [],
   pages: [],
@@ -28,6 +29,31 @@ describe("featureManifestSchema", () => {
         pages: [{ access: { kind: "public" }, path: "/catalog/[slug]" }],
       }).pages[0]?.path,
     ).toBe("/catalog/[slug]");
+  });
+
+  it("accepts validated navigation and rejects undeclared or duplicate links", () => {
+    const navigation = [
+      { access: { kind: "public" }, href: "/games", label: "Games" },
+    ] as const;
+    expect(
+      featureManifestSchema.parse({
+        ...validManifest,
+        capabilities: ["public-page", "navigation"],
+        navigation,
+        pages: [{ access: { kind: "public" }, path: "/games" }],
+      }).navigation,
+    ).toEqual(navigation);
+    expect(() =>
+      featureManifestSchema.parse({ ...validManifest, navigation }),
+    ).toThrow("navigation capability");
+    expect(() =>
+      featureManifestSchema.parse({
+        ...validManifest,
+        capabilities: ["public-page", "navigation"],
+        navigation: [...navigation, ...navigation],
+        pages: [{ access: { kind: "public" }, path: "/games" }],
+      }),
+    ).toThrow("unique");
   });
 
   it.each([
@@ -63,6 +89,25 @@ describe("featureManifestSchema", () => {
           access: { kind: "platform", capability: "invalid" },
           path: "/catalog",
         },
+      ],
+    },
+    {
+      ...validManifest,
+      capabilities: ["public-page", "navigation"],
+      navigation: [
+        { access: { kind: "public" }, href: "/games/[slug]", label: "Games" },
+      ],
+    },
+    {
+      ...validManifest,
+      capabilities: ["public-page", "navigation"],
+      navigation: [{ access: { kind: "public" }, href: "/games", label: " " }],
+    },
+    {
+      ...validManifest,
+      capabilities: ["public-page", "navigation"],
+      navigation: [
+        { access: { kind: "public" }, href: "/missing", label: "Missing" },
       ],
     },
     {

@@ -5,6 +5,12 @@ import { creatorAdmissionFeature } from "../src/registration.ts";
 describe("creator admission registration", () => {
   it("declares its detachable access and accounts dependency", () => {
     expect(creatorAdmissionFeature.manifest).toMatchObject({
+      capabilities: [
+        "api-routes",
+        "authenticated-page",
+        "navigation",
+        "studio-page",
+      ],
       dependencies: ["accounts"],
       id: "creator-admission",
       pages: [

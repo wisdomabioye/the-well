@@ -1,0 +1,103 @@
+import { renderToStaticMarkup } from "react-dom/server";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import type { WalletConnectionClient } from "../src/client/provider.tsx";
+
+const connect = vi.fn(async () => undefined);
+const disconnect = vi.fn();
+const vendor = vi.hoisted(() => ({
+  wallets: Object.fromEntries(
+    [
+      "binance",
+      "keplr",
+      "leather",
+      "magic-eden",
+      "okx",
+      "op_net",
+      "orange",
+      "oyl",
+      "phantom",
+      "sparrow",
+      "tokeo",
+      "unisat",
+      "wizz",
+      "xverse",
+    ].map((provider) => [
+      provider,
+      { name: provider, url: `https://${provider}.example` },
+    ]),
+  ),
+}));
+const state = {
+  address: "tb1qcandidate",
+  connect,
+  connected: false,
+  disconnect,
+  hasBinance: false,
+  hasKeplr: false,
+  hasLeather: false,
+  hasMagicEden: false,
+  hasOkx: false,
+  hasOpNet: false,
+  hasOrange: false,
+  hasOyl: false,
+  hasPhantom: false,
+  hasSparrow: false,
+  hasTokeo: false,
+  hasUnisat: false,
+  hasWizz: false,
+  hasXverse: true,
+  isConnecting: false,
+  network: "signet",
+  provider: undefined,
+};
+
+vi.mock("@omnisat/lasereyes-react", () => ({
+  LaserEyesProvider: ({ children }: { readonly children: React.ReactNode }) =>
+    children,
+  SUPPORTED_WALLETS: vendor.wallets,
+  useLaserEyes: () => state,
+}));
+
+import { useWalletConnection } from "../src/client/provider.tsx";
+
+let captured: WalletConnectionClient | null = null;
+function Probe() {
+  captured = useWalletConnection();
+  return <span>probe</span>;
+}
+
+describe("normalized wallet connection client", () => {
+  beforeEach(() => {
+    captured = null;
+    connect.mockClear();
+    disconnect.mockClear();
+    vendor.wallets.xverse = {
+      name: "xverse",
+      url: "https://xverse.example",
+    };
+    Reflect.set(state, "provider", undefined);
+  });
+
+  it("maps provider availability and delegates lifecycle calls", async () => {
+    renderToStaticMarkup(<Probe />);
+    if (captured === null) throw new Error("Expected captured wallet client");
+    expect(captured.isInstalled("xverse")).toBe(true);
+    expect(captured.isInstalled("unisat")).toBe(false);
+    expect(captured.installationUrl("xverse")).toBe("https://xverse.example");
+    await captured.connect("xverse");
+    captured.disconnect();
+    expect(connect).toHaveBeenCalledWith("xverse");
+    expect(disconnect).toHaveBeenCalledOnce();
+  });
+
+  it("normalizes an active provider and rejects missing vendor metadata", () => {
+    Reflect.set(state, "provider", "xverse");
+    renderToStaticMarkup(<Probe />);
+    if (captured === null) throw new Error("Expected captured wallet client");
+    expect(captured.provider).toBe("xverse");
+    Reflect.deleteProperty(vendor.wallets, "xverse");
+    expect(() => captured?.installationUrl("xverse")).toThrow(
+      "no installation URL",
+    );
+  });
+});

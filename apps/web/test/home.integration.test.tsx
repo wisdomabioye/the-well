@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 import FeaturePage from "../src/app/[[...path]]/page";
 
 describe("home navigation", () => {
-  it("connects navigation to visible launch and game sections", async () => {
+  it("connects every public and authentication-status surface", async () => {
     const page = await FeaturePage({
       params: Promise.resolve({}),
       searchParams: Promise.resolve({}),
@@ -16,6 +16,12 @@ describe("home navigation", () => {
     expect(markup).toContain('href="/games"');
     expect(markup).toContain('id="games"');
     expect(markup).toContain("Frostbite");
+    expect(markup).toContain('href="/collections"');
+    expect(markup).toContain('href="/creators"');
+    expect(markup).toContain('href="/account"');
+    expect(markup).toContain('href="/connect"');
+    expect(markup).not.toContain('href="/studio"');
+    expect(markup).not.toContain('href="/admin"');
   });
 
   it("rejects a page path that no registered feature owns", async () => {

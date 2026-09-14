@@ -6,7 +6,8 @@ Runtime-neutral contracts and pure domain behavior shared by browser and server 
 
 - `@ador/shared/allowlists` — strict Leaf V1 bytes, decoder, and SHA-256 Merkle primitives used by
   browser, server, and contract fixture tooling.
-- `@ador/shared/features` — versioned feature identifiers, capabilities, and manifest schema.
+- `@ador/shared/features` — versioned feature identifiers, capabilities, pages, navigation, and
+  manifest schema.
 - `@ador/shared/decisions` — accepted-decision records and fail-closed gate evaluation.
 - `@ador/shared/http` — HTTP headers, methods, idempotency policy, and the versioned error envelope.
 - `@ador/shared/platform` — public platform-status input and output contracts.
@@ -29,6 +30,8 @@ sorted-pair convention are protocol behavior and are locked by Rust/TypeScript f
 - Every feature declares at least one supported capability.
 - Manifests reject undeclared fields.
 - Feature routes and provider requirements are runtime-validated boot contracts.
+- Navigation destinations and labels are strict, unique per feature, and require the declared
+  navigation capability.
 - Accepted decisions require an owner, date, selected outcome, ADR, and evidence records.
 - Correlation IDs are UUIDs and idempotency keys are bounded opaque values.
 - HTTP errors use one strict, versioned public envelope.

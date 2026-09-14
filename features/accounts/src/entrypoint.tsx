@@ -1,6 +1,7 @@
 import type { FeatureEntrypoint } from "@ador/plugin-kit";
 import { registerHttpOperation } from "@ador/http/registered-operation";
 import type { UuidV7 } from "@ador/shared/identifiers";
+import type { NavigationItem } from "@ador/plugin-kit/navigation";
 
 import { createPasskeyOperations } from "./application/passkey-operations.ts";
 import { getPasskeyLinkingService } from "./runtime.ts";
@@ -11,12 +12,14 @@ type PasskeyService = ReturnType<typeof getPasskeyLinkingService>;
 async function account(
   actorUserId: UuidV7 | null,
   getService: () => PasskeyService,
+  navigation: readonly NavigationItem[],
 ) {
   if (actorUserId === null) return null;
   try {
     return (
       <AccountSurface
         actorUserId={actorUserId}
+        navigation={navigation}
         passkeyCredentialIds={await getService().list(actorUserId)}
         surface="account"
       />
@@ -25,6 +28,7 @@ async function account(
     return (
       <AccountSurface
         actorUserId={actorUserId}
+        navigation={navigation}
         passkeysUnavailable
         surface="account"
       />
@@ -49,22 +53,31 @@ export function createAccountsEntrypoint(
       {
         access: { kind: "authenticated" },
         path: "/account",
-        render: ({ actorUserId }) => account(actorUserId, getService),
+        render: ({ actorUserId, navigation }) =>
+          account(actorUserId, getService, navigation),
       },
       {
         access: { kind: "authenticated" },
         path: "/studio",
-        render: ({ actorUserId }) =>
+        render: ({ actorUserId, navigation }) =>
           actorUserId === null ? null : (
-            <AccountSurface actorUserId={actorUserId} surface="studio" />
+            <AccountSurface
+              actorUserId={actorUserId}
+              navigation={navigation}
+              surface="studio"
+            />
           ),
       },
       {
         access: { capability: "platform:operate", kind: "platform" },
         path: "/admin",
-        render: ({ actorUserId }) =>
+        render: ({ actorUserId, navigation }) =>
           actorUserId === null ? null : (
-            <AccountSurface actorUserId={actorUserId} surface="admin" />
+            <AccountSurface
+              actorUserId={actorUserId}
+              navigation={navigation}
+              surface="admin"
+            />
           ),
       },
     ],

@@ -19,6 +19,12 @@ describe("protected page delivery", () => {
       expect(markup).toContain("Authentication required");
       expect(markup).not.toContain("Session active");
       expect(markup).not.toContain("Staff capability verified");
+      expect(markup).toContain('href="/launches"');
+      expect(markup).toContain('href="/collections"');
+      expect(markup).toContain('href="/creators"');
+      expect(markup).toContain('href="/games"');
+      expect(markup).toContain('href="/account"');
+      expect(markup).not.toContain('href="/studio"');
     },
   );
 });

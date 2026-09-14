@@ -13,6 +13,13 @@ function productFeature(catalog: ProductCatalog) {
     manifest: {
       capabilities: ["navigation", "public-page"],
       dependencies: [],
+      navigation: [
+        {
+          access: { kind: "public" },
+          href: catalog.path,
+          label: catalog.label,
+        },
+      ],
       id: catalog.featureId,
       pages: [
         { access: { kind: "public" }, path: catalog.path },

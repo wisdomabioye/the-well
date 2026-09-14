@@ -6,7 +6,8 @@ Detachable authenticated account, studio, and staff route contributions.
 
 `accountsFeature` is the only registration export. Adding or removing it from `configs/features.ts`
 adds or removes the complete page and passkey API route family. The lazy entrypoint is validated
-against its manifest.
+against its manifest. Its manifest also contributes the public account entry, authenticated studio,
+and capability-gated admin navigation items.
 
 ## Invariants
 

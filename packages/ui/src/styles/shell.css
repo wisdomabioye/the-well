@@ -71,7 +71,9 @@
   box-shadow: 0 0 1rem color-mix(in srgb, var(--arcade-red) 60%, transparent);
 }
 .app-navigation {
+  flex-wrap: wrap;
   gap: 0.75rem;
+  justify-content: flex-end;
 }
 .app-footer {
   justify-content: space-between;

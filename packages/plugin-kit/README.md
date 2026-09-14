@@ -11,6 +11,8 @@ Explicit feature/provider registration, boot validation, dependency checking, an
 - `@ador/plugin-kit/providers` defines and creates explicit provider registries.
 - `@ador/plugin-kit/boot` validates decision gates, provider requirements, pages, routes, and
   operation IDs before serving.
+- `@ador/plugin-kit/navigation` filters validated manifest navigation for public, authenticated, or
+  capability-authorized users. Visibility never replaces destination authorization.
 
 Applications register a feature by importing its registration and adding it to
 `configs/features.ts`. The registry never scans the filesystem or activates modules through import
@@ -31,6 +33,7 @@ side effects.
 - Method/path pairs and operation IDs are globally unique; parameter names do not hide collisions.
 - Routes are static until the shared HTTP contract defines typed path-parameter validation.
 - Page paths are declared in manifests, globally unique at boot, and match loaded entrypoints.
+- Navigation is manifest-owned and immutable; detaching a feature removes its links with its pages.
 
 Removing the single registration entry from `configs/features.ts` removes that feature's pages and
 operations. Runtime filesystem discovery and feature-specific app routes are intentionally absent.

@@ -5,6 +5,19 @@ export const accountsFeature = defineFeature({
   manifest: {
     capabilities: ["api-routes", "authenticated-page", "navigation"],
     dependencies: [],
+    navigation: [
+      { access: { kind: "public" }, href: "/account", label: "Account" },
+      {
+        access: { kind: "authenticated" },
+        href: "/studio",
+        label: "Studio",
+      },
+      {
+        access: { capability: "platform:operate", kind: "platform" },
+        href: "/admin",
+        label: "Admin",
+      },
+    ],
     id: "accounts",
     pages: [
       { access: { kind: "authenticated" }, path: "/account" },

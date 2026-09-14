@@ -9,6 +9,7 @@ describe("feature manifest serialization", () => {
       version: "2.1.0",
       capabilities: ["public-page", "navigation"],
       dependencies: ["platform-shell"],
+      navigation: [],
       requiredProviderCapabilities: [],
       requiredDecisionGates: [],
       pages: [],

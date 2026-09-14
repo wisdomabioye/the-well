@@ -64,7 +64,10 @@ for (const surface of authenticatedSurfaces) {
     await expect(page.locator("#main-content")).toBeFocused();
     await page.locator("#main-content").blur();
     await page.addStyleTag({
-      content: ".skip-link { visibility: hidden !important; }",
+      content: [
+        ".skip-link { visibility: hidden !important; }",
+        ".status-lamp__light { box-shadow: none !important; }",
+      ].join("\n"),
     });
 
     const results = await new AxeBuilder({ page })

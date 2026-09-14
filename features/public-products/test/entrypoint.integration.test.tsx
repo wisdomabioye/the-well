@@ -16,7 +16,7 @@ describe("public product entrypoint", () => {
     );
     const page = entrypoint.pages?.find(({ path }) => path === "/launches");
     const markup = renderToStaticMarkup(
-      await page?.render({ actorUserId: null, params: {} }),
+      await page?.render({ actorUserId: null, navigation: [], params: {} }),
     );
     expect(markup).toContain("No launches online");
     expect(markup).toContain("No launch is published");
@@ -28,10 +28,18 @@ describe("public product entrypoint", () => {
       ({ path }) => path === "/games/[slug]",
     );
     const valid = renderToStaticMarkup(
-      await page?.render({ actorUserId: null, params: { slug: "frostbite" } }),
+      await page?.render({
+        actorUserId: null,
+        navigation: [],
+        params: { slug: "frostbite" },
+      }),
     );
     const invalid = renderToStaticMarkup(
-      await page?.render({ actorUserId: null, params: { slug: "Frostbite" } }),
+      await page?.render({
+        actorUserId: null,
+        navigation: [],
+        params: { slug: "Frostbite" },
+      }),
     );
     expect(valid).toContain("No published game matches");
     expect(valid).toContain("frostbite");

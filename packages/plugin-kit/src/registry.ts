@@ -3,11 +3,13 @@ import {
   type FeatureCapability,
   type FeatureId,
   type FeatureManifest,
+  type NavigationContribution,
   type PageAccessRequirement,
 } from "@ador/shared/features";
 import type { UuidV7 } from "@ador/shared/identifiers";
 import type { RegisteredHttpOperation } from "@ador/http/registered-operation";
 import type { ReactNode } from "react";
+import type { NavigationItem } from "./navigation.ts";
 
 export interface FeaturePageContribution {
   readonly access: PageAccessRequirement;
@@ -19,6 +21,7 @@ export interface FeaturePageContribution {
 
 export interface PageRenderContext {
   readonly actorUserId: UuidV7 | null;
+  readonly navigation: readonly NavigationItem[];
   readonly params: Readonly<Record<string, string>>;
 }
 
@@ -48,6 +51,7 @@ export interface FeatureRegistration {
 export interface FeatureRegistry {
   has(id: FeatureId): boolean;
   list(): readonly FeatureManifest[];
+  listNavigation(): readonly NavigationContribution[];
   load(id: FeatureId): Promise<FeatureEntrypoint>;
   loadAll(): Promise<readonly FeatureEntrypoint[]>;
   resolvePage(path: string): Promise<ResolvedFeaturePage | undefined>;
@@ -84,6 +88,11 @@ function freezeManifest(manifest: FeatureManifest): FeatureManifest {
     ...manifest,
     capabilities: Object.freeze([...manifest.capabilities]),
     dependencies: Object.freeze([...manifest.dependencies]),
+    navigation: Object.freeze(
+      manifest.navigation.map((item) =>
+        Object.freeze({ ...item, access: Object.freeze({ ...item.access }) }),
+      ),
+    ),
     requiredProviderCapabilities: Object.freeze([
       ...manifest.requiredProviderCapabilities,
     ]),
@@ -159,6 +168,23 @@ function assertDependencyGraph(
   registrations.forEach(({ manifest }) => visit(manifest.id));
 }
 
+function assertUniqueNavigation(
+  registrations: ReadonlyMap<FeatureId, FeatureRegistration>,
+): void {
+  const owners = new Map<string, FeatureId>();
+  registrations.forEach(({ manifest }) => {
+    manifest.navigation.forEach(({ href }) => {
+      const owner = owners.get(href);
+      if (owner) {
+        throw new Error(
+          `Duplicate navigation destination ${href} in ${owner} and ${manifest.id}.`,
+        );
+      }
+      owners.set(href, manifest.id);
+    });
+  });
+}
+
 export function defineFeature(
   registration: FeatureRegistration,
 ): FeatureRegistration {
@@ -186,6 +212,7 @@ export function createFeatureRegistry(
   }
 
   assertDependencyGraph(registrations);
+  assertUniqueNavigation(registrations);
   const registeredFeatureIds = Object.freeze([...registrations.keys()]);
 
   const load = async (id: FeatureId): Promise<FeatureEntrypoint> => {
@@ -217,6 +244,12 @@ export function createFeatureRegistry(
   return {
     has: (id) => registrations.has(id),
     list: () => [...registrations.values()].map(({ manifest }) => manifest),
+    listNavigation: () =>
+      Object.freeze(
+        [...registrations.values()].flatMap(({ manifest }) =>
+          manifest.navigation.map((item) => item),
+        ),
+      ),
     load,
     loadAll,
     resolvePage: async (path) => {

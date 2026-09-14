@@ -7,6 +7,7 @@ export function createUploadsFeature(providers: ProviderRegistry) {
     manifest: {
       capabilities: ["api-routes"],
       dependencies: ["accounts"],
+      navigation: [],
       id: "uploads",
       pages: [],
       requiredDecisionGates: [],

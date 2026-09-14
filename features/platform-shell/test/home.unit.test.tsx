@@ -8,6 +8,10 @@ describe("PlatformHome", () => {
   it("renders truthful status and the injected feature count", async () => {
     const markup = renderToStaticMarkup(
       <PlatformHome
+        navigation={[
+          { href: "/launches", label: "Launches" },
+          { href: "/games", label: "Games" },
+        ]}
         registeredFeatureIds={["platform-shell", "launches", "games"]}
         registeredFeatures={3}
       />,
@@ -24,7 +28,7 @@ describe("PlatformHome", () => {
     expect(page?.path).toBe("/");
     expect(
       renderToStaticMarkup(
-        await page?.render({ actorUserId: null, params: {} }),
+        await page?.render({ actorUserId: null, navigation: [], params: {} }),
       ),
     ).toContain("3 REGISTERED");
   });
@@ -47,6 +51,9 @@ describe("PlatformHome", () => {
     (testCase) => {
       const markup = renderToStaticMarkup(
         <PlatformHome
+          navigation={[
+            { href: `/${testCase.present}`, label: testCase.present },
+          ]}
           registeredFeatureIds={["platform-shell", testCase.present]}
           registeredFeatures={2}
         />,

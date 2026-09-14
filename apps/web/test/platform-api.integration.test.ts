@@ -32,7 +32,7 @@ describe("Next platform API adapter", () => {
     expect(response.headers.get("x-correlation-id")).toBe(correlationId);
     expect(platformStatusSchema.parse(await response.json())).toEqual({
       apiVersion: "v1",
-      registeredFeatures: 8,
+      registeredFeatures: 9,
       stage: "foundation",
       transactionalActions: "gated",
     });

@@ -3,8 +3,25 @@ import { creatorApplicationRoutes } from "@ador/shared/creator-admission";
 
 export const creatorAdmissionFeature = defineFeature({
   manifest: {
-    capabilities: ["api-routes", "authenticated-page", "studio-page"],
+    capabilities: [
+      "api-routes",
+      "authenticated-page",
+      "navigation",
+      "studio-page",
+    ],
     dependencies: ["accounts"],
+    navigation: [
+      {
+        access: { kind: "authenticated" },
+        href: "/studio/creator-application",
+        label: "Apply to create",
+      },
+      {
+        access: { capability: "creator:review", kind: "platform" },
+        href: "/admin/creator-applications",
+        label: "Creator reviews",
+      },
+    ],
     id: "creator-admission",
     pages: [
       {

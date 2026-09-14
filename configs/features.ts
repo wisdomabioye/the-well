@@ -9,7 +9,9 @@ import {
 } from "@ador/feature-public-products";
 import { createFeatureRegistry } from "@ador/plugin-kit";
 import { createUploadsFeature } from "@ador/feature-uploads";
+import { createWalletConnectionFeature } from "@ador/feature-wallet-connection";
 import { providerRegistry } from "./providers.ts";
+import { walletConnectionConfig } from "./wallet.ts";
 
 export const featureRegistry = createFeatureRegistry([
   platformShellFeature,
@@ -19,5 +21,6 @@ export const featureRegistry = createFeatureRegistry([
   collectionsFeature,
   creatorsFeature,
   gamesFeature,
+  createWalletConnectionFeature(walletConnectionConfig),
   createUploadsFeature(providerRegistry),
 ]);

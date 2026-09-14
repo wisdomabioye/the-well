@@ -1,24 +1,14 @@
 import type { UuidV7 } from "@ador/shared/identifiers";
-import {
-  AppShell,
-  ArcadeButton,
-  ArcadePanel,
-  StatusLamp,
-} from "@repo/ui/arcade";
+import { AppShell, ArcadePanel, StatusLamp } from "@repo/ui/arcade";
+import type { NavigationItem } from "@ador/plugin-kit/navigation";
 import { PasskeyPanel } from "./passkey-panel.tsx";
-
-const navigation = [
-  { href: "/", label: "Home" },
-  { href: "/account", label: "Account", tone: "cyan" },
-  { href: "/studio", label: "Studio", tone: "yellow" },
-] as const;
 
 const surfaces = {
   account: {
     eyebrow: "Player identity",
     status: "Authenticated session",
     title: "Account console",
-    body: "Your wallet-backed platform session is active. Wallet connection alone never unlocks this surface.",
+    body: "Your platform session is active. Wallet connection alone never unlocks this surface.",
   },
   admin: {
     eyebrow: "Platform operations",
@@ -36,11 +26,13 @@ const surfaces = {
 
 export function AccountSurface({
   actorUserId,
+  navigation = [],
   passkeyCredentialIds = [],
   passkeysUnavailable = false,
   surface,
 }: {
   readonly actorUserId: UuidV7;
+  readonly navigation?: readonly NavigationItem[];
   readonly passkeyCredentialIds?: readonly string[];
   readonly passkeysUnavailable?: boolean;
   readonly surface: keyof typeof surfaces;
@@ -61,23 +53,6 @@ export function AccountSurface({
         <p>{content.body}</p>
         <ArcadePanel eyebrow="Current player" title="Session active">
           <p className="arcade-muted">User {actorUserId}</p>
-          <div className="arcade-actions">
-            <ArcadeButton href="/account" tone="cyan">
-              Account
-            </ArcadeButton>
-            <ArcadeButton href="/studio" tone="yellow">
-              Studio
-            </ArcadeButton>
-            {surface === "studio" ? (
-              <ArcadeButton href="/studio/creator-application" tone="cyan">
-                Creator application
-              </ArcadeButton>
-            ) : surface === "admin" ? (
-              <ArcadeButton href="/admin/creator-applications" tone="yellow">
-                Creator reviews
-              </ArcadeButton>
-            ) : null}
-          </div>
         </ArcadePanel>
         {surface === "account" ? (
           <PasskeyPanel

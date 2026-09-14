@@ -4,20 +4,23 @@ import {
   ArcadePanel,
   StatusLamp,
 } from "@repo/ui/arcade";
+import type { NavigationItem } from "@ador/plugin-kit/navigation";
 
 import type { ProductCatalog } from "../domain/catalog.ts";
 
 export function ProductIndex({
   catalog,
+  navigation,
 }: {
   readonly catalog: ProductCatalog;
+  readonly navigation: readonly NavigationItem[];
 }) {
   return (
     <AppShell
       brand="Adorbitals"
       footerLabel="Public discovery"
       homeHref="/"
-      navigation={[{ href: catalog.path, label: catalog.label }]}
+      navigation={navigation}
       notices={[
         "◆ VERIFIED PUBLIC RECORDS",
         "▲ TRUTHFUL SYSTEM STATE",
@@ -39,9 +42,11 @@ export function ProductIndex({
 
 export function ProductDetailUnavailable({
   catalog,
+  navigation,
   slug,
 }: {
   readonly catalog: ProductCatalog;
+  readonly navigation: readonly NavigationItem[];
   readonly slug: string | null;
 }) {
   const valid = slug !== null;
@@ -50,7 +55,7 @@ export function ProductDetailUnavailable({
       brand="Adorbitals"
       footerLabel="Public discovery"
       homeHref="/"
-      navigation={[{ href: catalog.path, label: catalog.label }]}
+      navigation={navigation}
       notices={[
         "◆ VERIFIED PUBLIC RECORDS",
         "▲ FAIL CLOSED",
