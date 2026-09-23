@@ -12,6 +12,11 @@ OpenAPI is assembled from the same registered operations.
 
 ## Commands
 
+Create `apps/web/.env.local` from `apps/web/.env.example`; Next.js loads environment values from
+the application directory. The root examples remain the canonical cross-workspace contract, and
+`env:check` rejects missing, extra, reordered, or duplicated keys in committed templates and local
+value files.
+
 Run these from the repository root:
 
 ```bash
@@ -23,6 +28,9 @@ pnpm --filter web test:unit
 pnpm --filter web test:integration
 pnpm --filter web test:coverage
 pnpm --filter web build
+pnpm db:migrate
+pnpm db:generate
+pnpm db:check
 ```
 
 Browser behavior is verified by the root `pnpm test:e2e` command against the standalone production

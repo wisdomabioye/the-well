@@ -1,6 +1,6 @@
 "use client";
 
-import "../vendor/lasereyes-react.d.ts";
+import type {} from "../vendor/lasereyes-react.d.ts";
 
 import {
   LaserEyesProvider,

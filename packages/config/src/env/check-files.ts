@@ -12,6 +12,21 @@ export const environmentFiles = [
   ".env.production.example",
 ] as const;
 
+export const applicationEnvironmentFiles = ["apps/web/.env.example"] as const;
+
+export const localEnvironmentFiles = [
+  ".env",
+  ".env.local",
+  ".env.test",
+  ".env.preview",
+  ".env.production",
+  "apps/web/.env",
+  "apps/web/.env.local",
+  "apps/web/.env.test",
+  "apps/web/.env.preview",
+  "apps/web/.env.production",
+] as const;
+
 function extractKeys(contents: string): string[] {
   return contents
     .split("\n")
@@ -20,15 +35,41 @@ function extractKeys(contents: string): string[] {
     .map((line) => line.slice(0, line.indexOf("=")));
 }
 
-export async function checkEnvironmentFiles(root: string): Promise<void> {
-  for (const filename of environmentFiles) {
-    const contents = await readFile(resolve(root, filename), "utf8");
-    const actualKeys = extractKeys(contents);
-    if (actualKeys.join("\n") !== environmentKeys.join("\n")) {
-      throw new Error(
-        `${filename} must contain the canonical environment keys in order.`,
-      );
+function assertCanonicalKeys(filename: string, contents: string): void {
+  const actualKeys = extractKeys(contents);
+  if (actualKeys.join("\n") !== environmentKeys.join("\n")) {
+    throw new Error(
+      `${filename} must contain the canonical environment keys in order.`,
+    );
+  }
+}
+
+async function readOptional(path: string): Promise<string | undefined> {
+  try {
+    return await readFile(path, "utf8");
+  } catch (error) {
+    if (error instanceof Error && "code" in error && error.code === "ENOENT") {
+      return undefined;
     }
+    throw error;
+  }
+}
+
+export async function checkEnvironmentTemplates(root: string): Promise<void> {
+  for (const filename of [
+    ...environmentFiles,
+    ...applicationEnvironmentFiles,
+  ]) {
+    const contents = await readFile(resolve(root, filename), "utf8");
+    assertCanonicalKeys(filename, contents);
+  }
+}
+
+export async function checkEnvironmentFiles(root: string): Promise<void> {
+  await checkEnvironmentTemplates(root);
+  for (const filename of localEnvironmentFiles) {
+    const contents = await readOptional(resolve(root, filename));
+    if (contents !== undefined) assertCanonicalKeys(filename, contents);
   }
 }
 
@@ -37,13 +78,13 @@ const modulePath = fileURLToPath(import.meta.url);
 export async function runEnvironmentFileCheck(
   executablePath: string | undefined,
   currentModulePath: string,
+  root = resolve(dirname(currentModulePath), "../../../.."),
 ): Promise<boolean> {
   if (executablePath !== currentModulePath) {
     return false;
   }
 
-  const repositoryRoot = resolve(dirname(currentModulePath), "../../../..");
-  await checkEnvironmentFiles(repositoryRoot);
+  await checkEnvironmentFiles(root);
   return true;
 }
 
